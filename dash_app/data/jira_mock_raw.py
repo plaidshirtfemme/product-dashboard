@@ -623,6 +623,17 @@ _DASH_EPICS = {
     "E8": "DASH-EPIC-8",  # Release Preparation
 }
 
+EPIC_NAMES: dict[str, str] = {
+    "DASH-EPIC-1": "Discovery & Setup",
+    "DASH-EPIC-2": "Navigation & Shell",
+    "DASH-EPIC-3": "Motif Demo Tabs",
+    "DASH-EPIC-4": "Mock Data Layer",
+    "DASH-EPIC-5": "Multi-Project Architecture",
+    "DASH-EPIC-6": "Real KP Data Integration",
+    "DASH-EPIC-7": "Product Discovery & Docs",
+    "DASH-EPIC-8": "Release Preparation",
+}
+
 
 def _di(
     key: str,
@@ -1457,6 +1468,32 @@ def get_dash_issues() -> list[dict]:
             decision_note="metrics.py:11 — import re as _re теперь в шапке файла вместе с остальными импортами."),
 
         # ── Предрелизная подготовка ───────────────────────────────────────────
+        _di("DASH-90", "Backlog UX: Summary колонка, попап задачи, редактирование Priority, Epic-имена",
+            "Done", "Story", "DEV", _DASH_EPICS["E7"], 4, 5, "Claude Code",
+            created="2026-07-10T16:00:00.000+0000",
+            started="2026-07-10T16:30:00.000+0000",
+            resolved="2026-07-10T18:00:00.000+0000",
+            labels=["ux", "backlog"],
+            priority="High",
+            description=(
+                "Улучшение вкладки Backlog: "
+                "1) добавить колонку Summary (название задачи) — проброс через adapter→state→UI; "
+                "2) попап/диалог задачи в стиле Jira по клику на строку; "
+                "3) редактирование поля Priority прямо в попапе; "
+                "4) осмысленные имена эпиков (DASH-EPIC-1 → 'Discovery & Setup'); "
+                "5) Epic первой колонкой, Squad второй; "
+                "6) тип задачи всегда в нижнем регистре."
+            ),
+            decision_note=(
+                "Issue.summary + Issue.epic_name + Issue.description + Issue.decision_note добавлены в dataclass. "
+                "EPIC_NAMES dict экспортирован из jira_mock_raw.py, резолвится в adapt_issue(). "
+                "issue_type теперь всегда .lower() в adapter. "
+                "BacklogState: selected_key, _priority_overrides, open_issue/close_issue/set_issue_priority. "
+                "selected_issue @rx.var возвращает dict с применёнными overrides. "
+                "backlog.py: rx.dialog попап с двухколоночным layout (description слева, metadata справа), "
+                "Priority — редактируемый select в попапе. Summary — кликабельная ячейка в таблице."
+            )),
+
         _di("DASH-89", "Переименовать проект: KP Dashboard → Product Dashboard + папка product-dashboard",
             "Done", "Task", "DEV", _DASH_EPICS["E8"], 2, 1, "Guzel K.",
             created="2026-07-10T14:00:00.000+0000",

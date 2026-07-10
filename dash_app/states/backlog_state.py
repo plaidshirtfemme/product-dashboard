@@ -29,8 +29,10 @@ _OKR_TITLES_DASH: dict[str, str] = {obj.tag: obj.title for obj in load_dash_okrs
 def _to_dict(i, okr_titles: dict) -> dict:
     return {
         "key": i.key,
+        "summary": i.summary,
         "squad_key": i.squad_key,
         "epic": i.epic,
+        "epic_name": i.epic_name,
         "issue_type": i.issue_type,
         "status": i.status,
         "priority": i.priority or "",
@@ -52,6 +54,10 @@ def _to_dict(i, okr_titles: dict) -> dict:
         "assignee": i.assignee or "",
         "fix_version": i.fix_version or "",
         "release_slipped": "Да" if i.release_slipped else "",
+        "description": i.description or "",
+        "decision_note": i.decision_note or "",
+        "labels": ", ".join(i.labels) if i.labels else "",
+        "created_at": i.created_at.strftime("%Y-%m-%d") if i.created_at else "",
     }
 
 
@@ -106,6 +112,20 @@ class BacklogState(ProjectState):
     # ── display mode ────────────────────────────────────────────────────────
     mode: str = "issues"   # "issues" | "epics"
 
+    # ── issue popup ──────────────────────────────────────────────────────────
+    selected_key: str = ""
+    _priority_overrides: dict[str, str] = {}
+
+    def open_issue(self, key: str):
+        self.selected_key = key
+
+    def close_issue(self):
+        self.selected_key = ""
+
+    def set_issue_priority(self, priority: str):
+        if self.selected_key:
+            self._priority_overrides[self.selected_key] = priority
+
     # ── event handlers ───────────────────────────────────────────────────────
     def set_squad(self, v: str):    self.squad    = v
     def set_type(self, v: str):     self.type_    = v
@@ -126,6 +146,10 @@ class BacklogState(ProjectState):
     @rx.var
     def filtered(self) -> list[dict]:
         rows = _ALL_DASH if self.project_mode == "dash" else _ALL
+        rows = [
+            {**r, "priority": self._priority_overrides.get(r["key"], r["priority"])}
+            for r in rows
+        ]
         if self.squad:    rows = [r for r in rows if r["squad_key"]  == self.squad]
         if self.type_:    rows = [r for r in rows if r["issue_type"] == self.type_]
         if self.status:   rows = [r for r in rows if r["status"]     == self.status]
@@ -135,6 +159,16 @@ class BacklogState(ProjectState):
         if self.epic:     rows = [r for r in rows if r["epic"]       == self.epic]
         if self.okr:      rows = [r for r in rows if r["okr_tag"]    == self.okr]
         return rows
+
+    @rx.var
+    def selected_issue(self) -> dict:
+        if not self.selected_key:
+            return {}
+        rows = _ALL_DASH if self.project_mode == "dash" else _ALL
+        for r in rows:
+            if r["key"] == self.selected_key:
+                return {**r, "priority": self._priority_overrides.get(r["key"], r["priority"])}
+        return {}
 
     @rx.var
     def filtered_count(self) -> int:
