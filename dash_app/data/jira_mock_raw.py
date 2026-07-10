@@ -1069,9 +1069,17 @@ def get_dash_issues() -> list[dict]:
             created="2026-07-07T12:00:00.000+0000",
             labels=["process"]),
         _di("DASH-55", "Подготовить GitHub release: README, demo GIF, публичный репо",
-            "To Do", "task", "DEV", _DASH_EPICS["E8"], 5, 5, "Guzel K.",
+            "Done", "task", "DEV", _DASH_EPICS["E8"], 5, 5, "Guzel K.",
             created="2026-07-07T12:00:00.000+0000",
-            labels=["release"], priority="High"),
+            started="2026-07-10T14:00:00.000+0000",
+            resolved="2026-07-10T16:00:00.000+0000",
+            labels=["release"], priority="High",
+            decision_note=(
+                "git init + явный git add (без git add .) → первый коммит. "
+                "gh repo create product-dashboard --public → https://github.com/plaidshirtfemme/product-dashboard. "
+                "67 файлов, 13124 строки. Ветка master. "
+                "demo GIF — отложен на следующую итерацию после деплоя."
+            )),
 
         # ── North Star ────────────────────────────────────────────────────────
         _di("DASH-56", "Зафиксировать два North Star: продуктовый и портфолийный",
