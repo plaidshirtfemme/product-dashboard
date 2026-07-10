@@ -1,0 +1,22 @@
+{
+  "_comment": "Frozen snapshot of Obsidian vault — update by running scripts/update_vault_snapshot.py",
+  "_snapshot_date": "2026-07-07",
+  "_vault_name": "design_programming",
+  "total_notes": 358,
+  "folders": [
+    {"name": "product",                  "count": 139},
+    {"name": "figma",                    "count": 56},
+    {"name": "inbox",                    "count": 67},
+    {"name": "work",                     "count": 53},
+    {"name": "photoshop",                "count": 11},
+    {"name": "psychology",               "count": 8},
+    {"name": "others_AI",                "count": 5},
+    {"name": "DIY",                      "count": 4},
+    {"name": "programms_motion_design",  "count": 4},
+    {"name": "architecture",             "count": 2},
+    {"name": "tablet_for_design",        "count": 2},
+    {"name": "tilda",                    "count": 2},
+    {"name": "notion",                   "count": 1},
+    {"name": "obsidian",                 "count": 1}
+  ]
+}
