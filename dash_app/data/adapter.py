@@ -23,6 +23,7 @@ from .jira_mock_raw import (
     ProjectConfig,
     MOTIF_DEMO_CONFIG,
     DASH_CONFIG,
+    EPIC_NAMES,
     WORKFLOW_INDEX,
     CF_STORY_POINTS,
     CF_SPRINT,
@@ -65,8 +66,10 @@ def _parse_iso(value: str | None) -> datetime | None:
 @dataclass
 class Issue:
     key: str
+    summary: str
     squad_key: str
     epic: str
+    epic_name: str
     issue_type: str
     status: str
     assignee: str
@@ -157,6 +160,10 @@ class Issue:
     variant_b: str | None = None
     experiment_result: str | None = None
     requirement_source: str | None = None
+
+    # popup fields
+    description: str = ""
+    decision_note: str = ""
 
     @property
     def rice_score(self) -> float:
@@ -274,11 +281,14 @@ def adapt_issue(raw: dict) -> Issue:
         if approved_at and created_at else None
     )
 
+    epic_key = fields.get(CF_EPIC_LINK, "")
     return Issue(
         key=raw["key"],
+        summary=fields.get("summary", ""),
         squad_key=raw["_squad_key"],
-        epic=fields.get(CF_EPIC_LINK, ""),
-        issue_type=fields["issuetype"]["name"],
+        epic=epic_key,
+        epic_name=EPIC_NAMES.get(epic_key, epic_key),
+        issue_type=fields["issuetype"]["name"].lower(),
         status=fields["status"]["name"],
         assignee=fields["assignee"]["displayName"],
         story_points=fields.get(CF_STORY_POINTS, 0),
@@ -331,6 +341,8 @@ def adapt_issue(raw: dict) -> Issue:
         variant_b=fields.get(CF_VARIANT_B),
         experiment_result=fields.get(CF_EXPERIMENT_RESULT),
         requirement_source=fields.get(CF_REQUIREMENT_SOURCE),
+        description=fields.get("description", "") or "",
+        decision_note=fields.get(CF_DECISION, "") or "",
     )
 
 

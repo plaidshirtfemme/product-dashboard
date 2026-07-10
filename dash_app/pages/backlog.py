@@ -1,11 +1,11 @@
 """
-Backlog tab — полный реестр всех 103 Jira-задач с интерактивными фильтрами.
+Backlog tab — полный реестр всех задач с интерактивными фильтрами.
 
 Режимы отображения:
-- Issues  — строка = одна задача (12 колонок, как в Jira Board/List)
+- Issues  — строка = одна задача
 - Epics   — строка = один эпик с агрегатами
 
-Фильтры (реактивные, без перезагрузки):
+Фильтры (реактивные):
   Squad · Type · Status · Priority · Severity · Sprint · Epic · OKR
 """
 
@@ -19,38 +19,10 @@ from ..states.backlog_state import (
 )
 
 # ---------------------------------------------------------------------------
-# Color maps
-# ---------------------------------------------------------------------------
-
-_STATUS_COLORS = {
-    "Done":        ("grass",  "Готово"),
-    "In Progress": ("amber",  "В работе"),
-    "In Review":   ("teal",   "На ревью"),
-    "To Do":       ("gray",   "Не начато"),
-}
-_SEV_COLORS = {
-    "Blocker":  "tomato", "Critical": "tomato",
-    "Major":    "amber",  "Minor":    "amber",  "Trivial": "gray",
-}
-_PRI_COLORS = {
-    "Highest": "tomato", "High": "amber",
-    "Medium":  "gray",   "Low":  "gray",  "Lowest": "gray",
-}
-_TYPE_COLORS = {
-    "bug":            "tomato", "story":          "teal",
-    "task":           "gray",   "design":         "violet",
-    "experiment":     "iris",   "research-spike": "cyan",
-    "requirement":    "amber",  "adr":            "plum",
-    "support-ticket": "orange",
-}
-
-
-# ---------------------------------------------------------------------------
 # Filter bar
 # ---------------------------------------------------------------------------
 
 def _select(label: str, options: list[str], value_var, on_change) -> rx.Component:
-    """Static select — for options that don't change between project modes."""
     items = [rx.select.item("Все", value="")] + [rx.select.item(o, value=o) for o in options]
     return rx.box(
         rx.text(label, size="1", color=rx.color("gray", 9),
@@ -67,7 +39,6 @@ def _select(label: str, options: list[str], value_var, on_change) -> rx.Componen
 
 
 def _select_dyn(label: str, options_var, value_var, on_change) -> rx.Component:
-    """Dynamic select — options_var is a BacklogState computed var (list[str])."""
     return rx.box(
         rx.text(label, size="1", color=rx.color("gray", 9),
                 style={"text_transform": "uppercase", "letter_spacing": "0.04em"},
@@ -88,7 +59,6 @@ def _select_dyn(label: str, options_var, value_var, on_change) -> rx.Component:
 def _filter_bar() -> rx.Component:
     return rx.box(
         rx.flex(
-            # Mode toggle
             rx.flex(
                 rx.button(
                     rx.icon("list", size=13), "Issues",
@@ -106,10 +76,7 @@ def _filter_bar() -> rx.Component:
                 ),
                 gap="4px",
             ),
-
             rx.separator(orientation="vertical", size="2"),
-
-            # Filters (squad/type/sprint/epic/okr are reactive — change with project mode)
             _select_dyn("Squad",  BacklogState.squad_options,  BacklogState.squad,    BacklogState.set_squad),
             _select_dyn("Type",   BacklogState.type_options,   BacklogState.type_,    BacklogState.set_type),
             _select("Status",   STATUS_OPTIONS,   BacklogState.status,   BacklogState.set_status),
@@ -118,10 +85,7 @@ def _filter_bar() -> rx.Component:
             _select_dyn("Sprint", BacklogState.sprint_options, BacklogState.sprint,   BacklogState.set_sprint),
             _select_dyn("Epic",   BacklogState.epic_options,   BacklogState.epic,     BacklogState.set_epic),
             _select_dyn("OKR",    BacklogState.okr_options,    BacklogState.okr,      BacklogState.set_okr),
-
             rx.separator(orientation="vertical", size="2"),
-
-            # Reset + count
             rx.flex(
                 rx.button(
                     rx.icon("x", size=13), "Сбросить",
@@ -136,7 +100,6 @@ def _filter_bar() -> rx.Component:
                 align="center",
                 gap=SPACING["sm"],
             ),
-
             align="end",
             gap=SPACING["md"],
             wrap="wrap",
@@ -151,22 +114,214 @@ def _filter_bar() -> rx.Component:
 
 
 # ---------------------------------------------------------------------------
-# Issues table (rx.foreach — reactive)
+# Issue detail popup (Jira-style dialog)
 # ---------------------------------------------------------------------------
 
-def _status_chip(status: str) -> rx.Component:
-    color, label = _STATUS_COLORS.get(status, ("gray", status))
-    return rx.badge(label, color_scheme=color, variant="soft", size="1")
+def _priority_badge(priority: str) -> rx.Component:
+    return rx.badge(
+        priority,
+        color_scheme=rx.match(
+            priority,
+            ("Highest", "tomato"), ("High", "amber"),
+            ("Medium", "blue"), ("Low", "gray"), ("Lowest", "gray"),
+            "gray",
+        ),
+        variant="outline", size="1",
+    )
 
+
+def _status_badge(status: str) -> rx.Component:
+    return rx.badge(
+        rx.match(status,
+            ("Done", "Готово"), ("In Progress", "В работе"),
+            ("In Review", "На ревью"), ("To Do", "Не начато"),
+            status),
+        color_scheme=rx.match(
+            status,
+            ("Done", "grass"), ("In Progress", "amber"), ("In Review", "teal"),
+            "gray",
+        ),
+        variant="soft", size="1",
+    )
+
+
+def _detail_field(label: str, value) -> rx.Component:
+    return rx.flex(
+        rx.text(label, size="1", color=rx.color("gray", 9), weight="medium",
+                style={"min_width": "120px", "text_transform": "uppercase",
+                       "letter_spacing": "0.04em"}),
+        value,
+        align="start",
+        gap="3",
+        padding_y="6px",
+        border_bottom=f"1px solid {rx.color('gray', 4)}",
+        width="100%",
+    )
+
+
+def _issue_popup() -> rx.Component:
+    issue = BacklogState.selected_issue
+    return rx.dialog.root(
+        rx.dialog.content(
+            # Header
+            rx.flex(
+                rx.flex(
+                    rx.badge(
+                        issue["issue_type"],
+                        color_scheme=rx.match(
+                            issue["issue_type"],
+                            ("bug", "tomato"), ("story", "teal"),
+                            ("design", "violet"), ("experiment", "iris"),
+                            ("research-spike", "cyan"), ("requirement", "amber"),
+                            ("adr", "plum"), ("support-ticket", "orange"),
+                            "gray",
+                        ),
+                        variant="soft", size="1",
+                    ),
+                    rx.text(issue["key"],
+                            style={"font_family": "monospace", "font_size": "12px"},
+                            color=rx.color("teal", 11)),
+                    align="center",
+                    gap="2",
+                ),
+                rx.dialog.close(
+                    rx.icon_button(
+                        rx.icon("x", size=14),
+                        size="1", variant="ghost", color_scheme="gray",
+                    ),
+                ),
+                justify="between",
+                align="center",
+                margin_bottom="3",
+            ),
+            # Title
+            rx.heading(issue["summary"], size="4", weight="bold",
+                       margin_bottom="4",
+                       style={"line_height": "1.4"}),
+            # Two-column layout like Jira
+            rx.flex(
+                # Left: description + decision note
+                rx.flex(
+                    rx.cond(
+                        issue["description"] != "",
+                        rx.box(
+                            rx.text("Description", size="1", color=rx.color("gray", 9),
+                                    weight="medium",
+                                    style={"text_transform": "uppercase", "letter_spacing": "0.04em"},
+                                    margin_bottom="2"),
+                            rx.text(issue["description"], size="2",
+                                    color=rx.color("gray", 11),
+                                    style={"white_space": "pre-wrap", "line_height": "1.6"}),
+                            margin_bottom="4",
+                        ),
+                        rx.box(),
+                    ),
+                    rx.cond(
+                        issue["decision_note"] != "",
+                        rx.box(
+                            rx.flex(
+                                rx.icon("lightbulb", size=13, color=rx.color("amber", 9)),
+                                rx.text("Decision Note", size="1", color=rx.color("amber", 9),
+                                        weight="medium",
+                                        style={"text_transform": "uppercase", "letter_spacing": "0.04em"}),
+                                align="center", gap="1", margin_bottom="2",
+                            ),
+                            rx.box(
+                                rx.text(issue["decision_note"], size="2",
+                                        color=rx.color("gray", 11),
+                                        style={"white_space": "pre-wrap", "line_height": "1.6"}),
+                                background=rx.color("amber", 2),
+                                border_left=f"3px solid {rx.color('amber', 6)}",
+                                border_radius="0 var(--radius-2) var(--radius-2) 0",
+                                padding="10px 12px",
+                            ),
+                        ),
+                        rx.box(),
+                    ),
+                    direction="column",
+                    flex="1",
+                    min_width="0",
+                ),
+                # Right: metadata fields
+                rx.flex(
+                    # Editable priority
+                    rx.flex(
+                        rx.text("Priority", size="1", color=rx.color("gray", 9), weight="medium",
+                                style={"min_width": "120px", "text_transform": "uppercase",
+                                       "letter_spacing": "0.04em"}),
+                        rx.select.root(
+                            rx.select.trigger(size="1"),
+                            rx.select.content(
+                                *[rx.select.item(p, value=p) for p in PRIORITY_OPTIONS],
+                            ),
+                            value=issue["priority"],
+                            on_change=BacklogState.set_issue_priority,
+                        ),
+                        align="center",
+                        gap="3",
+                        padding_y="6px",
+                        border_bottom=f"1px solid {rx.color('gray', 4)}",
+                        width="100%",
+                    ),
+                    _detail_field("Status",   _status_badge(issue["status"])),
+                    _detail_field("Assignee", rx.text(issue["assignee"], size="2")),
+                    _detail_field("Epic",     rx.text(issue["epic_name"], size="2",
+                                                      color=rx.color("teal", 11))),
+                    _detail_field("Squad",    rx.text(issue["squad_key"], size="2")),
+                    _detail_field("Sprint",   rx.text(issue["sprint_name"], size="2",
+                                                      color=rx.color("gray", 10))),
+                    _detail_field("Story Pts", rx.text(issue["story_points"].to_string(), size="2")),
+                    _detail_field("Created",  rx.text(issue["created_at"], size="2",
+                                                      color=rx.color("gray", 10))),
+                    rx.cond(
+                        issue["labels"] != "",
+                        _detail_field("Labels", rx.text(issue["labels"], size="2",
+                                                        color=rx.color("gray", 10))),
+                        rx.box(),
+                    ),
+                    direction="column",
+                    width="260px",
+                    flex_shrink="0",
+                    background=rx.color("gray", 2),
+                    border_radius="var(--radius-3)",
+                    padding="12px",
+                    border=f"{BORDER} {rx.color('gray', 4)}",
+                ),
+                gap="5",
+                align="start",
+            ),
+            max_width="860px",
+            width="90vw",
+            max_height="85vh",
+            overflow_y="auto",
+        ),
+        open=BacklogState.selected_key != "",
+        on_open_change=lambda open: rx.cond(open, rx.noop(), BacklogState.close_issue()),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Issues table
+# ---------------------------------------------------------------------------
 
 def _issue_row(row: dict) -> rx.Component:
     return rx.table.row(
+        # Epic (first)
+        rx.table.cell(
+            rx.text(row["epic_name"], size="1", color=rx.color("teal", 11),
+                    style={"white_space": "nowrap", "max_width": "160px",
+                           "overflow": "hidden", "text_overflow": "ellipsis"}),
+        ),
+        # Squad (second)
+        rx.table.cell(rx.text(row["squad_key"], size="1", color=rx.color("gray", 11))),
+        # Key
         rx.table.cell(
             rx.text(row["key"],
                     style={"font_family": "monospace", "font_size": "12px",
                            "white_space": "nowrap"},
-                    color=rx.color("teal", 11)),
+                    color=rx.color("gray", 10)),
         ),
+        # Type
         rx.table.cell(
             rx.badge(row["issue_type"],
                      color_scheme=rx.match(
@@ -183,6 +338,20 @@ def _issue_row(row: dict) -> rx.Component:
                      ),
                      variant="soft", size="1"),
         ),
+        # Summary (clickable)
+        rx.table.cell(
+            rx.text(
+                row["summary"],
+                size="2",
+                color=rx.color("gray", 12),
+                style={"cursor": "pointer", "max_width": "340px",
+                       "overflow": "hidden", "text_overflow": "ellipsis",
+                       "white_space": "nowrap",
+                       "_hover": {"color": rx.color("teal", 11), "text_decoration": "underline"}},
+                on_click=BacklogState.open_issue(row["key"]),
+            ),
+        ),
+        # Status
         rx.table.cell(
             rx.badge(
                 rx.match(row["status"],
@@ -201,10 +370,7 @@ def _issue_row(row: dict) -> rx.Component:
                 variant="soft", size="1",
             ),
         ),
-        rx.table.cell(rx.text(row["squad_key"], size="1", color=rx.color("gray", 11))),
-        rx.table.cell(rx.text(row["epic"], size="1",
-                              style={"font_family": "monospace"},
-                              color=rx.color("gray", 10))),
+        # Priority
         rx.table.cell(
             rx.cond(
                 row["priority"] != "",
@@ -217,6 +383,7 @@ def _issue_row(row: dict) -> rx.Component:
                 rx.text("—", size="1", color=rx.color("gray", 7)),
             )
         ),
+        # Severity
         rx.table.cell(
             rx.cond(
                 row["severity"] != "",
@@ -286,10 +453,13 @@ def _issues_table() -> rx.Component:
         rx.table.root(
             rx.table.header(
                 rx.table.row(
-                    *[rx.table.column_header_cell(col, style={"font_size": "11px", "color": rx.color("gray", 10),
-                                                              "text_transform": "uppercase", "white_space": "nowrap"})
-                      for col in ["Key", "Type", "Status", "Squad", "Epic", "Priority",
-                                  "Severity", "SP", "Sprint", "OKR", "Cycle time", "Rework", "🔒", "📊"]]
+                    *[rx.table.column_header_cell(col, style={"font_size": "11px",
+                                                              "color": rx.color("gray", 10),
+                                                              "text_transform": "uppercase",
+                                                              "white_space": "nowrap"})
+                      for col in ["Epic", "Squad", "Key", "Type", "Summary", "Status",
+                                  "Priority", "Severity", "SP", "Sprint", "OKR",
+                                  "Cycle time", "Rework", "🔒", "📊"]]
                 )
             ),
             rx.table.body(
@@ -305,7 +475,7 @@ def _issues_table() -> rx.Component:
 
 
 # ---------------------------------------------------------------------------
-# Epics table (rx.foreach — reactive)
+# Epics table
 # ---------------------------------------------------------------------------
 
 def _epic_row(row: dict) -> rx.Component:
@@ -336,8 +506,7 @@ def _epic_row(row: dict) -> rx.Component:
                     background=rx.color("gray", 4), border_radius="var(--radius-full)",
                     overflow="hidden",
                 ),
-                rx.text(done_pct.to_string() + "%", size="1",
-                        color=rx.color(color, 11)),
+                rx.text(done_pct.to_string() + "%", size="1", color=rx.color(color, 11)),
                 align="center", gap="6px",
             )
         ),
@@ -360,7 +529,8 @@ def _epics_table() -> rx.Component:
         rx.table.root(
             rx.table.header(
                 rx.table.row(
-                    *[rx.table.column_header_cell(col, style={"font_size": "11px", "color": rx.color("gray", 10),
+                    *[rx.table.column_header_cell(col, style={"font_size": "11px",
+                                                              "color": rx.color("gray", 10),
                                                               "text_transform": "uppercase"})
                       for col in ["Epic", "OKR", "Squads", "Total", "Done", "Done %",
                                   "SP Total", "SP Done", "In Progress", "Bugs"]]
@@ -384,6 +554,8 @@ def _epics_table() -> rx.Component:
 
 def backlog_tab() -> rx.Component:
     return rx.box(
+        _issue_popup(),
+
         section_header(
             "Backlog",
             subtitle="Все задачи Jira · интерактивные фильтры · режимы Issues / Epics",
@@ -399,6 +571,6 @@ def backlog_tab() -> rx.Component:
         ),
 
         padding=SPACING["xl"],
-        max_width="1400px",   # шире чем остальные вкладки — много колонок
+        max_width="1400px",
         margin="0 auto",
     )
