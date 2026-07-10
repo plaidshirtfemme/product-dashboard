@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+assets/external/
+.web
+*.db
+.states
+
+# Claude Code internals
+.claude/
+
+# Internal session documents
+CLAUDE.md
+20260702_2219_HANDOFF-*.md
+20260706_2157_PROJECT_STATE.md
+20260707_1530_HANDOFF-*.md
+20260701_state_*.md
+
+# Local env
+.env
+.env.local

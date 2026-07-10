@@ -1,0 +1,84 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Product Dashboard design tokens — source of truth for code and Figma (via Tokens Studio).",
+
+  "theme": {
+    "accent": {
+      "$value": "teal",
+      "$type": "string",
+      "$description": "Radix accent color. Teal = precision/measurement feel, avoids generic SaaS indigo."
+    },
+    "gray": {
+      "$value": "slate",
+      "$type": "string",
+      "$description": "Radix gray scale. Slate pairs cleanly with teal."
+    },
+    "radius": {
+      "$value": "medium",
+      "$type": "string",
+      "$description": "Radix radius preset. Medium = data-dense feel without harsh edges."
+    }
+  },
+
+  "color": {
+    "status": {
+      "$description": "Semantic status colors — Radix color names, shade picked per usage via rx.color().",
+      "success": { "$value": "grass",  "$type": "string", "$description": "Done / on-time / green light" },
+      "warning": { "$value": "amber",  "$type": "string", "$description": "In-progress / at-risk / yellow light" },
+      "danger":  { "$value": "tomato", "$type": "string", "$description": "Blocked / overdue / red light" },
+      "info":    { "$value": "teal",   "$type": "string", "$description": "Neutral informational, matches accent" },
+      "neutral": { "$value": "slate",  "$type": "string", "$description": "Backlog / not-started / no signal" }
+    }
+  },
+
+  "spacing": {
+    "$description": "Named spacing scale. Use for gap, padding, margin. Prefer rem for layout, px only for micro-adjustments.",
+    "2xs": { "$value": "2px",    "$type": "dimension", "$description": "Icon nudge, tight bar gaps" },
+    "xs":  { "$value": "4px",    "$type": "dimension", "$description": "Tiny spacing within a component" },
+    "sm":  { "$value": "0.5rem", "$type": "dimension", "$description": "Between atoms inside a molecule" },
+    "md":  { "$value": "1rem",   "$type": "dimension", "$description": "Default component gap" },
+    "lg":  { "$value": "1.5rem", "$type": "dimension", "$description": "Between molecules" },
+    "xl":  { "$value": "2rem",   "$type": "dimension", "$description": "Section padding" },
+    "2xl": { "$value": "3rem",   "$type": "dimension", "$description": "Page-level separation" }
+  },
+
+  "border": {
+    "$description": "Border tokens. Compose: f\"{BORDER} {rx.color('gray', 4)}\"",
+    "width": { "$value": "1px",   "$type": "dimension", "$description": "Standard border width" },
+    "style": { "$value": "solid", "$type": "string",    "$description": "Standard border style" }
+  },
+
+  "radius": {
+    "$description": "Border-radius in px — for contexts that don't inherit Radix Theme radius (e.g. recharts).",
+    "sm":   { "$value": "4px",    "$type": "dimension" },
+    "md":   { "$value": "8px",    "$type": "dimension" },
+    "lg":   { "$value": "12px",   "$type": "dimension" },
+    "full": { "$value": "9999px", "$type": "dimension" }
+  },
+
+  "layout": {
+    "$description": "Layout-level constants for page containers and navigation.",
+    "page-max-width":      { "$value": "1100px", "$type": "dimension", "$description": "Standard page content width" },
+    "page-max-width-wide": { "$value": "1400px", "$type": "dimension", "$description": "Wide tables (backlog, kanban)" },
+    "sidebar-width":       { "$value": "220px",  "$type": "dimension", "$description": "Sidebar navigation width" }
+  },
+
+  "typography": {
+    "$description": "Font families and size scale.",
+    "font-sans": {
+      "$value": "'Inter', -apple-system, sans-serif",
+      "$type": "fontFamily",
+      "$description": "UI copy"
+    },
+    "font-mono": {
+      "$value": "'JetBrains Mono', 'SF Mono', monospace",
+      "$type": "fontFamily",
+      "$description": "IDs, timestamps, code — visually separates artifact data from UI copy"
+    },
+    "size-label":      { "$value": "12px", "$type": "dimension", "$description": "StatCard labels, table headers" },
+    "size-body":       { "$value": "14px", "$type": "dimension", "$description": "Default UI text" },
+    "size-value":      { "$value": "24px", "$type": "dimension", "$description": "StatCard big numbers" },
+    "size-heading":    { "$value": "18px", "$type": "dimension", "$description": "SectionHeader" },
+    "size-page-title": { "$value": "22px", "$type": "dimension", "$description": "Page title" }
+  }
+}
