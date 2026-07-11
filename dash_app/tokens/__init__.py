@@ -1,6 +1,7 @@
 from .tokens import (
     THEME_CONFIG,
     STATUS_COLORS,
+    EPIC_TYPE_COLORS,
     SPACING,
     BORDER,
     BORDER_WIDTH,
@@ -16,6 +17,7 @@ from .tokens import (
 __all__ = [
     "THEME_CONFIG",
     "STATUS_COLORS",
+    "EPIC_TYPE_COLORS",
     "SPACING",
     "BORDER",
     "BORDER_WIDTH",

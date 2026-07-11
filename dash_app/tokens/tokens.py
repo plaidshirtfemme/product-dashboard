@@ -52,6 +52,15 @@ STATUS_COLORS: dict[str, str] = {
     for k in ("success", "warning", "danger", "info", "neutral")
 }
 
+# Epic-type accent colors (Radix names). Single source for the type badge/chip
+# across Roadmap Timeline and Backlog Epics view. Порядок/сам тип эпика —
+# доменные данные, живут в data/jira_mock_raw.py (EPIC_TYPES); здесь только цвет.
+EPIC_TYPE_COLORS: dict[str, str] = {
+    "business":  "teal",
+    "enabler":   "amber",
+    "component": "gray",
+}
+
 # ---------------------------------------------------------------------------
 # Spacing scale — use for gap, padding, margin.
 # ---------------------------------------------------------------------------

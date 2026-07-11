@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
+from functools import lru_cache
 
 from .jira_mock_raw import (
     generate_raw_issues,
@@ -346,18 +347,30 @@ def adapt_issue(raw: dict) -> Issue:
     )
 
 
+# Датасет каждого проекта иммутабелен и одинаков на всех вкладках → строим и
+# адаптируем один раз, потом отдаём из кэша (17 call-sites × импорты давали
+# полную пересборку каждый раз). Ключ — project_key (у каждого конфига уникален).
+_ISSUE_CACHE: dict[str, list[Issue]] = {}
+
+
 def load_issues(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[Issue]:
     """
     The single function every dashboard tab should call. Swap `config`
     for a different ProjectConfig to simulate an entirely different
     project through the exact same pipeline.
     DASH_CONFIG is special: uses hand-authored get_dash_issues() instead of the random generator.
+    Результат кэшируется по project_key (issues трактуются как read-only downstream).
     """
+    cached = _ISSUE_CACHE.get(config.project_key)
+    if cached is not None:
+        return cached
     if config.project_key == "DASH":
         raw_issues = get_dash_issues()
     else:
         raw_issues = generate_raw_issues(config)
-    return [adapt_issue(raw) for raw in raw_issues]
+    result = [adapt_issue(raw) for raw in raw_issues]
+    _ISSUE_CACHE[config.project_key] = result
+    return result
 
 
 def list_releases(config: ProjectConfig = MOTIF_DEMO_CONFIG):

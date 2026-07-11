@@ -14,17 +14,10 @@ import reflex as rx
 from ..data.adapter import load_issues
 from ..data.okr import load_okrs
 from ..data.okr_dash import load_dash_okrs
-from ..data.jira_mock_raw import DASH_CONFIG, EPIC_NAMES, EPIC_TYPES, EPIC_UNLOCKS
+from ..data.jira_mock_raw import (
+    DASH_CONFIG, EPIC_NAMES, EPIC_TYPES, EPIC_UNLOCKS, epic_sort_key,
+)
 from . import ProjectState
-
-# Порядок групп в режиме Epics: business → enabler → component (DASH-93)
-_EPIC_TYPE_ORDER = {"business": 0, "enabler": 1, "component": 2}
-
-
-def _epic_sort_key(epic_key: str) -> tuple[int, int]:
-    tail = epic_key.rsplit("-", 1)[-1]
-    num = int(tail) if tail.isdigit() else 0
-    return (_EPIC_TYPE_ORDER.get(EPIC_TYPES.get(epic_key, ""), 3), num)
 
 _OKR_TITLES: dict[str, str] = {obj.tag: obj.title for obj in load_okrs()}
 _OKR_TITLES_DASH: dict[str, str] = {obj.tag: obj.title for obj in load_dash_okrs()}
@@ -104,6 +97,37 @@ PRIORITY_OPTIONS = _PRIORITIES
 SEVERITY_OPTIONS = _SEVERITIES
 EPIC_OPTIONS     = _OPTS["epic_names"]
 OKR_OPTIONS      = _OPTS["okrs"]
+
+
+# ---------------------------------------------------------------------------
+# Epic aggregation helpers — shared by selected_epic (popup) and epic_rows
+# (table), so progress/SP math lives in one place.
+# ---------------------------------------------------------------------------
+
+def _aggregate_epic(rows: list[dict]) -> dict:
+    total   = len(rows)
+    done    = sum(1 for r in rows if r["status"] == "Done")
+    in_prog = sum(1 for r in rows if r["status"] == "In Progress")
+    return {
+        "total":       total,
+        "done":        done,
+        "in_progress": in_prog,
+        "to_do":       total - done - in_prog,
+        "done_pct":    round(100 * done / total) if total else 0,
+        "sp_total":    sum(r["story_points"] for r in rows),
+        "sp_done":     sum(r["story_points"] for r in rows if r["status"] == "Done"),
+        "squads":      ", ".join(sorted({r["squad_key"] for r in rows})),
+        "bugs":        sum(1 for r in rows if r["issue_type"] == "bug"),
+    }
+
+
+def _epic_meta(epic_key: str) -> dict:
+    unlocks_key = EPIC_UNLOCKS.get(epic_key, "")
+    return {
+        "epic_type":    EPIC_TYPES.get(epic_key, ""),
+        "unlocks":      unlocks_key.replace("DASH-EPIC-", "E") if unlocks_key else "",
+        "unlocks_name": EPIC_NAMES.get(unlocks_key, unlocks_key) if unlocks_key else "",
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -238,27 +262,11 @@ class BacklogState(ProjectState):
         epic_rows = [r for r in rows if r["epic"] == self.selected_epic_key]
         if not epic_rows:
             return {}
-        done       = sum(1 for r in epic_rows if r["status"] == "Done")
-        in_prog    = sum(1 for r in epic_rows if r["status"] == "In Progress")
-        total      = len(epic_rows)
-        sp_total   = sum(r["story_points"] for r in epic_rows)
-        sp_done    = sum(r["story_points"] for r in epic_rows if r["status"] == "Done")
-        squads     = ", ".join(sorted({r["squad_key"] for r in epic_rows}))
-        unlocks_key = EPIC_UNLOCKS.get(self.selected_epic_key, "")
         return {
-            "epic_key":   self.selected_epic_key,
-            "epic_name":  epic_rows[0]["epic_name"],
-            "epic_type":  EPIC_TYPES.get(self.selected_epic_key, ""),
-            "unlocks":    unlocks_key.replace("DASH-EPIC-", "E") if unlocks_key else "",
-            "unlocks_name": EPIC_NAMES.get(unlocks_key, unlocks_key) if unlocks_key else "",
-            "total":      total,
-            "done":       done,
-            "in_progress": in_prog,
-            "to_do":      total - done - in_prog,
-            "done_pct":   round(100 * done / total) if total else 0,
-            "sp_total":   sp_total,
-            "sp_done":    sp_done,
-            "squads":     squads,
+            "epic_key":  self.selected_epic_key,
+            "epic_name": epic_rows[0]["epic_name"],
+            **_epic_meta(self.selected_epic_key),
+            **_aggregate_epic(epic_rows),
         }
 
     @rx.var
@@ -278,28 +286,14 @@ class BacklogState(ProjectState):
         for r in self.filtered:
             by_epic[r["epic"]].append(r)
         result = []
-        for epic_key, rows in sorted(by_epic.items(), key=lambda kv: _epic_sort_key(kv[0])):
-            done  = sum(1 for r in rows if r["status"] == "Done")
-            total = len(rows)
-            sp_total = sum(r["story_points"] for r in rows)
-            sp_done  = sum(r["story_points"] for r in rows if r["status"] == "Done")
-            squads   = ", ".join(sorted({r["squad_key"] for r in rows}))
-            unlocks_key = EPIC_UNLOCKS.get(epic_key, "")
+        for epic_key, rows in sorted(by_epic.items(), key=lambda kv: epic_sort_key(kv[0])):
             result.append({
-                "epic":       epic_key,
-                "epic_name":  rows[0]["epic_name"],
-                "epic_type":  EPIC_TYPES.get(epic_key, ""),
-                "unlocks":    unlocks_key.replace("DASH-EPIC-", "E") if unlocks_key else "",
-                "okr_tag":    rows[0]["okr_tag"],
-                "okr_title":  rows[0].get("okr_title", rows[0]["okr_tag"]),
-                "squads":     squads,
-                "total":      total,
-                "done":       done,
-                "done_pct":   round(100 * done / total) if total else 0,
-                "sp_total":   sp_total,
-                "sp_done":    sp_done,
-                "in_progress": sum(1 for r in rows if r["status"] == "In Progress"),
-                "bugs":       sum(1 for r in rows if r["issue_type"] == "bug"),
+                "epic":      epic_key,
+                "epic_name": rows[0]["epic_name"],
+                "okr_tag":   rows[0]["okr_tag"],
+                "okr_title": rows[0].get("okr_title", rows[0]["okr_tag"]),
+                **_epic_meta(epic_key),
+                **_aggregate_epic(rows),
             })
         return result
 
@@ -335,7 +329,8 @@ class BacklogState(ProjectState):
             if r["epic"] and r["epic"] not in seen:
                 seen[r["epic"]] = r["epic_name"]
 
-        # Числовая сортировка (E1…E14), не лексикографическая (E1, E10, E11, …, E2)
+        # Фильтр намеренно сортируется ТОЛЬКО численно E1…E14 (требование DASH-109),
+        # а не по типам как таблица эпиков — здесь не нужен epic_sort_key.
         def _num(key: str) -> int:
             tail = key.rsplit("-", 1)[-1]
             return int(tail) if tail.isdigit() else 0
