@@ -1,10 +1,15 @@
 """Kanban board — read-only. Swimlanes by squad, 6 columns, WIP limits."""
 
+from datetime import date
+
 import reflex as rx
 from ..tokens import SPACING, BORDER
 from ..components import data_source_badge, section_header, color_legend
 from ..data.adapter import load_issues, Issue
 from ..data.jira_mock_raw import DASH_CONFIG
+from ..data.sprint_calendar import SPRINT_DAYS, SPRINT_ROWS, DEADLINE_KEYS
+from ..states.backlog_state import BacklogState
+from .backlog import _popup as _issue_popup
 
 # ---------------------------------------------------------------------------
 # Column definitions
@@ -334,6 +339,110 @@ _LEGEND_ITEMS = [
 
 
 # ---------------------------------------------------------------------------
+# Sprint calendar (ПМ-краш: дни × эпики; DASH-режим, спринт 11-17.07)
+# ---------------------------------------------------------------------------
+
+def _cal_chip(key: str, status: str, summary: str, is_past: bool) -> rx.Component:
+    """Чип задачи. Обход автоматический: Done — зелёный, In Progress — жёлтый,
+    To Do в прошедшем дне — красный (жёлтое/красное переносим — правило письма 5)."""
+    if status == "Done":
+        color = "grass"
+    elif status in ("In Progress", "In Review"):
+        color = "amber"          # в работе — жёлтый, не красный, даже в прошедшем дне
+    elif is_past and status == "To Do":
+        color = "tomato"          # красный только для реально не начатого в прошедшем дне
+    else:
+        color = "gray"            # будущее / статус не найден
+    label = ("⏰ " if key in DEADLINE_KEYS else "") + key.replace("DASH-", "")
+    return rx.tooltip(
+        rx.box(
+            rx.text(label, size="1", weight="medium", color=rx.color(color, 11),
+                    style={"white_space": "nowrap", "font_family": "monospace"}),
+            background=rx.color(color, 3),
+            border=f"1px solid {rx.color(color, 6)}",
+            border_radius="var(--radius-2)",
+            padding="1px 6px",
+            style={"cursor": "pointer",
+                   "_hover": {"border_color": rx.color(color, 8),
+                              "background": rx.color(color, 4)}},
+            on_click=BacklogState.open_issue(key),
+        ),
+        content=f"{key} · {summary} — {status} · клик — попап задачи",
+    )
+
+
+def _sprint_calendar(issues: list[Issue]) -> rx.Component:
+    by_key = {i.key: i for i in issues}
+    today = date.today()
+
+    def _day_header(d: dict) -> rx.Component:
+        is_today = d["date"] == today
+        return rx.table.column_header_cell(
+            rx.box(
+                rx.text(d["label"], size="1", weight="bold",
+                        color=rx.color("teal", 11) if is_today else rx.color("gray", 11)),
+                rx.text(d["stage"], size="1", color=rx.color("gray", 9),
+                        style={"font_size": "10px"}),
+                rx.text(d["focus"], size="1", color=rx.color("gray", 10),
+                        style={"font_size": "10px", "max_width": "130px"}),
+            ),
+            background=rx.color("teal", 2) if is_today else None,
+            style={"vertical_align": "top"},
+        )
+
+    def _row(row: dict) -> rx.Component:
+        cells = []
+        for d, keys in zip(SPRINT_DAYS, row["cells"]):
+            is_past = d["date"] < today
+            is_today = d["date"] == today
+            chips = [
+                _cal_chip(k,
+                          by_key[k].status if k in by_key else "?",
+                          by_key[k].summary if k in by_key else "не найдена в данных",
+                          is_past)
+                for k in keys
+            ]
+            cells.append(rx.table.cell(
+                rx.flex(*chips, gap="4px", wrap="wrap") if chips
+                else rx.text("—", size="1", color=rx.color("gray", 6)),
+                background=rx.color("teal", 1) if is_today else None,
+                style={"vertical_align": "top"},
+            ))
+        return rx.table.row(
+            rx.table.cell(rx.text(row["name"], size="1", weight="medium",
+                                  color=rx.color("gray", 11),
+                                  style={"white_space": "nowrap"}),
+                          style={"vertical_align": "top"}),
+            *cells,
+        )
+
+    return rx.box(
+        section_header(
+            "Календарь спринта · 11–17 июля",
+            subtitle="Дни × эпики · обход: зелёный — сделано, жёлтый — в работе, "
+                     "красный — просрочено (переносим) · ⏰ — промежуточный дедлайн",
+            # Временно mock — как соседние DASH-поверхности; честная метка logged придёт в DASH-117
+            action=data_source_badge("mock"),
+        ),
+        rx.box(
+            rx.table.root(
+                rx.table.header(
+                    rx.table.row(
+                        rx.table.column_header_cell(
+                            rx.text("Эпик", size="1", color=rx.color("gray", 10))),
+                        *[_day_header(d) for d in SPRINT_DAYS],
+                    )
+                ),
+                rx.table.body(*[_row(r) for r in SPRINT_ROWS]),
+                variant="surface", size="1", width="100%",
+            ),
+            width="100%", overflow_x="auto",
+            margin_bottom=SPACING["xl"],
+        ),
+    )
+
+
+# ---------------------------------------------------------------------------
 # Tab entry point
 # ---------------------------------------------------------------------------
 
@@ -387,4 +496,16 @@ def kanban_tab() -> rx.Component:
 
 
 def dash_kanban_tab() -> rx.Component:
-    return _kanban_for(load_issues(DASH_CONFIG))
+    issues = load_issues(DASH_CONFIG)
+    return rx.box(
+        # Единственный rx.dialog.root на страницу (Radix-правило) —
+        # переиспользуем попап задачи/эпика из Backlog для чипов календаря
+        _issue_popup(),
+        rx.box(
+            _sprint_calendar(issues),
+            padding=f"{SPACING['xl']} {SPACING['xl']} 0",
+            max_width="1400px",
+            margin="0 auto",
+        ),
+        _kanban_for(issues),
+    )

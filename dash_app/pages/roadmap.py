@@ -14,7 +14,7 @@ from ..components import (
 )
 from ..data.adapter import load_issues
 from ..data.okr_dash import load_dash_okrs
-from ..data.jira_mock_raw import DASH_CONFIG
+from ..data.jira_mock_raw import DASH_CONFIG, EPIC_NAMES, EPIC_TYPES, EPIC_UNLOCKS
 
 _PAD = f"0 {SPACING['xl']} {SPACING['xl']}"
 _MAX = PAGE_MAX_WIDTH
@@ -124,9 +124,37 @@ def _okr_card(obj) -> rx.Component:
     )
 
 
+def _north_star_banner() -> rx.Component:
+    """Единственная North Star проекта (установочная встреча 11.07, DASH-95)."""
+    return rx.box(
+        rx.flex(
+            rx.icon("star", size=18, color=rx.color("teal", 11)),
+            rx.box(
+                rx.text("NORTH STAR",
+                        style={"font_size": "11px", "font_weight": "600",
+                               "text_transform": "uppercase", "letter_spacing": "0.08em"},
+                        color=rx.color("teal", 11)),
+                rx.text("Оффер продуктового дизайнера от Muse",
+                        size="4", weight="bold", color=rx.color("gray", 12)),
+                rx.text("Кейс — главная цель; удобный дашборд для команды — инструментальная. "
+                        "При конфликте приоритетов побеждает зритель кейса.",
+                        size="1", color=rx.color("gray", 10)),
+            ),
+            gap=SPACING["md"],
+            align="center",
+        ),
+        padding=SPACING["lg"],
+        border=f"{BORDER} {rx.color('teal', 6)}",
+        border_radius="var(--radius-3)",
+        background=rx.color("teal", 2),
+        margin_bottom=SPACING["md"],
+    )
+
+
 def _goals_section() -> rx.Component:
     return rx.box(
         section_header("Goals · OKR", "target"),
+        _north_star_banner(),
         rx.flex(
             *[_okr_card(obj) for obj in _okrs],
             gap=SPACING["md"],
@@ -137,6 +165,17 @@ def _goals_section() -> rx.Component:
 
 
 # ── Section 2: Timeline ───────────────────────────────────────────────────────
+
+# Визуальная иерархия: business-эпики первыми, затем enabler, компонентная
+# история — внизу; внутри группы — по номеру (E9, E10…, а не E1, E10, E2).
+_TYPE_ORDER = {"business": 0, "enabler": 1, "component": 2}
+
+
+def _epic_sort_key(item: tuple[str, list]) -> tuple[int, int]:
+    epic_key = item[0]
+    num = int(epic_key.rsplit("-", 1)[-1]) if epic_key.rsplit("-", 1)[-1].isdigit() else 0
+    return (_TYPE_ORDER.get(EPIC_TYPES.get(epic_key, ""), 3), num)
+
 
 def _epic_row(epic_key: str, issues: list) -> rx.Component:
     total = len(issues)
@@ -156,10 +195,23 @@ def _epic_row(epic_key: str, issues: list) -> rx.Component:
         color, label = "gray", "To Do"
 
     short = epic_key.replace("DASH-EPIC-", "E").replace("KP-EPIC-", "E")
+    epic_type = EPIC_TYPES.get(epic_key, "")
+    type_color = {"business": "teal", "enabler": "amber", "component": "gray"}.get(epic_type, "gray")
+    unlocks_key = EPIC_UNLOCKS.get(epic_key, "")
+    type_label = epic_type
+    if unlocks_key:
+        type_label = f"{epic_type} → {unlocks_key.replace('DASH-EPIC-', 'E')}"
 
     return rx.flex(
         rx.text(short, size="1", color=rx.color("gray", 9),
                 min_width="40px", font_family="var(--font-mono)"),
+        rx.tooltip(
+            rx.badge(type_label, color_scheme=type_color, variant="soft", size="1",
+                     min_width="86px", justify="center"),
+            content=(f"{EPIC_NAMES.get(epic_key, epic_key)} — enabler, "
+                     f"разблокирует «{EPIC_NAMES.get(unlocks_key, unlocks_key)}»") if unlocks_key
+                    else f"{EPIC_NAMES.get(epic_key, epic_key)} — {epic_type or 'без типа'}",
+        ) if epic_type else rx.box(min_width="86px"),
         rx.flex(
             rx.box(
                 height="20px",
@@ -205,6 +257,7 @@ def _timeline_section() -> rx.Component:
         rx.box(height=SPACING["md"]),
         rx.flex(
             rx.text("Epic", size="1", color=rx.color("gray", 8), min_width="40px"),
+            rx.text("Type", size="1", color=rx.color("gray", 8), min_width="86px"),
             rx.text("Progress", size="1", color=rx.color("gray", 8), flex="1"),
             rx.text("Status", size="1", color=rx.color("gray", 8), min_width="90px"),
             rx.text("Issues · SP", size="1", color=rx.color("gray", 8),
@@ -213,7 +266,7 @@ def _timeline_section() -> rx.Component:
             padding=f"0 0 {SPACING['sm']}",
             border_bottom=f"1.5px solid {rx.color('gray', 4)}",
         ),
-        *[_epic_row(epic, issues) for epic, issues in sorted(by_epic.items())],
+        *[_epic_row(epic, issues) for epic, issues in sorted(by_epic.items(), key=_epic_sort_key)],
         data_source_badge("mock"),
     )
 

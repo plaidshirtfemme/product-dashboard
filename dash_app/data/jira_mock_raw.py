@@ -612,15 +612,25 @@ _DASH_SPRINTS = [
      "startDate": "2026-07-20T10:00:00.000+0000", "endDate": "2026-07-27T10:00:00.000+0000"},
 ]
 
+# Эпики E1-E8 — компонентная нарезка первого месяца (закрыты историей, не переписываем).
+# 11.07.2026 на установочной встрече эпики перенарезаны по ценности (DASH-95):
+# business-эпик отвечает «что получит зритель кейса», enabler обязан ссылаться
+# «разблокирует → …» (SAFe business/enabler epics + ПМ-краш письмо 4-5).
 _DASH_EPICS = {
-    "E1": "DASH-EPIC-1",  # Discovery & Setup
-    "E2": "DASH-EPIC-2",  # Navigation & Shell
-    "E3": "DASH-EPIC-3",  # Motif Demo Tabs
-    "E4": "DASH-EPIC-4",  # Mock Data Layer
-    "E5": "DASH-EPIC-5",  # Multi-Project Architecture
-    "E6": "DASH-EPIC-6",  # Real KP Data Integration
-    "E7": "DASH-EPIC-7",  # Product Discovery & Documentation
-    "E8": "DASH-EPIC-8",  # Release Preparation
+    "E1": "DASH-EPIC-1",   # Discovery & Setup
+    "E2": "DASH-EPIC-2",   # Navigation & Shell
+    "E3": "DASH-EPIC-3",   # Motif Demo Tabs
+    "E4": "DASH-EPIC-4",   # Mock Data Layer
+    "E5": "DASH-EPIC-5",   # Multi-Project Architecture
+    "E6": "DASH-EPIC-6",   # Real KP Data Integration
+    "E7": "DASH-EPIC-7",   # Product Discovery & Documentation
+    "E8": "DASH-EPIC-8",   # Release Preparation
+    "E9": "DASH-EPIC-9",   # Дизайн-процесс, которым восхищаются (business)
+    "E10": "DASH-EPIC-10", # Живая команда и живой бизнес (business)
+    "E11": "DASH-EPIC-11", # Зритель понимает кейс (business)
+    "E12": "DASH-EPIC-12", # Кейс опубликован (business)
+    "E13": "DASH-EPIC-13", # Деплой и инженерная готовность (enabler → E12)
+    "E14": "DASH-EPIC-14", # Figma MCP (enabler → E9)
 }
 
 EPIC_NAMES: dict[str, str] = {
@@ -632,7 +642,54 @@ EPIC_NAMES: dict[str, str] = {
     "DASH-EPIC-6": "Real KP Data Integration",
     "DASH-EPIC-7": "Product Discovery & Docs",
     "DASH-EPIC-8": "Release Preparation",
+    "DASH-EPIC-9": "Дизайн-процесс, которым восхищаются",
+    "DASH-EPIC-10": "Живая команда и живой бизнес",
+    "DASH-EPIC-11": "Зритель понимает кейс",
+    "DASH-EPIC-12": "Кейс опубликован",
+    "DASH-EPIC-13": "Деплой и инженерная готовность",
+    "DASH-EPIC-14": "Figma MCP",
 }
+
+# Тип эпика: business — ценность зрителю кейса, enabler — разблокирует business-эпик,
+# component — историческая компонентная нарезка (до перенарезки 11.07.2026).
+EPIC_TYPES: dict[str, str] = {
+    "DASH-EPIC-1": "component",
+    "DASH-EPIC-2": "component",
+    "DASH-EPIC-3": "component",
+    "DASH-EPIC-4": "component",
+    "DASH-EPIC-5": "component",
+    "DASH-EPIC-6": "component",
+    "DASH-EPIC-7": "component",
+    "DASH-EPIC-8": "component",
+    "DASH-EPIC-9": "business",
+    "DASH-EPIC-10": "business",
+    "DASH-EPIC-11": "business",
+    "DASH-EPIC-12": "business",
+    "DASH-EPIC-13": "enabler",
+    "DASH-EPIC-14": "enabler",
+}
+
+# Enabler-эпик обязан явно ссылаться на то, что разблокирует.
+EPIC_UNLOCKS: dict[str, str] = {
+    "DASH-EPIC-13": "DASH-EPIC-12",  # без деплоя нечего встраивать в Framer
+    "DASH-EPIC-14": "DASH-EPIC-9",   # MCP ускоряет hi-fi артефакты + сам по себе плюс в кейс
+}
+
+# Инвариант параллельных словарей: каждый эпик из NAMES обязан иметь тип, и
+# наоборот — иначе тип молча пропадёт в UI, а sort бросит эпик в конец.
+# Каждый unlocks-таргет и его источник должны существовать в NAMES.
+assert set(EPIC_NAMES) == set(EPIC_TYPES), (
+    f"EPIC_NAMES vs EPIC_TYPES рассинхронены: "
+    f"только в NAMES {set(EPIC_NAMES) - set(EPIC_TYPES)}, "
+    f"только в TYPES {set(EPIC_TYPES) - set(EPIC_NAMES)}"
+)
+for _src, _dst in EPIC_UNLOCKS.items():
+    assert _src in EPIC_NAMES and _dst in EPIC_NAMES, (
+        f"EPIC_UNLOCKS ссылается на несуществующий эпик: {_src} → {_dst}"
+    )
+    assert EPIC_TYPES.get(_src) == "enabler", (
+        f"EPIC_UNLOCKS[{_src}] задан, но тип эпика не enabler"
+    )
 
 
 def _di(
@@ -1027,7 +1084,7 @@ def get_dash_issues() -> list[dict]:
             labels=["process"],
             decision_note="Компоненты = что затрагивает в коде/продукте. Лейблы = характер задачи. Таксономию можно менять позже — все данные в jira_mock_raw.py, это Python-словари"),
         _di("DASH-47", "Прочитать JSONL истории сессии и создать Jira-задачи для DASH",
-            "In Progress", "task", "ANALYSIS", _DASH_EPICS["E7"], 3, 8, "Claude Code",
+            "In Progress", "task", "ANALYSIS", _DASH_EPICS["E10"], 3, 8, "Claude Code",
             created="2026-07-09T13:00:00.000+0000",
             started="2026-07-09T13:30:00.000+0000",
             resolved=None,
@@ -1049,11 +1106,11 @@ def get_dash_issues() -> list[dict]:
                 "Данные DASH_CONFIG, не MOTIF — соблюдено правило соответствия проекта."
             )),
         _di("DASH-49", "Создать Dev Tech Debt tab (вложена в Backlog)",
-            "To Do", "story", "DEV", _DASH_EPICS["E8"], 4, 5, "Claude Code",
+            "To Do", "story", "DEV", _DASH_EPICS["E10"], 4, 5, "Claude Code",
             created="2026-07-05T10:00:00.000+0000",
             labels=["❌-missing"]),
         _di("DASH-50", "Создать Design Tech Debt tab (вложена в Backlog)",
-            "To Do", "story", "DEV", _DASH_EPICS["E8"], 4, 5, "Claude Code",
+            "To Do", "story", "DEV", _DASH_EPICS["E10"], 4, 5, "Claude Code",
             created="2026-07-05T10:00:00.000+0000",
             labels=["❌-missing"]),
         _di("DASH-51", "Переименовать Info → Practices & Rules и переместить сразу после About project",
@@ -1072,11 +1129,11 @@ def get_dash_issues() -> list[dict]:
             decision_note="navigation.py: _design_accordion() с chevron + rx.cond для ds sub-item. "
                           "NavState.design_open: bool + toggle_design(). В tabs_nav ds скрыта."),
         _di("DASH-53", "Реализовать онбординг для рекрутера (tooltips, coach marks, progressive disclosure)",
-            "To Do", "story", "DEV", _DASH_EPICS["E8"], 4, 8, "Claude Code",
+            "To Do", "story", "DEV", _DASH_EPICS["E11"], 4, 8, "Claude Code",
             created="2026-07-05T10:00:00.000+0000",
             labels=["❌-missing", "ux"], priority="High"),
         _di("DASH-54", "Провести Retro → зафиксировать coding rules в CLAUDE.md",
-            "To Do", "task", "ANALYSIS", _DASH_EPICS["E8"], 4, 3, "Guzel K.",
+            "To Do", "task", "ANALYSIS", _DASH_EPICS["E10"], 4, 3, "Guzel K.",
             created="2026-07-07T12:00:00.000+0000",
             labels=["process"]),
         _di("DASH-55", "Подготовить GitHub release: README, demo GIF, публичный репо",
@@ -1109,7 +1166,7 @@ def get_dash_issues() -> list[dict]:
 
         # ── Double Diamond: Design Process artifacts ──────────────────────────
         _di("DASH-57", "Journey map: путь рекрутера по дашборду",
-            "To Do", "Story", "DESIGN", _DASH_EPICS["E7"], 4, 3, "Guzel K.",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E9"], 4, 3, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["ux", "discovery"],
             description=(
@@ -1119,7 +1176,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-58", "HMW-вопросы: переформулировать проблемы рекрутера в возможности",
-            "To Do", "Task", "DESIGN", _DASH_EPICS["E7"], 2, 1, "Guzel K.",
+            "To Do", "Task", "DESIGN", _DASH_EPICS["E9"], 2, 1, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["ux", "discovery"],
             description=(
@@ -1129,7 +1186,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-59", "User flow: ключевые сценарии взаимодействия с дашбордом",
-            "To Do", "Story", "DESIGN", _DASH_EPICS["E7"], 3, 2, "Guzel K.",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E9"], 3, 2, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["ux"],
             description=(
@@ -1139,7 +1196,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-60", "Создать вкладку Design Process в дашборде",
-            "To Do", "Story", "DESIGN", _DASH_EPICS["E7"], 5, 5, "Claude Code",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E9"], 5, 5, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
             labels=["ux", "content"],
             description=(
@@ -1150,7 +1207,7 @@ def get_dash_issues() -> list[dict]:
 
         # ── Figma integration ─────────────────────────────────────────────────
         _di("DASH-61", "Настроить Figma MCP: подключить к Claude Code",
-            "To Do", "Spike", "ARCH", _DASH_EPICS["E7"], 3, 2, "Claude Code",
+            "To Do", "Spike", "ARCH", _DASH_EPICS["E14"], 3, 2, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
             labels=["spike", "architecture"],
             description=(
@@ -1160,7 +1217,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-62", "Wireframes ключевых экранов дашборда в Figma",
-            "To Do", "Story", "DESIGN", _DASH_EPICS["E7"], 4, 3, "Guzel K.",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E9"], 4, 3, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["ux"],
             description=(
@@ -1170,7 +1227,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-63", "Hi-fi макеты в Figma на основе wireframes",
-            "To Do", "Story", "DESIGN", _DASH_EPICS["E7"], 5, 5, "Guzel K.",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E9"], 5, 5, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["ux"],
             description=(
@@ -1181,7 +1238,7 @@ def get_dash_issues() -> list[dict]:
 
         # ── Командный сценарий и комикс ───────────────────────────────────────
         _di("DASH-64", "Написать единый сценарий 2-недельного спринта команды",
-            "To Do", "Story", "PM", _DASH_EPICS["E4"], 8, 5, "Guzel K.",
+            "To Do", "Story", "PM", _DASH_EPICS["E10"], 8, 5, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["content", "discovery"],
             priority="High",
@@ -1193,7 +1250,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-65", "Написать дневники ролей: BA, SA, PA, PD, Dev, QA, Growth",
-            "To Do", "Story", "PM", _DASH_EPICS["E4"], 8, 5, "Guzel K.",
+            "To Do", "Story", "PM", _DASH_EPICS["E10"], 8, 5, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["content", "ux"],
             priority="High",
@@ -1205,7 +1262,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-66", "Разработать концепцию комикса: персонажи, раскадровка, стиль",
-            "To Do", "Story", "DESIGN", _DASH_EPICS["E7"], 8, 5, "Guzel K.",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E11"], 8, 5, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["ux", "content"],
             description=(
@@ -1216,7 +1273,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-67", "Создать UI комикса в дашборде (новая вкладка или страница)",
-            "To Do", "Story", "DESIGN", _DASH_EPICS["E7"], 8, 8, "Claude Code",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E11"], 8, 8, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
             labels=["ux", "content"],
             description=(
@@ -1226,7 +1283,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-80", "UX/UI аудит дашборда: пройти по всем вкладкам глазами рекрутера",
-            "To Do", "Task", "DESIGN", _DASH_EPICS["E7"], 3, 2, "Guzel K.",
+            "To Do", "Task", "DESIGN", _DASH_EPICS["E9"], 3, 2, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["ux", "research"],
             description=(
@@ -1237,7 +1294,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-68", "Usability testing: показать дашборд IT-друзьям, собрать фидбек",
-            "To Do", "Task", "RESEARCH", _DASH_EPICS["E8"], 3, 2, "Guzel K.",
+            "To Do", "Task", "RESEARCH", _DASH_EPICS["E12"], 3, 2, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
             labels=["research"],
             description=(
@@ -1249,7 +1306,7 @@ def get_dash_issues() -> list[dict]:
 
         # ── Переписать MOTIF данные под реальный сценарий ────────────────────
         _di("DASH-69", "Spike: переписать MOTIF_DEMO_CONFIG данные под реальный сценарий спринта",
-            "To Do", "Spike", "DEV", _DASH_EPICS["E4"], 8, 5, "Claude Code",
+            "To Do", "Spike", "DEV", _DASH_EPICS["E10"], 8, 5, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
             labels=["spike", "content"],
             description=(
@@ -1261,7 +1318,7 @@ def get_dash_issues() -> list[dict]:
 
         # ── Технический долг (рефакторинг из плана) ──────────────────────────
         _di("DASH-70", "Рефакторинг компонентов: универсальный data_table, вынос молекул",
-            "To Do", "Task", "DEV", _DASH_EPICS["E7"], 5, 5, "Claude Code",
+            "To Do", "Task", "DEV", _DASH_EPICS["E13"], 5, 5, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
             labels=["tech-debt", "architecture"],
             description=(
@@ -1271,7 +1328,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-71", "Рефакторинг кода: router, god-файл kp_dashboard.py",
-            "To Do", "Task", "DEV", _DASH_EPICS["E7"], 3, 3, "Claude Code",
+            "To Do", "Task", "DEV", _DASH_EPICS["E13"], 3, 3, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
             labels=["tech-debt"],
             description=(
@@ -1281,7 +1338,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-72", "Spike: Claude Design интеграция — код → макеты → код",
-            "To Do", "Spike", "DESIGN", _DASH_EPICS["E7"], 3, 3, "Claude Code",
+            "To Do", "Spike", "DESIGN", _DASH_EPICS["E14"], 3, 3, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
             labels=["spike", "architecture"],
             description=(
@@ -1389,7 +1446,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-85", "Удалить tabs_nav и горизонтальный режим навигации",
-            "To Do", "Task", "DEV", _DASH_EPICS["E8"], 3, 3, "Claude Code",
+            "To Do", "Task", "DEV", _DASH_EPICS["E13"], 3, 3, "Claude Code",
             created="2026-07-10T10:00:00.000+0000",
             labels=["tech-debt"],
             priority="Low",
@@ -1419,7 +1476,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-87", "Spike: сохранение логов сессий Claude — исследовать подходы",
-            "To Do", "Spike", "ARCH", _DASH_EPICS["E8"], 3, 3, "Guzel K.",
+            "To Do", "Spike", "ARCH", _DASH_EPICS["E13"], 3, 3, "Guzel K.",
             created="2026-07-10T12:00:00.000+0000",
             labels=["spike", "architecture", "process"],
             priority="Low",
@@ -1448,7 +1505,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-81", "UX/UI аудит: карточки раздела Goals на вкладке Roadmap",
-            "To Do", "Task", "DESIGN", _DASH_EPICS["E7"], 3, 3, "Guzel K.",
+            "To Do", "Task", "DESIGN", _DASH_EPICS["E9"], 3, 3, "Guzel K.",
             created="2026-07-09T12:00:00.000+0000",
             labels=["ux", "design"],
             priority="Medium",
@@ -1468,30 +1525,56 @@ def get_dash_issues() -> list[dict]:
             decision_note="metrics.py:11 — import re as _re теперь в шапке файла вместе с остальными импортами."),
 
         # ── Предрелизная подготовка ───────────────────────────────────────────
-        _di("DASH-90", "Backlog UX: Summary колонка, попап задачи, редактирование Priority, Epic-имена",
+        _di("DASH-90", "Backlog UX: попапы задачи/эпика в стиле Jira, кликабельные ключи, фильтр по эпику",
             "Done", "Story", "DEV", _DASH_EPICS["E7"], 4, 5, "Claude Code",
             created="2026-07-10T16:00:00.000+0000",
             started="2026-07-10T16:30:00.000+0000",
-            resolved="2026-07-10T18:00:00.000+0000",
+            resolved="2026-07-11T20:00:00.000+0000",
             labels=["ux", "backlog"],
             priority="High",
             description=(
-                "Улучшение вкладки Backlog: "
-                "1) добавить колонку Summary (название задачи) — проброс через adapter→state→UI; "
-                "2) попап/диалог задачи в стиле Jira по клику на строку; "
-                "3) редактирование поля Priority прямо в попапе; "
-                "4) осмысленные имена эпиков (DASH-EPIC-1 → 'Discovery & Setup'); "
-                "5) Epic первой колонкой, Squad второй; "
-                "6) тип задачи всегда в нижнем регистре."
+                "Улучшение вкладки Backlog (5 пунктов + расширения 11 июля):\n"
+                "1) попап задачи в стиле Jira (статус-кнопка сверху, поля в правой панели);\n"
+                "2) попап эпика по клику на строку эпика (агрегированная статистика + список задач);\n"
+                "3) Epic KEY (DASH-EPIC-1) виден в таблице и в заголовке попапа;\n"
+                "4) фильтр эпиков показывает 'KEY · Название' в дропдауне;\n"
+                "5) Epic редактируемый в попапе задачи;\n"
+                "6) KEY и название задачи/эпика кликабельны для открытия попапа из любого режима (Issues и Epics)."
             ),
             decision_note=(
-                "Issue.summary + Issue.epic_name + Issue.description + Issue.decision_note добавлены в dataclass. "
-                "EPIC_NAMES dict экспортирован из jira_mock_raw.py, резолвится в adapt_issue(). "
-                "issue_type теперь всегда .lower() в adapter. "
-                "BacklogState: selected_key, _priority_overrides, open_issue/close_issue/set_issue_priority. "
-                "selected_issue @rx.var возвращает dict с применёнными overrides. "
-                "backlog.py: rx.dialog попап с двухколоночным layout (description слева, metadata справа), "
-                "Priority — редактируемый select в попапе. Summary — кликабельная ячейка в таблице."
+                "Единственный rx.dialog.root на страницу (Radix-конфликт при двух sibling-диалогах). "
+                "Контент переключается через rx.cond(selected_epic_key != '', _epic_content(), _issue_content()). "
+                "selected_epic_key объявлен ДО методов open_issue/open_epic (порядок vars в Reflex-State критичен). "
+                "rx.badge(color_scheme=DynamicVar) не работает → заменён на rx.box + rx.cond цепочки. "
+                "Структурные изменения требуют Remove-Item .web/ + reflex run (hot reload не подхватывает). "
+                "epic фильтр хранит KEY, не name; filtered() сравнивает r['epic'] == self.epic. "
+                "Clickable cells: epic key + epic name в _issue_row → open_epic(); issue key в _issue_row → open_issue()."
+            )),
+
+        _di("DASH-91", "UI/UX аудит: синхронизация состояния интерфейса и сущностей для разных пользователей",
+            "To Do", "research-spike", "DISCOVERY", _DASH_EPICS["E9"], 5, 3, "Guzel K.",
+            created="2026-07-10T16:00:00.000+0000",
+            labels=["ux", "research", "architecture"],
+            priority="Medium",
+            description=(
+                "Аудит того, как состояние UI синхронизируется с данными (сущностями-объектами) "
+                "при работе разных пользователей с одним продуктом одновременно.\n\n"
+                "Вопросы для исследования:\n"
+                "1. Кто «владеет» состоянием: UI-слой или слой данных? "
+                "Где живёт source of truth для каждого поля?\n"
+                "2. Что происходит когда два пользователя одновременно редактируют одну задачу? "
+                "Какая модель разрешения конфликтов?\n"
+                "3. Оптимистичные обновления (optimistic UI) vs. pessimistic locking — "
+                "что лучше подходит для нашего контекста и почему?\n"
+                "4. Как отражать «чужие» изменения: polling, WebSockets, SSE? "
+                "Какие артефакты UI появляются при этом (индикатор 'updated', toast, badge)?\n"
+                "5. Разница в UX между синхронными (Figma: live cursors) и асинхронными (Jira: last-write-wins) инструментами — "
+                "когда какая модель уместна?\n\n"
+                "Цель: сформулировать дизайн-принципы для продуктов с мультипользовательским стейтом. "
+                "Оформить как UX-артефакт (principles doc или journey map конфликта состояния).\n\n"
+                "Живой кейс из нашего же дашборда (11.07): после полной перезагрузки страницы "
+                "выбранный проект сбрасывается на Motif — project_mode не переживает reload "
+                "(нет персистентности в localStorage/URL). Разобрать в рамках аудита."
             )),
 
         _di("DASH-89", "Переименовать проект: KP Dashboard → Product Dashboard + папка product-dashboard",
@@ -1511,6 +1594,215 @@ def get_dash_issues() -> list[dict]:
                 "README.md, README_RU.md, USER_STORIES.md, clone URL. "
                 "Папка переименована вручную в проводнике."
             )),
+
+        # ── Спринт 11–17.07: перенарезка по ценностям (установочная встреча) ──
+        _di("DASH-95", "Перенарезка эпиков по ценностям: business/enabler, распределение задач",
+            "Done", "Task", "PM", _DASH_EPICS["E10"], 3, 3, "Claude Code",
+            created="2026-07-11T10:00:00.000+0000",
+            started="2026-07-11T12:00:00.000+0000",
+            resolved="2026-07-11T20:30:00.000+0000",
+            labels=["process", "architecture"], priority="High",
+            description=(
+                "DOD: North Star видна в Overview; OKR и артефакты установочной встречи — в Roadmap; "
+                "у эпиков виден тип (business/enabler); все открытые задачи распределены по новым эпикам; "
+                "в календаре спринта key + название задач актуальны."
+            ),
+            decision_note=(
+                "Установочная встреча PM+Stakeholder 11.07: пересмотр DASH-56 — North Star одна, не две. "
+                "«Кейс → оффер Muse» — главная цель; «удобный дашборд для выдуманной команды» — инструментальная "
+                "(выдуманный PM — персона, не стейкхолдер). При конфликте побеждает зритель кейса. "
+                "Эпики нарезаны по ценности (SAFe business/enabler): E9-E12 business, E13-E14 enabler c явным "
+                "«разблокирует →» (EPIC_UNLOCKS). Компонентные E1-E8 не переписываем — честная история проекта. "
+                "Открытые задачи (25 шт.) переназначены на новые эпики."
+            )),
+        _di("DASH-92", "Дизайн-система дашборда: ревизия токенов и компонентов перед hi-fi",
+            "To Do", "Task", "DESIGN", _DASH_EPICS["E9"], 3, 3, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["ux", "design-system"], priority="High",
+            description="Ревизия design_tokens.json и компонентов: консистентность цветов, типографики, "
+                        "отступов. База для hi-fi макетов (DASH-63) и Tokens Studio."),
+        _di("DASH-96", "История команды: кризисы + Goals легенды (финансирование, бизнес-метрики)",
+            "To Do", "Story", "PM", _DASH_EPICS["E10"], 3, 5, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["content", "discovery"], priority="High",
+            description="Расширяет DASH-64 (сценарий спринта): бизнес-контекст легенды — кто финансирует, "
+                        "какие Goals с цифрами, 2-3 решённых кризиса (антидот риску «картонной команды»). "
+                        "Текстом, вс 12.07 — вместе со сценарием комикса (DASH-100), не переключаясь."),
+        _di("DASH-100", "Сценарий комикса по истории команды",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E11"], 3, 3, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["content", "ux"], priority="High",
+            description="Сценарий (текст) из той же истории, что DASH-96. Питает DASH-66 (концепция/раскадровка)."),
+        _di("DASH-97", "Легенда → mock-данные: вшить кризисы и Goals в MOTIF-данные",
+            "To Do", "Task", "DEV", _DASH_EPICS["E10"], 4, 5, "Claude Code",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["content", "data"], priority="High",
+            description="Перенести историю из DASH-96 в данные (связан с DASH-69)."),
+        _di("DASH-98", "Карточки персон команды: цитаты, JTBD, RACI",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E10"], 4, 3, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["ux", "content"],
+            description="Закрывает пробел Double Diamond «User personas — частично»: "
+                        "визуальные карточки поверх USER_STORIES.md + RACI-матрица по Deliverables."),
+        _di("DASH-99", "Карта обмена артефактами PD ↔ команда (визуализация на дашборде)",
+            "To Do", "Story", "ANALYSIS", _DASH_EPICS["E10"], 4, 3, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["ux", "content"],
+            description="PD в центре, стрелки входящие/исходящие по ролям (таблица в CLAUDE.md). "
+                        "Место: вкладка ролей/RACI или Design Process tab."),
+        _di("DASH-93", "Визуальная иерархия Goals → Epics → Issues в коде дашборда",
+            "In Progress", "Story", "DEV", _DASH_EPICS["E9"], 4, 5, "Claude Code",
+            created="2026-07-11T10:00:00.000+0000",
+            started="2026-07-11T17:00:00.000+0000",
+            labels=["ux"], priority="High",
+            description="Три уровня оптики (ПМ-краш п.5): Goals — квадрокоптер, Epics — пейзаж "
+                        "(тип business/enabler виден, у enabler — «разблокирует →»), Issues — лупа. "
+                        "Побочный продукт — схема сущностей Goal→Epic→Issue (SA-артефакт)."),
+        _di("DASH-94", "Competitive-слайд: почему такая структура навигации (Jira/Linear/Notion)",
+            "To Do", "Task", "ANALYSIS", _DASH_EPICS["E9"], 4, 1, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["research"], priority="Low",
+            description="Закрывает пробел Double Diamond «Competitive analysis». Could — флексится первым."),
+        _di("DASH-101", "Отрисовка комикса",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E11"], 4, 5, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["ux", "content"], priority="High"),
+        _di("DASH-102", "Встроить комикс в дашборд/кейс",
+            "To Do", "Task", "DEV", _DASH_EPICS["E11"], 4, 3, "Claude Code",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["ux", "content"], priority="High",
+            description="Наполнение контентом UI из DASH-67."),
+        _di("DASH-103", "Деплой дашборда (Railway/Fly.io/VPS) — публичный URL",
+            "To Do", "Task", "ARCH", _DASH_EPICS["E13"], 4, 3, "Claude Code",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["release", "architecture"], priority="High",
+            description="По решению DASH-88: дашборд отдельно, Framer даёт кнопку-ссылку. Блокирует Framer-сборку."),
+        _di("DASH-104", "Переписать CV под позиционирование «продуктовый дизайнер»",
+            "To Do", "Task", "PM", _DASH_EPICS["E12"], 4, 3, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["content", "release"], priority="High"),
+        _di("DASH-105", "Hero-блоки остальных кейсов портфолио (реальные показатели-достижения)",
+            "To Do", "Task", "DESIGN", _DASH_EPICS["E12"], 4, 3, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["content", "release"]),
+        _di("DASH-106", "Framer: структура и сборка кейс-страницы + встройка дашборда",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E12"], 4, 5, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["release", "ux"], priority="High"),
+        _di("DASH-107", "Публикация кейса + отклик Muse (буфер 18-20.07: Tola)",
+            "To Do", "Task", "PM", _DASH_EPICS["E12"], 4, 2, "Guzel K.",
+            created="2026-07-11T10:00:00.000+0000",
+            labels=["release"], priority="Highest",
+            description="⏰ Жёсткий дедлайн пт 17.07. KR2: отклики Muse + Tola ≤ 20.07."),
+
+        # ── Backlog UX-улучшения (стейкхолдер-ревью 11.07 вечером) ───────────
+        _di("DASH-108", "Backlog: мультивыбор в фильтрах (Squad, Type, Status и др.)",
+            "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 3, "Claude Code",
+            created="2026-07-11T18:00:00.000+0000",
+            labels=["ux", "backlog"],
+            description="Заменить одиночные select на мультивыбор (checkbox-список в дропдауне). "
+                        "filtered() переходит от равенства к 'значение in выбранные'."),
+        _di("DASH-109", "Backlog: числовая сортировка эпиков в фильтре (E1…E14)",
+            "Done", "Bug", "DEV", _DASH_EPICS["E9"], 3, 1, "Claude Code",
+            created="2026-07-11T18:00:00.000+0000",
+            started="2026-07-11T18:00:00.000+0000",
+            resolved="2026-07-11T18:30:00.000+0000",
+            labels=["ux", "backlog"],
+            decision_note="epic_filter_options: sorted(seen) лексикографический (E1, E10, E11, …, E2) "
+                          "→ сортировка по числовому суффиксу ключа."),
+        _di("DASH-110", "Кликабельные key/name задач и эпиков во всём дашборде (не только Backlog)",
+            "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 5, "Claude Code",
+            created="2026-07-11T18:00:00.000+0000",
+            labels=["ux"], priority="High",
+            description="Вынести попап задачи/эпика из Backlog в глобальный компонент. "
+                        "Кликабельность: Kanban-карточки, Roadmap Timeline/Sprint Review, вкладки ролей. "
+                        "Один rx.dialog.root на страницу (Radix-правило).\n\n"
+                        "На подумать (UX): что делать, если из попапа эпика пользователь кликает "
+                        "на child issue и хочет попап задачи? Диалог у нас один, контент через rx.cond — "
+                        "варианты: (а) замена контента в том же диалоге + кнопка «← назад к эпику» "
+                        "(стек навигации в State), (б) хлебные крошки в шапке попапа "
+                        "(DASH-EPIC-9 → DASH-57), (в) как в Jira — переход на полную страницу задачи. "
+                        "Посмотреть, как это решает Jira в epic-панели.\n\n"
+                        "На подумать (UX) №2: перетаскивание попапа по экрану (draggable dialog) — "
+                        "если за попапом что-то не видно, закрывать-открывать заново не хочется. "
+                        "Radix Dialog из коробки drag не умеет: нужен кастомный drag-handle на шапке "
+                        "(state: dx/dy + transform) или отказ от modal-режима (non-modal + "
+                        "pointer-events на фоне). Референсы: попап задачи в Linear/Height, "
+                        "detail-панель Figma. Возможно, дешёвая альтернатива — сдвинуть попап "
+                        "к краю экрана и сделать фон некликабельным, но прозрачным."),
+        _di("DASH-111", "Актуализировать OKR-теги эпиков: сейчас у всех один тег",
+            "To Do", "Task", "PM", _DASH_EPICS["E10"], 4, 2, "Claude Code",
+            created="2026-07-11T18:00:00.000+0000",
+            labels=["data", "process"], priority="High",
+            description="Все DASH-задачи носят один okr_tag «Рекрутер понимает продуктовый контекст…». "
+                        "Разнести по актуальным O0-O3 (okr_dash.py): E9→O2, E12/E13→O0 и т.д. "
+                        "_di() должен принимать okr_tag параметром вместо константы."),
+        _di("DASH-112", "История изменений статусов в попапах задач и эпиков (как в Jira)",
+            "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 5, "Claude Code",
+            created="2026-07-11T18:00:00.000+0000",
+            labels=["ux", "backlog"],
+            description="Jira показывает History в Activity-секции: автор, поле, было → стало, дата. "
+                        "Данные уже есть: changelog.histories в issue dict. "
+                        "Изучить референс UI Jira (Activity → History) и повторить."),
+        _di("DASH-113", "Бэкфилл changelog: восстановить историю статусов из логов сессий",
+            "To Do", "Task", "ANALYSIS", _DASH_EPICS["E10"], 5, 5, "Claude Code",
+            created="2026-07-11T18:00:00.000+0000",
+            labels=["data", "process"],
+            description="Прочитать JSONL сессий (~/.claude/projects/), найти даты-время фактических смен "
+                        "статусов и исполнителей для всех существующих задач; заполнить changelog.histories. "
+                        "Договорённость в CLAUDE.md: заполняем регулярно при каждой смене статуса. "
+                        "Связан с DASH-87 (spike про логи сессий)."),
+        _di("DASH-114", "Backlog: drag-n-drop порядок колонок + ручная ширина колонок",
+            "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 8, "Claude Code",
+            created="2026-07-11T18:00:00.000+0000",
+            labels=["ux", "backlog"], priority="Low",
+            description="Перестановка колонок таблицы перетаскиванием, ресайз за границу колонки. "
+                        "Состояние порядка/ширины — в BacklogState (сохранение на клиенте)."),
+        _di("DASH-116", "Календарь спринта в дашборде: дни × эпики на вкладке Kanban",
+            "Done", "Story", "PM", _DASH_EPICS["E10"], 3, 3, "Claude Code",
+            created="2026-07-11T19:00:00.000+0000",
+            started="2026-07-11T19:00:00.000+0000",
+            resolved="2026-07-11T20:00:00.000+0000",
+            labels=["ux", "process"], priority="High",
+            description=(
+                "Календарь спринта (ПМ-краш: недели × Deliverables → здесь дни × эпики) "
+                "выведен в дашборд для ежедневной актуализации. Размещение на Kanban временное — "
+                "Guzel решит, куда переместить."
+            ),
+            decision_note=(
+                "data/sprint_calendar.py: SPRINT_DAYS (дата, этап, фокус) + SPRINT_ROWS (эпики × ключи задач) "
+                "+ DEADLINE_KEYS (⏰). Компонент _sprint_calendar() в kanban.py, только dash-режим. "
+                "Статусы НЕ дублируются — подтягиваются из mock-данных по ключу: обход автоматический "
+                "(Done → зелёный, In Progress → жёлтый, To Do в прошедшем дне → красный). "
+                "Договорённость в CLAUDE.md: при изменении календаря актуализировать оба места. "
+                "Доработка: чипы кликабельны → попап задачи (переиспользован _popup() из backlog.py + "
+                "BacklogState.open_issue; один dialog.root на страницу — Radix-правило). "
+                "Первый шаг DASH-110 (кликабельность во всём дашборде)."
+            )),
+        _di("DASH-117", "Провенанс данных: 3 состояния бейджа вместо real/mock, аудит всех вкладок",
+            "To Do", "Story", "PM", _DASH_EPICS["E10"], 4, 5, "Guzel K.",
+            created="2026-07-11T20:30:00.000+0000",
+            labels=["ux", "content", "data"], priority="High",
+            description=(
+                "Текущий data_source_badge бинарен (real/mock) и путает две оси: «реальность проекта» "
+                "и «происхождение данных секции». Ставится по-секционно (overview.py имеет и real, и mock), "
+                "но непоследовательно. Главная ложь: Jira-задачи KP и DASH — это РУЧНОЙ ЛОГ РЕАЛЬНОЙ РАБОТЫ "
+                "(реальные проекты, исполнители Guzel+Claude, задачи оформлены вручную), а метятся как "
+                "«Демо · модель Jira-интеграции» — занижают.\n\n"
+                "Решение: 3 состояния провенанса в _SOURCE_MAP (badge.py):\n"
+                "• extracted — «Данные из реального источника» (database): vault_snapshot, real_project_extract;\n"
+                "• logged — «Реальная работа · задачи ведём вручную» (pen/notebook): таск-борды KP + DASH;\n"
+                "• demo — «Демо · вымышленный проект» (flask): только Motif (generate_raw_issues).\n\n"
+                "Аудит ~60 вызовов data_source_badge по всем pages/: выбрать честное состояние для каждой секции. "
+                "Календарь спринта (kanban.py) → logged. Это усиливает позиционирование: реальный продуктовый "
+                "процесс, а не демо. Связано с DASH-95 (правило соответствия данных проекту)."
+            )),
+        _di("DASH-115", "Backlog: сортировка по клику на заголовок колонки",
+            "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 5, "Claude Code",
+            created="2026-07-11T18:00:00.000+0000",
+            labels=["ux", "backlog"], priority="Low",
+            description="Возобновляет отложенный план «сортировка таблиц» (memory project_table_sorting): "
+                        "клик по заголовку — asc/desc/сброс, индикатор стрелкой. Позже — поиск по колонкам."),
     ]
 
     # ── Issue links ───────────────────────────────────────────────────────────
@@ -1552,6 +1844,23 @@ def get_dash_issues() -> list[dict]:
         "DASH-74": [_link("Relates", "DASH-75"), _link("Relates", "DASH-76"),
                     _link("Relates", "DASH-77"), _link("Relates", "DASH-78"), _link("Relates", "DASH-79")],
         "DASH-82": [_block("DASH-70"), _block("DASH-71"), _block("DASH-55")],
+        # Спринт 11-17.07 (перенарезка DASH-95)
+        "DASH-92": [_block("DASH-63")],                              # токены до hi-fi
+        "DASH-96": [_link("Relates", "DASH-64"), _block("DASH-97"),
+                    _block("DASH-100")],                             # история питает данные и комикс
+        "DASH-100": [_block("DASH-66"), _block("DASH-101")],         # сценарий до раскадровки и отрисовки
+        "DASH-101": [_block("DASH-102")],                            # отрисовка до встройки
+        "DASH-97": [_link("Relates", "DASH-69")],
+        "DASH-98": [_link("Relates", "DASH-65")],
+        "DASH-103": [_block("DASH-106")],                            # деплой блокирует Framer-сборку
+        "DASH-104": [_block("DASH-106")],
+        "DASH-105": [_block("DASH-106")],
+        "DASH-106": [_block("DASH-107")],                            # сборка до публикации
+        "DASH-93": [_link("Relates", "DASH-90"), _link("Relates", "DASH-81")],
+        "DASH-110": [_link("Relates", "DASH-90")],
+        "DASH-112": [_block("DASH-113")],   # сначала UI истории, потом бэкфилл данных
+        "DASH-113": [_link("Relates", "DASH-87")],
+        "DASH-114": [_link("Relates", "DASH-115")],
     }
     for issue in issues:
         key = issue["key"]

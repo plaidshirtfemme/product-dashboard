@@ -4,6 +4,24 @@ from .okr import KeyResult, Objective
 
 
 DASH_OKR_OBJECTIVES: list[Objective] = [
+    # Установочная встреча PM+Stakeholder 11.07.2026 (DASH-95):
+    # North Star одна — «Кейс → оффер Muse». Прежние O1-O3 остаются как
+    # операционные цели, инструментальные по отношению к O0.
+    Objective(
+        tag="O0 · North Star",
+        title="Оффер продуктового дизайнера от Muse",
+        description="Кейс — главная цель; удобство дашборда для выдуманной команды — инструментальная. "
+                    "При конфликте приоритетов побеждает зритель кейса. Запасная цель — Tola (тёплый контакт).",
+        quarter="Спринт 11–17 июля 2026 · жёсткий дедлайн пт 17.07",
+        key_results=[
+            KeyResult("KR-0.1", "Кейс опубликован на Framer ≤ 17.07",
+                      current=0, target=1, unit="кейс", baseline=0),
+            KeyResult("KR-0.2", "Отклики отправлены (Muse + Tola) ≤ 20.07",
+                      current=0, target=2, unit="отклика", baseline=0),
+            KeyResult("KR-0.3", "Приглашение на интервью",
+                      current=0, target=1, unit="интервью", baseline=0),
+        ],
+    ),
     Objective(
         tag="O1 · Portfolio",
         title="Рекрутер понимает продуктовый контекст без объяснений",
