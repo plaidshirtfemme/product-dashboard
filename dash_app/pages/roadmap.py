@@ -4,7 +4,7 @@ from datetime import date
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER, PAGE_MAX_WIDTH, STATUS_COLORS
+from ..tokens import SPACING, BORDER, PAGE_MAX_WIDTH, STATUS_COLORS, EPIC_TYPE_COLORS
 from ..components import (
     section_header,
     stat_card,
@@ -14,7 +14,9 @@ from ..components import (
 )
 from ..data.adapter import load_issues
 from ..data.okr_dash import load_dash_okrs
-from ..data.jira_mock_raw import DASH_CONFIG, EPIC_NAMES, EPIC_TYPES, EPIC_UNLOCKS
+from ..data.jira_mock_raw import (
+    DASH_CONFIG, EPIC_NAMES, EPIC_TYPES, EPIC_UNLOCKS, epic_sort_key,
+)
 
 _PAD = f"0 {SPACING['xl']} {SPACING['xl']}"
 _MAX = PAGE_MAX_WIDTH
@@ -124,8 +126,15 @@ def _okr_card(obj) -> rx.Component:
     )
 
 
+# North Star = первый Objective (O0) в okr_dash — единый источник, без хардкода.
+_NORTH_STAR = next((o for o in _okrs if o.tag.startswith("O0")), None)
+
+
 def _north_star_banner() -> rx.Component:
-    """Единственная North Star проекта (установочная встреча 11.07, DASH-95)."""
+    """Единственная North Star проекта (установочная встреча 11.07, DASH-95).
+    Заголовок и описание берём из Objective O0, чтобы не расходились с OKR-картой."""
+    if _NORTH_STAR is None:
+        return rx.fragment()
     return rx.box(
         rx.flex(
             rx.icon("star", size=18, color=rx.color("teal", 11)),
@@ -134,10 +143,9 @@ def _north_star_banner() -> rx.Component:
                         style={"font_size": "11px", "font_weight": "600",
                                "text_transform": "uppercase", "letter_spacing": "0.08em"},
                         color=rx.color("teal", 11)),
-                rx.text("Оффер продуктового дизайнера от Muse",
+                rx.text(_NORTH_STAR.title,
                         size="4", weight="bold", color=rx.color("gray", 12)),
-                rx.text("Кейс — главная цель; удобный дашборд для команды — инструментальная. "
-                        "При конфликте приоритетов побеждает зритель кейса.",
+                rx.text(_NORTH_STAR.description,
                         size="1", color=rx.color("gray", 10)),
             ),
             gap=SPACING["md"],
@@ -166,17 +174,6 @@ def _goals_section() -> rx.Component:
 
 # ── Section 2: Timeline ───────────────────────────────────────────────────────
 
-# Визуальная иерархия: business-эпики первыми, затем enabler, компонентная
-# история — внизу; внутри группы — по номеру (E9, E10…, а не E1, E10, E2).
-_TYPE_ORDER = {"business": 0, "enabler": 1, "component": 2}
-
-
-def _epic_sort_key(item: tuple[str, list]) -> tuple[int, int]:
-    epic_key = item[0]
-    num = int(epic_key.rsplit("-", 1)[-1]) if epic_key.rsplit("-", 1)[-1].isdigit() else 0
-    return (_TYPE_ORDER.get(EPIC_TYPES.get(epic_key, ""), 3), num)
-
-
 def _epic_row(epic_key: str, issues: list) -> rx.Component:
     total = len(issues)
     if total == 0:
@@ -196,7 +193,7 @@ def _epic_row(epic_key: str, issues: list) -> rx.Component:
 
     short = epic_key.replace("DASH-EPIC-", "E").replace("KP-EPIC-", "E")
     epic_type = EPIC_TYPES.get(epic_key, "")
-    type_color = {"business": "teal", "enabler": "amber", "component": "gray"}.get(epic_type, "gray")
+    type_color = EPIC_TYPE_COLORS.get(epic_type, "gray")
     unlocks_key = EPIC_UNLOCKS.get(epic_key, "")
     type_label = epic_type
     if unlocks_key:
@@ -266,7 +263,8 @@ def _timeline_section() -> rx.Component:
             padding=f"0 0 {SPACING['sm']}",
             border_bottom=f"1.5px solid {rx.color('gray', 4)}",
         ),
-        *[_epic_row(epic, issues) for epic, issues in sorted(by_epic.items(), key=_epic_sort_key)],
+        *[_epic_row(epic, issues)
+          for epic, issues in sorted(by_epic.items(), key=lambda kv: epic_sort_key(kv[0]))],
         data_source_badge("mock"),
     )
 

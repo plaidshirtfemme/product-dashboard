@@ -691,6 +691,17 @@ for _src, _dst in EPIC_UNLOCKS.items():
         f"EPIC_UNLOCKS[{_src}] задан, но тип эпика не enabler"
     )
 
+# Порядок групп эпиков в списках: business → enabler → component → прочее.
+EPIC_TYPE_ORDER: dict[str, int] = {"business": 0, "enabler": 1, "component": 2}
+
+
+def epic_sort_key(epic_key: str) -> tuple[int, int]:
+    """Единый ключ сортировки эпиков: сначала по типу (business→enabler→
+    component), внутри группы — по числовому суффиксу (E9, E10…, а не E1, E10)."""
+    tail = epic_key.rsplit("-", 1)[-1]
+    num = int(tail) if tail.isdigit() else 0
+    return (EPIC_TYPE_ORDER.get(EPIC_TYPES.get(epic_key, ""), 3), num)
+
 
 def _di(
     key: str,
