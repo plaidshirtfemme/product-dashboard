@@ -1,8 +1,8 @@
 """Page layout — sidebar and tabs variants, page header."""
 
 import reflex as rx
-from .states import NavState, ProjectState
-from .components import sidebar_nav, tabs_nav
+from .states import ProjectState
+from .components import sidebar_nav
 from .router import page_content
 from .tokens import SPACING
 
@@ -54,18 +54,4 @@ def index() -> rx.Component:
         overflow="hidden",
     )
 
-    tabs_layout = rx.box(
-        tabs_nav(),
-        rx.box(
-            page_header,
-            rx.box(height=_SPACING_XL),
-            page_content,
-        ),
-        width="100%",
-    )
-
-    return rx.cond(
-        NavState.nav_variant == "sidebar",
-        sidebar_layout,
-        tabs_layout,
-    )
+    return sidebar_layout

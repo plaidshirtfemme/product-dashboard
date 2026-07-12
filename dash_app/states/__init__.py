@@ -24,12 +24,8 @@ BUILT_TABS = {"about", "roadmap", "overview", "backlog", "kanban", "research", "
 
 
 class NavState(rx.State):
-    nav_variant: str = "sidebar"   # "sidebar" | "tabs"
     active_tab: str = "kanban"
     design_open: bool = False
-
-    def toggle_variant(self):
-        self.nav_variant = "tabs" if self.nav_variant == "sidebar" else "sidebar"
 
     def set_tab(self, tab: str):
         if tab in BUILT_TABS:

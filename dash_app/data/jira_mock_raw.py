@@ -1643,8 +1643,10 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-85", "Удалить tabs_nav и горизонтальный режим навигации",
-            "To Do", "Task", "DEV", _DASH_EPICS["E13"], 3, 3, "Claude Code",
+            "Done", "Task", "DEV", _DASH_EPICS["E13"], 3, 3, "Claude Code",
             created="2026-07-10T10:00:00.000+0000",
+            started="2026-07-12T21:00:00.000+0000",
+            resolved="2026-07-12T21:20:00.000+0000",
             labels=["tech-debt"],
             priority="Low",
             description=(
@@ -1655,7 +1657,12 @@ def get_dash_issues() -> list[dict]:
                 "_burger_btn() из navigation.py, "
                 "условный рендер sidebar vs tabs из layout.py. "
                 "Оставить только sidebar_nav()."
-            )),
+            ),
+            decision_note="Закрыто 12.07: подтверждён недостижимый tabs_layout (переключатель _burger_btn "
+                          "жил внутри tabs_nav, в который из sidebar не попасть). Удалено −160 строк: "
+                          "tabs_nav/_tab_item/_burger_btn/_project_dropdown_compact (navigation.py), "
+                          "nav_variant/toggle_variant (NavState), tabs_layout+rx.cond (layout.py), "
+                          "экспорты (components/__init__). Компиляция OK, мёртвых ссылок нет."),
 
         _di("DASH-88", "Spike: Framer как платформа для портфолио + возможность встроить дашборд",
             "Done", "Spike", "ARCH", _DASH_EPICS["E8"], 3, 3, "Guzel K.",
