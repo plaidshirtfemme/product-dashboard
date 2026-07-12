@@ -1095,12 +1095,13 @@ def get_dash_issues() -> list[dict]:
             labels=["process"],
             decision_note="Компоненты = что затрагивает в коде/продукте. Лейблы = характер задачи. Таксономию можно менять позже — все данные в jira_mock_raw.py, это Python-словари"),
         _di("DASH-47", "Прочитать JSONL истории сессии и создать Jira-задачи для DASH",
-            "In Progress", "task", "ANALYSIS", _DASH_EPICS["E10"], 3, 8, "Claude Code",
+            "Done", "task", "ANALYSIS", _DASH_EPICS["E10"], 3, 8, "Claude Code",
             created="2026-07-09T13:00:00.000+0000",
             started="2026-07-09T13:30:00.000+0000",
-            resolved=None,
+            resolved="2026-07-12T13:00:00.000+0000",
             labels=["content", "process"],
-            priority="High"),
+            priority="High",
+            decision_note="Закрыто 12.07 при наведении порядка: DASH-задачи (121 шт.) заведены и ведутся."),
     ]
 
     # ── Epic 8: Release Preparation (все задачи открыты) ─────────────────────
@@ -1144,9 +1145,14 @@ def get_dash_issues() -> list[dict]:
             created="2026-07-05T10:00:00.000+0000",
             labels=["❌-missing", "ux"], priority="High"),
         _di("DASH-54", "Провести Retro → зафиксировать coding rules в CLAUDE.md",
-            "To Do", "task", "ANALYSIS", _DASH_EPICS["E10"], 4, 3, "Guzel K.",
+            "Done", "task", "ANALYSIS", _DASH_EPICS["E10"], 4, 3, "Guzel K.",
             created="2026-07-07T12:00:00.000+0000",
-            labels=["process"]),
+            started="2026-07-10T10:00:00.000+0000",
+            resolved="2026-07-12T13:00:00.000+0000",
+            labels=["process"],
+            decision_note="Закрыто 12.07: правило зафиксировано — Claude ведёт актуальность CLAUDE.md "
+                          "(retro-выводы DASH-90, релиз-конвенции, DS-канон, критический путь). "
+                          "Стало постоянной практикой (feedback-память rules-in-claudemd)."),
         _di("DASH-55", "Подготовить GitHub release: README, demo GIF, публичный репо",
             "Done", "task", "DEV", _DASH_EPICS["E8"], 5, 5, "Guzel K.",
             created="2026-07-07T12:00:00.000+0000",
@@ -1186,6 +1192,110 @@ def get_dash_issues() -> list[dict]:
                 "Хранение: вкладка Design Process в дашборде + Figma."
             )),
 
+        _di("DASH-118", "Research: опыт дизайнеров с Figma MCP — подводные камни, за/против",
+            "Done", "Spike", "ANALYSIS", _DASH_EPICS["E14"], 3, 3, "Guzel K.",
+            created="2026-07-12T11:00:00.000+0000",
+            started="2026-07-12T11:30:00.000+0000",
+            resolved="2026-07-12T12:00:00.000+0000",
+            labels=["research", "spike"], priority="High",
+            description=(
+                "Актуальный опыт (YouTube, статьи, threads) работы с Figma MCP. Фокус: подводные "
+                "камни В СВЯЗИ С ДИЗАЙН-СИСТЕМОЙ, есть ли доводы вообще не браться, плюсы. "
+                "Особенно интересует round-trip код↔Figma и генерация Figma из живого UI: "
+                "надёжность, потеря структуры/слоёв, качество вывода. De-risk перед вложением в DS-в-Figma."
+            ),
+            decision_note=(
+                "РЕЗУЛЬТАТ (12.07): ЗА (когда работает) — для команд со ЗРЕЛОЙ структурированной DS "
+                "ускорение 50-70%; дашборд из 8 компонентов 2-3 дня → полдня, ревизии 4-5 → ~1. "
+                "ПРОТИВ / камни: без Code Connect точность стилей 85-90% МИМО (руками правишь spacing/"
+                "radius/responsive; модель «угадывает»); Code Connect — #1 рычаг, но требует платного + "
+                "setup; начальная настройка 40-80 часов; на файле с непоследовательным неймингом — тяжёлое "
+                "редактирование; мультипликатор есть ТОЛЬКО при зрелой DS. Безопасность: аудит 68 MCP-"
+                "пакетов → 118 находок (транзитивные зависимости). НАШ КЕЙС (соло, free, DS с нуля): большие "
+                "выигрыши достаются командам с DS+Code Connect+платными seat — у нас пока нет ничего из "
+                "этого; Figma→код гейтится Dev Mode (платно) И даёт 85-90% мимо без Code Connect. "
+                "ВЫВОД: на дедлайне сейчас ROI низкий → пауза оправдана, hi-fi в коде. Позже (чистая DS "
+                "+ возможно платный seat) — реальный мультипликатор и сильный скилл для портфолио."
+            )),
+        _di("DASH-119", "Research: альтернативы Figma MCP для round-trip код↔дизайн",
+            "Done", "Spike", "ANALYSIS", _DASH_EPICS["E14"], 3, 2, "Guzel K.",
+            created="2026-07-12T11:00:00.000+0000",
+            started="2026-07-12T12:00:00.000+0000",
+            resolved="2026-07-12T12:20:00.000+0000",
+            labels=["research", "spike"],
+            description=(
+                "Инструменты-альтернативы под задачу Guzel (основа в коде → правки в дизайн-тула → "
+                "обратно в код, + дизайн-система-источник-правды). Кандидаты: Claude Design "
+                "(claude.ai/design), Tokens Studio standalone, Anima, Builder.io, локоны code-to-design. "
+                "Критерий: качество round-trip, token-first, цена, зрелость."
+            ),
+            decision_note=(
+                "РЕЗУЛЬТАТ (12.07): КЛЮЧЕВОЙ вывод — почти все Figma→code инструменты (Anima 1.5M "
+                "инсталлов, Builder.io Visual Copilot, Locofy, v0) выводят React/Vue/HTML, а НЕ Reflex "
+                "Python. Наш стек — Reflex (Python→React под капотом), в него их вывод напрямую не ложится: "
+                "пришлось бы переводить React→Reflex. То есть нога «Figma→код» плохо обслуживается ЛЮБЫМ "
+                "тулом для Reflex-проекта, не только Figma MCP. Качество: AI даёт ~75%, доводка руками "
+                "встроена в процесс, ни один не выдаёт production-ready без правок. ЧТО РЕАЛЬНО ПОДХОДИТ "
+                "под наш кейс: (1) Tokens Studio ↔ design_tokens.json — token pipeline framework-agnostic, "
+                "ложится в наш token-first БЕЗ Figma→code генерации; (2) Claude Design (DesignSync, доступен "
+                "мне) + мой перевод в Reflex; (3) ручной путь — hi-fi в Reflex-коде мной, Guzel правит "
+                "визуально, я перевожу намерение. ВЫВОД: не гнаться за Figma→code тулами (все про JS); "
+                "инвестировать в токен-пайплайн + Claude Design. Комплементы: Builder.io Visual Copilot — "
+                "лучший по маппингу на существующие компоненты; Locofy — чистейшая структура; Anima — "
+                "самый распространённый, но flat HTML без семантики."
+            )),
+        _di("DASH-120", "Research: свод правил дизайн-системы по канону (Figma + документация)",
+            "Done", "Spike", "DESIGN", _DASH_EPICS["E9"], 3, 5, "Guzel K.",
+            created="2026-07-12T11:00:00.000+0000",
+            started="2026-07-12T12:20:00.000+0000",
+            resolved="2026-07-12T12:50:00.000+0000",
+            labels=["research", "design-system"], priority="High",
+            description=(
+                "Лучшие практики DS от дизайнеров в командах: как оформлять в Figma (variables, "
+                "components, tokens, naming, структура файла/страниц) и как вести документацию. "
+                "Мы собираем DS сами → нужен канон + подводные камни. Выход: свод правил в CLAUDE.md/wiki, "
+                "по которому строим DS-артефакт для рекрутера (эпик E9)."
+            ),
+            decision_note=(
+                "РЕЗУЛЬТАТ (12.07): свод правил оформлен → wiki/design_system_canon.md (+ краткие правила "
+                "в CLAUDE.md). Канон: токены — единый источник (W3C DTCG v2025.10); 3 уровня primitive→"
+                "semantic→component; Figma-файлы Foundations/Components/Docs, страницы=категории; 3 коллекции "
+                "Variables; нейминг категория-роль-вариант; документация анатомия/состояния/do-don't. "
+                "Наши гэпы: design_tokens.json плоский (привести к 3 уровням); publish library требует paid "
+                "(на free — визуальная подача); Storybook/Code Connect неприменимы (Reflex). Чек-лист «наша "
+                "DS по канону» — в конце wiki-документа."
+            )),
+
+        _di("DASH-121", "Research: как дизайнеры и фронтендеры синхронят работу и дизайн-системы",
+            "Done", "Spike", "ANALYSIS", _DASH_EPICS["E9"], 3, 5, "Guzel K.",
+            created="2026-07-12T12:00:00.000+0000",
+            started="2026-07-12T12:20:00.000+0000",
+            resolved="2026-07-12T12:50:00.000+0000",
+            labels=["research", "design-system"], priority="High",
+            description=(
+                "Лучшие практики синхронизации дизайн↔фронтенд, особенно Figma-DS ↔ код-DS. "
+                "Вопросы: кто источник правды для токенов/компонентов; token pipeline "
+                "(Figma variables → Tokens Studio → JSON → код, W3C DTCG); handoff-процесс; "
+                "как избегают дрейфа между макетом и кодом; Code Connect; версионирование DS; "
+                "роли и ритуалы (DS-review, contribution model). Отличие от DASH-120: там — как "
+                "оформить DS по канону; здесь — как ДВЕ стороны держат её в согласии. Наш кейс: "
+                "design_tokens.json уже единый источник — проверить против канона."
+            ),
+            decision_note=(
+                "РЕЗУЛЬТАТ (12.07): Канон 2026 — граф ТОКЕНОВ единый источник правды, чтобы дизайн и код "
+                "НЕ МОГЛИ разойтись (не «Figma главный» и не «код главный», а токены). Стандарт: W3C DTCG "
+                "v2025.10 (стабилен с окт.2025) — один JSON-формат $value/$type, который Figma, Tokens "
+                "Studio, Style Dictionary, Penpot, Supernova читают без конвертеров. Пайплайн: Figma "
+                "Variables ↔ Tokens Studio ↔ design_tokens.json (DTCG) → Style Dictionary 4 → CSS/Tailwind/"
+                "TS → Storybook preview → версионированный npm-пакет. Валидация: JSON-schema против DTCG в CI. "
+                "Против дрейфа: Code Connect (маппинг Figma-компонент → код-компонент). Ритуалы: DS-review, "
+                "contribution model. НАШ КЕЙС: design_tokens.json уже DTCG-стиля ($schema/$value/$type) — "
+                "это правильный современный подход (сильная история для рекрутера!), НО структура плоская "
+                "(color/spacing/…), без 3-уровневой канонной (primitive→semantic→component). Гэп на доработку "
+                "в DASH-120. Reflex-нюанс: у нас нет Storybook/npm — Style Dictionary опционален, tokens.py "
+                "читает JSON напрямую."
+            )),
+
         _di("DASH-58", "HMW-вопросы: переформулировать проблемы рекрутера в возможности",
             "To Do", "Task", "DESIGN", _DASH_EPICS["E9"], 2, 1, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
@@ -1222,9 +1332,38 @@ def get_dash_issues() -> list[dict]:
             created="2026-07-09T10:00:00.000+0000",
             labels=["spike", "architecture"],
             description=(
-                "Установить и настроить официальный Figma MCP-сервер. "
-                "После — Claude Code сможет читать фреймы из Figma и писать Reflex-компоненты на их основе. "
-                "Параллельно: подключить Tokens Studio плагин к design_tokens.json."
+                "ЦЕЛЬ GUZEL (из прошлых сессий): token-first архитектура — design_tokens.json "
+                "единый источник правды для КОДА и FIGMA одновременно; дизайн-система редактируется "
+                "в Figma и переносима между проектами. Три связанных инструмента: (1) официальный "
+                "Figma Dev Mode MCP — двусторонний Figma↔код; (2) Tokens Studio — синк "
+                "design_tokens.json ↔ Figma variables; (3) Claude Design 'Create using Claude Code'.\n\n"
+                "КЛЮЧЕВОЕ для кейса: MCP теперь умеет 'Generate Designs from Live UI' / write-to-canvas — "
+                "то есть из ЖИВОГО Reflex-дашборда генерировать редактируемые Figma-слои. Это прямо "
+                "закрывает пробел Double Diamond «hi-fi есть в коде, нечего показать в Figma» "
+                "(обратное направление код→Figma, которое раньше было невозможно).\n\n"
+                "ШАГИ (офиц. Figma Learn, проверено 12.07.2026):\n"
+                "0. Тариф: remote MCP доступен на ВСЕХ планах включая free; write-to-canvas бесплатен "
+                "в бете. Блокера по оплате нет.\n"
+                "1. `claude plugin install figma@claude-plugins-official` → рестарт Claude Code.\n"
+                "2. `/plugin` → вкладка Installed → figma → Enter → страница авторизации.\n"
+                "3. Авторизация: Allow access (Guzel делает сама — OAuth к её Figma-аккаунту).\n"
+                "4. `/plugin` снова → figma должен быть connected.\n"
+                "(Desktop-вариант — только для enterprise, требует Dev/Full seat; нам не нужен.)\n\n"
+                "После подключения: DASH-62/63 (wireframes/hi-fi в Figma) и Tokens Studio синк.\n\n"
+                "ПОДКЛЮЧЕНИЕ (desktop-app, Windows, 12.07): `claude` НЕ в PATH; `/plugin` в билде нет; "
+                "проектный .mcp.json приложение НЕ читает даже после полного перезапуска. "
+                "Рабочий путь (по claude-code-guide): user-scoped ~/.claude.json → добавить "
+                "mcpServers.figma = {type:http, url:https://mcp.figma.com/mcp}. Правку делать ПОКА "
+                "приложение полностью закрыто (иначе затрёт при выходе). Скрипт: "
+                "scratchpad/add_figma_mcp.py (бэкап .bak-figma, additive-only). Авторизация: "
+                "запустить app → /mcp → figma → Authenticate → браузер Allow access. "
+                "Не проверено, читает ли билд top-level mcpServers — тестируем.\n\n"
+                "⏸ ПАУЗА (12.07): эмпирически подтверждён потолок free-плана. Установлен официальный "
+                "dev-mode-mcp-server-dxt (Enabled, 7 инструментов), НО он «работает только когда Dev Mode "
+                "активен в Figma-файле», а Dev Mode недоступен на free Starter. В /mcp у remote-сервера НЕ "
+                "появился статус Needs authentication (нет Dev Mode). Figma-инструменты ко мне не подтянулись. "
+                "Вывод: генерация Figma↔код — функция Dev Mode = платно. Решение об апгрейде — после DASH-118/119. "
+                "Пока: hi-fi делаем в коде (первая нога round-trip Figma не требует)."
             )),
 
         _di("DASH-62", "Wireframes ключевых экранов дашборда в Figma",
@@ -1244,7 +1383,12 @@ def get_dash_issues() -> list[dict]:
             description=(
                 "Детальные макеты с реальными цветами, типографикой, контентом. "
                 "Использовать design_tokens.json через Tokens Studio. "
-                "Демонстрирует Figma proficiency для вакансии Muse."
+                "Демонстрирует Figma proficiency для вакансии Muse.\n\n"
+                "WORKFLOW (решение Guzel 12.07): round-trip код → Figma → код. "
+                "1) Claude пишет основу hi-fi фреймов кодом по референсам; "
+                "2) Guzel редактирует в Figma desktop; "
+                "3) через Figma MCP забираем правки обратно в Reflex-код. "
+                "Итог — красивый дашборд для рекрутера. То же для wireframes (DASH-62)."
             )),
 
         # ── Командный сценарий и комикс ───────────────────────────────────────
@@ -1329,33 +1473,46 @@ def get_dash_issues() -> list[dict]:
 
         # ── Технический долг (рефакторинг из плана) ──────────────────────────
         _di("DASH-70", "Рефакторинг компонентов: универсальный data_table, вынос молекул",
-            "To Do", "Task", "DEV", _DASH_EPICS["E13"], 5, 5, "Claude Code",
+            "In Progress", "Task", "DEV", _DASH_EPICS["E13"], 5, 5, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
+            started="2026-07-12T13:00:00.000+0000",
             labels=["tech-debt", "architecture"],
             description=(
                 "32 инлайн-молекулы в page-файлах → вынести в components/. "
                 "Дублирование: _tasks_table (4×), _bug_table (3×), _legend (4×). "
                 "Универсальный data_table_wrapper (шапка + строки + overflow)."
-            )),
+            ),
+            decision_note="Частично (сверка 12.07): components/data_table.py СОЗДАН, но 6 файлов "
+                          "(architecture, dev, info, monitoring, quality, release) ещё держат свои "
+                          "_bug_table/_legend — миграция не завершена. Остаток: перевести их на data_table."),
 
         _di("DASH-71", "Рефакторинг кода: router, god-файл kp_dashboard.py",
-            "To Do", "Task", "DEV", _DASH_EPICS["E13"], 3, 3, "Claude Code",
+            "Done", "Task", "DEV", _DASH_EPICS["E13"], 3, 3, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
+            started="2026-07-09T10:00:00.000+0000",
+            resolved="2026-07-10T12:00:00.000+0000",
             labels=["tech-debt"],
             description=(
                 "real_page_wrapper() — общий wrapper для всех real_*.py. "
                 "stat_card — keyword-only аргументы после value. "
                 "Разбить god-файл kp_dashboard.py если разросся."
-            )),
+            ),
+            decision_note="Закрыто (сверка 12.07): real_page_wrapper в components/shared.py; god-файл "
+                          "разбит (dash_app.py ~144 строки, DASH-84); stat_card keyword-only — DASH-83."),
 
         _di("DASH-72", "Spike: Claude Design интеграция — код → макеты → код",
-            "To Do", "Spike", "DESIGN", _DASH_EPICS["E14"], 3, 3, "Claude Code",
+            "Done", "Spike", "DESIGN", _DASH_EPICS["E14"], 3, 3, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
+            started="2026-07-12T12:00:00.000+0000",
+            resolved="2026-07-12T13:10:00.000+0000",
             labels=["spike", "architecture"],
             description=(
                 "Исследовать workflow: Claude Design читает компоненты → генерирует макеты. "
                 "Зависит от: DASH-61 (Figma MCP настроен)."
-            )),
+            ),
+            decision_note="Закрыто как superseded DASH-119: исследование Claude Design как пути "
+                          "проведено (DesignSync доступен, + мой перевод в Reflex). Реальную пробу — "
+                          "внутри работы над DS, не отдельным спайком."),
 
         # ── Баг: DASH данные не видны в Kanban/Backlog ───────────────────────
         _di("DASH-73", "Баг: DASH задачи не отображаются в Kanban и Backlog вкладках",
