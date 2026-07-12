@@ -104,6 +104,12 @@ OKR_OPTIONS      = _OPTS["okrs"]
 # (table), so progress/SP math lives in one place.
 # ---------------------------------------------------------------------------
 
+def _key_num(key: str) -> int:
+    """Числовой суффикс ключа задачи для сортировки (DASH-100 → 100, MTF-5 → 5)."""
+    tail = key.rsplit("-", 1)[-1]
+    return int(tail) if tail.isdigit() else 0
+
+
 def _aggregate_epic(rows: list[dict]) -> dict:
     total   = len(rows)
     done    = sum(1 for r in rows if r["status"] == "Done")
@@ -230,6 +236,9 @@ class BacklogState(ProjectState):
         if self.sprint:   rows = [r for r in rows if r["sprint_name"]== self.sprint]
         if self.epic:     rows = [r for r in rows if r["epic"]       == self.epic]   # filter by KEY
         if self.okr:      rows = [r for r in rows if r["okr_tag"]    == self.okr]
+        # Детерминированная сортировка по номеру задачи (DASH-2 < DASH-10 < DASH-100).
+        # Без неё порядок = порядок файла (не строго по номеру) → при фильтре «плывёт».
+        rows.sort(key=lambda r: _key_num(r["key"]))
         return rows
 
     @rx.var
