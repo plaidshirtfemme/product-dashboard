@@ -18,3 +18,6 @@ CLAUDE.md
 # Local env
 .env
 .env.local
+
+# Локальный Figma MCP-конфиг (инертен: desktop-app его не читает, Figma на паузе)
+.mcp.json
