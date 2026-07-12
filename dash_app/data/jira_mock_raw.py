@@ -675,6 +675,28 @@ EPIC_UNLOCKS: dict[str, str] = {
     "DASH-EPIC-14": "DASH-EPIC-9",   # MCP ускоряет hi-fi артефакты + сам по себе плюс в кейс
 }
 
+# Эпик → цель (tag из okr_dash.py O0-O3). Раньше у всех задач был один okr_tag —
+# теперь разнесено по смыслу эпика (DASH-111). tag = короткая метка в UI,
+# okr_title (полное название цели) резолвится в _OKR_TITLES_DASH по этому tag.
+EPIC_OKR: dict[str, str] = {
+    # компонентная история — сборка самого дашборда
+    "DASH-EPIC-1": "O1 · Portfolio",
+    "DASH-EPIC-2": "O1 · Portfolio",
+    "DASH-EPIC-3": "O1 · Portfolio",
+    "DASH-EPIC-4": "O3 · Quality",
+    "DASH-EPIC-5": "O1 · Portfolio",
+    "DASH-EPIC-6": "O1 · Portfolio",
+    "DASH-EPIC-7": "O2 · Design Process",
+    "DASH-EPIC-8": "O3 · Quality",
+    # ценностные
+    "DASH-EPIC-9":  "O2 · Design Process",  # дизайн-процесс
+    "DASH-EPIC-10": "O1 · Portfolio",       # живая команда = достоверный контекст
+    "DASH-EPIC-11": "O1 · Portfolio",       # комикс = зритель понимает
+    "DASH-EPIC-12": "O0 · North Star",      # публикация кейса = путь к офферу
+    "DASH-EPIC-13": "O0 · North Star",      # деплой разблокирует публикацию
+    "DASH-EPIC-14": "O2 · Design Process",  # Figma MCP питает дизайн-артефакты
+}
+
 # Инвариант параллельных словарей: каждый эпик из NAMES обязан иметь тип, и
 # наоборот — иначе тип молча пропадёт в UI, а sort бросит эпик в конец.
 # Каждый unlocks-таргет и его источник должны существовать в NAMES.
@@ -757,7 +779,7 @@ def _di(
             CF_SPRINT: [sprint],
             CF_EPIC_LINK: epic,
             CF_RICE_REACH: 5, CF_RICE_IMPACT: 1.0, CF_RICE_CONFIDENCE: 0.8, CF_RICE_EFFORT: sp,
-            CF_OKR_TAG: "Рекрутер понимает продуктовый контекст без объяснений",
+            CF_OKR_TAG: EPIC_OKR.get(epic, "O1 · Portfolio"),
             **extra,
         },
         "changelog": {"histories": changelog_histories},
@@ -1680,10 +1702,18 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-87", "Spike: сохранение логов сессий Claude — исследовать подходы",
-            "To Do", "Spike", "ARCH", _DASH_EPICS["E13"], 3, 3, "Guzel K.",
+            "Done", "Spike", "ARCH", _DASH_EPICS["E13"], 3, 3, "Guzel K.",
             created="2026-07-10T12:00:00.000+0000",
+            started="2026-07-12T22:00:00.000+0000",
+            resolved="2026-07-12T22:20:00.000+0000",
             labels=["spike", "architecture", "process"],
             priority="Low",
+            decision_note="Закрыто 12.07 → wiki/session_logs_spike.md. Логи: ~/.claude/projects/"
+                          "<encoded-cwd>/<sessionId>.jsonl, один файл на сессию, JSONL (события user/"
+                          "assistant/system + служебные), поля timestamp/uuid/parentUuid/gitBranch/"
+                          "toolUseResult/attribution*. Для DASH-113 достаточно полу-ручного скрипта "
+                          "(сопоставление по времени с git). Сырые логи НЕ коммитить (приватность), "
+                          "формат недокументирован (может меняться). Ценное — выжимками в wiki/CLAUDE.md.",
             description=(
                 "Исследовать варианты сохранения логов работы в сессиях Claude Code. "
                 "Вопросы: где хранятся .jsonl файлы истории, можно ли их читать/экспортировать, "
@@ -1917,7 +1947,7 @@ def get_dash_issues() -> list[dict]:
             "To Do", "Task", "PM", _DASH_EPICS["E12"], 4, 2, "Guzel K.",
             created="2026-07-11T10:00:00.000+0000",
             labels=["release"], priority="Highest",
-            description="⏰ Жёсткий дедлайн пт 17.07. KR2: отклики Muse + Tola ≤ 20.07."),
+            description="⏰ Жёсткий дедлайн вс 19.07 (сдвинут с 17.07). Отклики Muse + Tola ≤ 22.07."),
 
         # ── Backlog UX-улучшения (стейкхолдер-ревью 11.07 вечером) ───────────
         _di("DASH-108", "Backlog: мультивыбор в фильтрах (Squad, Type, Status и др.)",
@@ -1955,12 +1985,19 @@ def get_dash_issues() -> list[dict]:
                         "detail-панель Figma. Возможно, дешёвая альтернатива — сдвинуть попап "
                         "к краю экрана и сделать фон некликабельным, но прозрачным."),
         _di("DASH-111", "Актуализировать OKR-теги эпиков: сейчас у всех один тег",
-            "To Do", "Task", "PM", _DASH_EPICS["E10"], 4, 2, "Claude Code",
+            "Done", "Task", "PM", _DASH_EPICS["E10"], 4, 2, "Claude Code",
             created="2026-07-11T18:00:00.000+0000",
+            started="2026-07-12T21:30:00.000+0000",
+            resolved="2026-07-12T21:50:00.000+0000",
             labels=["data", "process"], priority="High",
             description="Все DASH-задачи носят один okr_tag «Рекрутер понимает продуктовый контекст…». "
                         "Разнести по актуальным O0-O3 (okr_dash.py): E9→O2, E12/E13→O0 и т.д. "
-                        "_di() должен принимать okr_tag параметром вместо константы."),
+                        "_di() должен принимать okr_tag параметром вместо константы.",
+            decision_note="Закрыто 12.07: добавлена карта EPIC_OKR (эпик → tag цели O0-O3), _di() берёт "
+                          "okr_tag из неё по эпику вместо хардкод-константы. Распределение: O0 North Star "
+                          "(E12/E13, публикация+деплой), O1 Portfolio (E10/E11 + компонентные), O2 Design "
+                          "Process (E9/E14/E7), O3 Quality (E4/E8). Все теги резолвятся в названия целей. "
+                          "Видно в UI после рестарта reflex (данные грузятся при импорте)."),
         _di("DASH-112", "История изменений статусов в попапах задач и эпиков (как в Jira)",
             "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 5, "Claude Code",
             created="2026-07-11T18:00:00.000+0000",
@@ -2024,6 +2061,23 @@ def get_dash_issues() -> list[dict]:
                 "Календарь спринта (kanban.py) → logged. Это усиливает позиционирование: реальный продуктовый "
                 "процесс, а не демо. Связано с DASH-95 (правило соответствия данных проекту)."
             )),
+        _di("DASH-123", "Баг: Backlog Issues без детерминированной сортировки (порядок «плывёт» при фильтре)",
+            "Done", "Bug", "DEV", _DASH_EPICS["E9"], 5, 2, "Claude Code",
+            created="2026-07-12T22:40:00.000+0000",
+            started="2026-07-12T22:40:00.000+0000",
+            resolved="2026-07-12T23:00:00.000+0000",
+            labels=["ux", "backlog"], priority="Medium",
+            description=(
+                "Симптом (Guzel 12.07): список Issues без фильтра выглядит по возрастанию номера, но при "
+                "включении фильтра порядок непонятный; также казалось, что показывает максимум ~115 из 122.\n"
+                "Причина: (1) filtered() отдавал строки в порядке ФАЙЛА (get_dash_issues), а он не строго по "
+                "номеру (вставки/аппенды: DASH-121→58, хвост 116,117,…,115) → без фильтра похоже на "
+                "возрастание (DASH-1..90 писались по порядку), с фильтром обнажается хаос. (2) «115» — "
+                "устаревшие данные на запущенном сервере (грузятся при импорте; новые задачи после рестарта)."
+            ),
+            decision_note="Фикс: filtered() теперь rows.sort(key=_key_num) — числовая сортировка по номеру "
+                          "задачи. Одинаковый порядок с фильтром и без. Хелпер _key_num (DASH-100→100). "
+                          "Полноценная сортировка по клику на любую колонку — отдельно DASH-115."),
         _di("DASH-115", "Backlog: сортировка по клику на заголовок колонки",
             "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 5, "Claude Code",
             created="2026-07-11T18:00:00.000+0000",

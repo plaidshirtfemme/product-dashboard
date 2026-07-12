@@ -12,11 +12,11 @@ DASH_OKR_OBJECTIVES: list[Objective] = [
         title="Оффер продуктового дизайнера от Muse",
         description="Кейс — главная цель; удобство дашборда для выдуманной команды — инструментальная. "
                     "При конфликте приоритетов побеждает зритель кейса. Запасная цель — Tola (тёплый контакт).",
-        quarter="Спринт 11–17 июля 2026 · жёсткий дедлайн пт 17.07",
+        quarter="Спринт 11–19 июля 2026 · жёсткий дедлайн вс 19.07",
         key_results=[
-            KeyResult("KR-0.1", "Кейс опубликован на Framer ≤ 17.07",
+            KeyResult("KR-0.1", "Кейс опубликован на Framer ≤ 19.07",
                       current=0, target=1, unit="кейс", baseline=0),
-            KeyResult("KR-0.2", "Отклики отправлены (Muse + Tola) ≤ 20.07",
+            KeyResult("KR-0.2", "Отклики отправлены (Muse + Tola) ≤ 22.07",
                       current=0, target=2, unit="отклика", baseline=0),
             KeyResult("KR-0.3", "Приглашение на интервью",
                       current=0, target=1, unit="интервью", baseline=0),
