@@ -2146,6 +2146,15 @@ def get_dash_issues() -> list[dict]:
                 "Кандидаты: аналитика — Plausible/GA/PostHog; heatmaps+записи сессий — Microsoft Clarity "
                 "(бесплатно) / Hotjar / PostHog. Важно: JS-инструменты, поэтому чисто (пингера нет, да он и не "
                 "нужен — DASH-103). Скорее post-publish / 2-я итерация — аналитику можно добавить после запуска."
+            ),
+            decision_note=(
+                "ИССЛЕДОВАНИЕ (13.07) → wiki/analytics_heatmaps_research.md. Рекомендация: Microsoft Clarity "
+                "на ОБЕ поверхности — бесплатно без лимитов, heatmaps + записи сессий + базовая аналитика, "
+                "один инструмент. Оговорка: MS обучает AI на данных (для публичного портфолио низкая "
+                "чувствительность); privacy-альтернативы — PostHog (self-host) / Hotjar. Framer: встроенная "
+                "аналитика есть (free), heatmaps — только через custom-скрипт. Reflex: скрипт через "
+                "rx.App(head_components=[rx.script(...)]) → передеплой. Внедрение — post-publish (не блокирует "
+                "вс 19). Остаётся: аккаунт + вставка сниппета в Framer (custom code) и в dash_app.py."
             )),
         _di("DASH-115", "Backlog: сортировка по клику на заголовок колонки",
             "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 5, "Claude Code",
