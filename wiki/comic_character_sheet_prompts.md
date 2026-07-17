@@ -13,9 +13,13 @@
 
 ---
 
+## Выбранный стиль: Семейство B — cel-shaded кинематографичный
+Референсы стиля: **#13 (Alan Pappy) + #17 (офис) + #16 (идзакая)**. #12 НЕ использовать (слишком живописный, тянет в Семейство C).
+⚠️ Char-sheet рисуем в **нейтральном ровном свете** (чистый «паспорт» героя). Драматичный/кинематографичный свет применяем в КАДРАХ, не в листе — иначе лица «плывут».
+
 ## STYLE (вставляй в начало КАЖДОГО промпта)
 ```
-Character reference sheet, three views of the SAME person in one image: front view, 3/4 (45°) view, side profile. Neutral standing pose, plain warm off-white background, soft even lighting. Consistent modern editorial comic illustration style: clean confident linework, semi-flat cel shading, warm friendly palette, expressive but grounded (not chibi, not photoreal). Full body visible, character sheet layout with the three views side by side.
+Character reference sheet, three views of the SAME person in one image: front view, 3/4 (45°) view, side profile. Neutral standing pose, plain neutral background, EVEN soft studio lighting so the character reads clearly. Style: modern cel-shaded cinematic comic — confident inked linework, bold cel shading with clean shadow shapes, warm grounded palette, expressive but realistic proportions (not chibi, not photoreal). Full body visible, three views side by side. Match the art style of the reference images.
 ```
 
 ---
@@ -85,6 +89,7 @@ Subject: NUR, artist-in-residence, 20s, gender-flexible, ink-stained fingers, ex
 ```
 
 ## Советы по консистентности
+- **Свет: лист = ровный, кадр = драматичный.** Стиль B кинематографичный, но в char-sheet держи нейтральный ровный свет; драму света давай в кадрах. Иначе тени перекраивают лицо и герой «плывёт».
 - **Один STYLE-блок везде** — стиль дрейфует первым.
 - **Держи имена в промпте** (KIM, AYA…) — помогает семантическому трекингу Nano Banana.
 - **1-2 «якоря» на героя** (у Леи — цветные пряди; у Нура — чернильные пальцы; у Марко — три монитора) — по ним модель узнаёт персонажа в кадре.
