@@ -84,12 +84,13 @@ RESOLUTIONS_OTHER = ["Won't Fix", "Duplicate", "Cannot Reproduce"]
 
 ADR_STATUSES = ["Proposed", "Accepted", "Superseded"]
 
-# Real ADRs from Knowledge Pipeline's own README — used instead of inventing
-# generic mock decisions, so the Architecture tab shows genuine content.
+# ADRs from Motif's domain (collaborative sketch app) — so the Architecture
+# tab shows decisions consistent with the team's story, not generic mocks.
 REAL_ADR_TOPICS = [
-    ("Fallback chain для видео без субтитров", "yt-dlp транскрипция как запасной путь"),
-    ("Идемпотентность обработки батчей", "хэш URL как ключ дедупликации"),
-    ("Chunking длинных транскриптов", "разбиение по токен-лимиту перед LLM-обогащением"),
+    ("Стратегия бэкапов и RPO для проектов", "ночные инфра-бэкапы + непрерывная version-history"),
+    ("Живая миграция хранилища без даунтайма", "миграция на горячую под срок демо (трейд-офф)"),
+    ("Realtime-синхронизация мультикурсора", "CRDT поверх общего холста"),
+    ("Хранение истории версий холста", "дельта-снапшоты вместо полных копий"),
 ]
 
 LABELS_POOL = ["tech-debt", "needs-refactor", "quick-win", "blocked-by-external"]
@@ -107,6 +108,11 @@ class SquadConfig:
     stage_order: int         # position in the SDLC pipeline (0-indexed)
     sprint_length_days: int  # must be a multiple of 7
     issue_types: list[str]   # which issue types this squad produces
+    # Story content — keeps the generator reusable: a config without these
+    # falls back to generic placeholders (squad name + PEOPLE pool). Motif
+    # fills them so the generated body reads like the real team's work.
+    assignees: list[str] = field(default_factory=list)   # cast members who own this squad's work
+    summaries: list[str] = field(default_factory=list)    # realistic task titles (domain-specific)
 
 
 @dataclass
@@ -131,16 +137,98 @@ MOTIF_DEMO_CONFIG = ProjectConfig(
     total_scope=5000,
     north_star_metric="Активных пользователей завершивших первый скетч",
     squads=[
-        SquadConfig("RESEARCH", "Research", 0, 7, ["research-spike"]),
-        SquadConfig("ARCHITECTURE", "Architecture", 1, 14, ["task", "story", "adr"]),
-        SquadConfig("ANALYSIS", "Analysis", 2, 14, ["requirement", "task"]),
-        SquadConfig("DESIGN", "Design", 3, 7, ["story", "task", "design"]),
-        SquadConfig("DEV", "Development & Pipeline", 4, 7, ["story", "bug", "task"]),
-        SquadConfig("QUALITY", "Quality", 5, 7, ["bug", "task"]),
-        SquadConfig("RELEASE", "Instructions & Release", 6, 7, ["task"]),
-        SquadConfig("MONITORING", "Monitoring & Support", 7, 7, ["bug", "task", "support-ticket"]),
-        SquadConfig("GROWTH", "Growth", 8, 14, ["experiment", "task"]),
-        SquadConfig("PM", "Product Management", 9, 14, ["task", "story"]),
+        SquadConfig(
+            "RESEARCH", "Research", 0, 7, ["research-spike"],
+            assignees=["Софи"],
+            summaries=[
+                "Юзабилити-тест онбординга: первый скетч за 5 минут",
+                "Интервью с художниками: боль совместной работы над артом",
+                "Ресёрч: почему юзеры бросают после первого наброска",
+                "Бенчмарк version-history у конкурентов (Figma / Procreate)",
+                "Опрос: доверие к облачному хранению проектов",
+            ]),
+        SquadConfig(
+            "ARCHITECTURE", "Architecture", 1, 14, ["task", "story", "adr"],
+            assignees=["Марко"],
+            summaries=[
+                "Архитектура realtime-синка мультикурсора",
+                "Проектирование миграции хранилища под v2",
+                "Оценка техдолга старого стораджа проектов",
+                "Схема непрерывной version-history холста",
+            ]),
+        SquadConfig(
+            "ANALYSIS", "Analysis", 2, 14, ["requirement", "task"],
+            assignees=["Марко", "Софи"],
+            summaries=[
+                "Спека: непрерывная version-history",
+                "Требования к recovery-флоу после инцидента",
+                "Контракт API истории версий v2",
+                "Анализ зависимостей миграции хранилища",
+            ]),
+        SquadConfig(
+            "DESIGN", "Design", 3, 7, ["story", "task", "design"],
+            assignees=["Ая"],  # Нур — пользователь (Artist-in-Residence / dogfood), не дизайн-сквад
+            summaries=[
+                "Дизайн v2 холста: слои и таймлайн версий",
+                "Recovery-UX: восстановление потерянной работы",
+                "UX-writing: экран извинения и компенсации",
+                "Пустое состояние: приглашение к первому скетчу",
+                "Онбординг-флоу нового художника",
+            ]),
+        SquadConfig(
+            "DEV", "Development", 4, 7, ["story", "bug", "task"],
+            assignees=["Лея", "Марко"],
+            summaries=[
+                "Фронт: панель version-history на холсте",
+                "Реализация мультикурсора realtime",
+                "Живая миграция хранилища без даунтайма",
+                "Непрерывное сохранение дельты проекта",
+                "Сборка экрана восстановления работы",
+            ]),
+        SquadConfig(
+            "QUALITY", "Quality", 5, 7, ["bug", "task"],
+            assignees=["Том"],
+            summaries=[
+                "Регресс: сохранность проектов при миграции",
+                "Тест-план: одновременное редактирование холста",
+                "Верификация восстановления после инцидента",
+                "Проверка RPO: потеря дельты между бэкапами",
+            ]),
+        SquadConfig(
+            "RELEASE", "Release", 6, 7, ["task"],
+            assignees=["Дэн", "Марко"],
+            summaries=[
+                "Релиз v2: чек-лист выката миграции",
+                "Откат-план для живой миграции",
+                "Координация демо для инвестора",
+            ]),
+        SquadConfig(
+            "MONITORING", "Monitoring & Support", 7, 7, ["bug", "task", "support-ticket"],
+            assignees=["Ли", "Том"],
+            summaries=[
+                "Инцидент: потеря свежих проектов у художников",
+                "Тикет: у пользователя пропал холст после миграции",
+                "Мониторинг ошибок сохранения дельты",
+                "Разбор обращений из сообщества после релиза",
+            ]),
+        SquadConfig(
+            "GROWTH", "Growth", 8, 14, ["experiment", "task"],
+            assignees=["Прия", "Ли"],
+            summaries=[
+                "Эксперимент: CTA на пустом холсте",
+                "Воронка: retention после первого арта",
+                "Анализ вирального роста после релиза",
+                "A/B: онбординг нового художника",
+            ]),
+        SquadConfig(
+            "PM", "Product Management", 9, 14, ["task", "story"],
+            assignees=["Дэн"],  # Ким — CEO/фаундер, НАД PM; в доставке тикетов не участвует
+            summaries=[
+                "Планирование спринта v2 к демо",
+                "Приоритизация бэклога после инцидента",
+                "Ставка спринта: удержание → Series A",
+                "Ретро: выводы после кризиса потери арта",
+            ]),
     ],
 )
 
@@ -228,6 +316,7 @@ def _gen_changelog(
     rng: random.Random,
     created: datetime,
     final_status: str,
+    people: list[str] | None = None,
 ) -> tuple[list[dict], datetime | None]:
     """
     Simulates the realistic messiness of a Jira changelog: an issue doesn't
@@ -240,9 +329,10 @@ def _gen_changelog(
     instead of picking it independently and risking a mismatch.
     """
     histories: list[dict] = []
+    people = people or PEOPLE
     current = created
     current_status = "To Do"
-    current_assignee = rng.choice(PEOPLE)
+    current_assignee = rng.choice(people)
     target_index = WORKFLOW_INDEX[final_status]
 
     if target_index == 0:
@@ -281,7 +371,7 @@ def _gen_changelog(
 
         # 20% chance the assignee changes at this point too
         if rng.random() < 0.2:
-            new_assignee = rng.choice([p for p in PEOPLE if p != current_assignee])
+            new_assignee = rng.choice([p for p in people if p != current_assignee] or people)
             current += timedelta(hours=rng.randint(1, 24))
             histories.append({
                 "created": _iso(current),
@@ -296,15 +386,15 @@ def _issue_type_extra_fields(rng: random.Random, issue_type: str, squad_key: str
     if issue_type == "research-spike":
         return {
             CF_HYPOTHESIS: rng.choice([
-                "Если добавить фильтр по source_type, пользователь быстрее найдёт заметку",
-                "Явный CTA на пустом состоянии повысит частоту первого действия",
-                "Группировка по темам снизит время поиска нужной заметки",
+                "Явный CTA на пустом холсте повысит частоту первого скетча",
+                "Видимая version-history снизит тревогу за сохранность работы",
+                "Мультикурсор в реальном времени повысит совместные сессии",
             ]),
             CF_RESEARCH_METHOD: rng.choice(["Task-based usability test", "A/B тест", "Опрос"]),
             CF_RESEARCH_METRIC: rng.choice(["Task Success Rate", "Time on task", "SUS score"]),
             CF_INSIGHT: rng.choice([
-                "80% не заметили фильтр с первого раза",
-                "Пользователи ожидали группировку по дате, а не по теме",
+                "70% не заметили автосохранение и боялись потерять набросок",
+                "Художники ожидали таймлайн версий, как в Procreate",
                 None,
             ]),
             CF_DECISION: rng.choice(["Применено", "В работе", None]),
@@ -312,7 +402,7 @@ def _issue_type_extra_fields(rng: random.Random, issue_type: str, squad_key: str
     if issue_type == "experiment":
         return {
             CF_VARIANT_A: "Контроль",
-            CF_VARIANT_B: rng.choice(["Новый onboarding", "Альтернативный folder_examples.yml"]),
+            CF_VARIANT_B: rng.choice(["Новый онбординг художника", "CTA на пустом холсте"]),
             CF_EXPERIMENT_RESULT: rng.choice(["Вариант B лучше", "Без значимой разницы", None]),
         }
     if issue_type == "requirement":
@@ -388,7 +478,7 @@ def generate_raw_issues(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[dict]
             CF_RICE_EFFORT: rng.choice([1, 2, 3, 5, 8]),
         }
         epic_okr_tag = rng.choice([
-            "Рост охвата контента", "Снижение needs_review", "Скорость обработки",
+            "Удержание художников", "Доверие к сохранности работы", "Совместные сессии",
         ])
 
         for _ in range(n_issues):
@@ -403,7 +493,7 @@ def generate_raw_issues(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[dict]
             is_done = rng.random() < 0.7
             final_status = "Done" if is_done else rng.choice(["To Do", "In Progress", "In Review"])
 
-            changelog, resolved_ts = _gen_changelog(rng, created, final_status)
+            changelog, resolved_ts = _gen_changelog(rng, created, final_status, squad.assignees or None)
             resolved = resolved_ts if final_status == "Done" else None
 
             # Release assignment + possible slip to a later release.
@@ -509,10 +599,11 @@ def generate_raw_issues(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[dict]
             issue = {
                 "key": key,
                 "fields": {
-                    "summary": f"{squad.name}: задача {issue_counter}",
+                    "summary": (rng.choice(squad.summaries) if squad.summaries
+                                else f"{squad.name}: задача {issue_counter}"),
                     "issuetype": {"name": issue_type},
                     "status": {"name": final_status, "statusCategory": STATUS_CATEGORY[final_status]},
-                    "assignee": {"displayName": rng.choice(PEOPLE)},
+                    "assignee": {"displayName": rng.choice(squad.assignees or PEOPLE)},
                     "created": _iso(created),
                     "updated": _iso(resolved or created),
                     "resolutiondate": _iso(resolved) if resolved else None,
@@ -570,7 +661,186 @@ def generate_raw_issues(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[dict]
                 "outwardIssue": {"key": related},
             })
 
+    # Story spine — a curated set of A1 "Потеря арта" issues woven on top of
+    # the generated statistical body (spine + braid, like the story itself).
+    # Only for the Motif demo; other configs get body-only.
+    if config.project_key == MOTIF_DEMO_CONFIG.project_key:
+        issues.extend(_motif_spine_issues(config, issue_counter))
+
     return issues
+
+
+# ---------------------------------------------------------------------------
+# Motif story spine — A1 «Потеря арта». Hand-authored hero issues that make
+# the crisis arc legible on the board (kanban/backlog/quality/architecture),
+# anchored to the sprint that shipped v2 to the investor demo. The generated
+# body above supplies statistical realism; these supply the narrative.
+# ---------------------------------------------------------------------------
+
+# Squad key -> stage_order, for the epic link. Kept in sync with the config.
+_MTF_STAGE = {
+    "RESEARCH": 0, "ARCHITECTURE": 1, "ANALYSIS": 2, "DESIGN": 3, "DEV": 4,
+    "QUALITY": 5, "RELEASE": 6, "MONITORING": 7, "GROWTH": 8, "PM": 9,
+}
+
+
+def _motif_spine_issues(config: ProjectConfig, start_counter: int) -> list[dict]:
+    # Anchor the crisis sprint to the two weeks before the MVP deadline (v2 demo).
+    spine_start = config.mvp_deadline - timedelta(days=18)
+    sprint_start = spine_start
+    sprint_end = sprint_start + timedelta(days=14)
+
+    def _sprint(state: str) -> list[dict]:
+        return [{
+            "id": 900, "name": "Motif — v2 к демо (Series A)", "state": state,
+            "startDate": _iso(sprint_start), "endDate": _iso(sprint_end),
+        }]
+
+    # Each spine ticket: squad, type, summary, assignee, status, created day,
+    # resolved day (None if unresolved), story points, priority, plus optional
+    # severity / labels / adr fields / links.
+    SPINE = [
+        dict(squad="PM", type="story", summary="Ставка спринта v2: удержание → Series A",
+             assignee="Дэн", status="Done", d0=0, d1=1, sp=3, prio="Highest"),
+        dict(squad="ARCHITECTURE", type="adr",
+             summary="ADR: Живая миграция хранилища без даунтайма",
+             assignee="Марко", status="Done", d0=0, d1=2, sp=5, prio="High",
+             labels=["tech-debt"],
+             adr=("Под срок демо нельзя останавливать запись → мигрируем на горячую",
+                  "Live-миграция vs полная заморозка записи vs перенос демо",
+                  "Живая миграция под срок демо (осознанный трейд-офф)",
+                  "Риск: одновременные записи во время миграции + латентный техдолг стораджа",
+                  "Accepted")),
+        dict(squad="ANALYSIS", type="requirement",
+             summary="version-history задвинута из скоупа ради срока демо",
+             assignee="Марко", status="Done", d0=0, d1=1, sp=2, prio="Medium",
+             req_source="PM decision"),
+        dict(squad="DEV", type="story",
+             summary="Живая миграция хранилища проектов на v2-схему",
+             assignee="Марко", status="Done", d0=2, d1=9, sp=8, prio="High",
+             labels=["tech-debt"]),
+        dict(squad="DEV", type="story",
+             summary="Фронт v2 под кранчем: слои и панель версий",
+             assignee="Лея", status="Done", d0=3, d1=8, sp=8, prio="High",
+             labels=["needs-refactor"]),
+        dict(squad="GROWTH", type="experiment",
+             summary="Виральный рост после анонса v2 (сообщество раздувает)",
+             assignee="Прия", status="Done", d0=4, d1=7, sp=3, prio="Medium"),
+        dict(squad="QUALITY", type="bug",
+             summary="QA-риск: гонка записи при миграции под нагрузкой",
+             assignee="Том", status="Done", d0=6, d1=8, sp=3, prio="High",
+             sev="Major"),
+        dict(squad="MONITORING", type="bug",
+             summary="🔴 Инцидент: потеря свежих проектов у художников",
+             assignee="Ли", status="Done", d0=9, d1=11, sp=5, prio="Highest",
+             sev="Blocker",
+             links=[("Blocks", "DEV_MIGR"), ("Relates", "QA_RISK")]),
+        dict(squad="DEV", type="bug",
+             summary="Экстренный фикс: откат из бэкапа, дельта после RPO невосстановима",
+             assignee="Марко", status="Done", d0=9, d1=11, sp=8, prio="Highest",
+             sev="Critical", labels=["tech-debt"]),
+        dict(squad="DESIGN", type="design",
+             summary="Recovery-UX: экран восстановления + извинение и компенсация",
+             assignee="Ая", status="Done", d0=10, d1=12, sp=5, prio="High"),
+        dict(squad="PM", type="task",
+             summary="Blameless-постмортем инцидента потери арта",
+             assignee="Реми", status="Done", d0=10, d1=11, sp=2, prio="High"),
+        dict(squad="ARCHITECTURE", type="story",
+             summary="Непрерывная version-history как принцип (post-incident)",
+             assignee="Марко", status="In Progress", d0=11, d1=None, sp=8, prio="High"),
+        dict(squad="RELEASE", type="task",
+             summary="Демо Даниэлю: честно про инцидент и реакцию команды",
+             assignee="Ким", status="Done", d0=11, d1=11, sp=2, prio="High"),
+        dict(squad="GROWTH", type="task",
+             summary="Retention после инцидента: доверие = удержание",
+             assignee="Прия", status="In Progress", d0=12, d1=None, sp=3, prio="Medium"),
+        dict(squad="DESIGN", type="story",
+             summary="Дизайн v2 холста: таймлайн версий и слои",
+             assignee="Ая", status="In Progress", d0=12, d1=None, sp=5, prio="Medium"),
+        dict(squad="PM", type="task",
+             summary="Найм бэкендера: разморозка после Series A",
+             assignee="Дэн", status="To Do", d0=13, d1=None, sp=3, prio="High"),
+    ]
+
+    # Two-pass so links can reference sibling spine keys by symbolic id.
+    counter = start_counter
+    keyed: list[tuple[str, dict]] = []
+    symbolic = {"DEV_MIGR": None, "QA_RISK": None}
+    for spec in SPINE:
+        counter += 1
+        key = f"{config.project_key}-{counter}"
+        keyed.append((key, spec))
+        if spec["summary"].startswith("Живая миграция"):
+            symbolic["DEV_MIGR"] = key
+        if spec["summary"].startswith("QA-риск"):
+            symbolic["QA_RISK"] = key
+
+    out: list[dict] = []
+    for key, spec in keyed:
+        created = spine_start + timedelta(days=spec["d0"])
+        resolved = spine_start + timedelta(days=spec["d1"]) if spec.get("d1") is not None else None
+        stage = _MTF_STAGE[spec["squad"]]
+        status = spec["status"]
+
+        changelog: list[dict] = []
+        if status != "To Do":
+            changelog.append({"created": _iso(created + timedelta(hours=6)), "items": [{
+                "field": "status", "fieldtype": "jira", "fieldId": "status",
+                "fromString": "To Do", "toString": "In Progress"}]})
+        if status == "Done":
+            changelog.append({"created": _iso(resolved), "items": [{
+                "field": "status", "fieldtype": "jira", "fieldId": "status",
+                "fromString": "In Progress", "toString": "Done"}]})
+
+        issuelinks = []
+        for link_name, sym in spec.get("links", []):
+            target = symbolic.get(sym)
+            if target:
+                issuelinks.append({
+                    "type": {"name": link_name,
+                             "inward": "is blocked by" if link_name == "Blocks" else "relates to",
+                             "outward": "blocks" if link_name == "Blocks" else "relates to"},
+                    "outwardIssue": {"key": target}})
+
+        extra: dict = {}
+        if "adr" in spec:
+            ctx, opts, dec, cons, st = spec["adr"]
+            extra = {"summary": spec["summary"], CF_ADR_CONTEXT: ctx, CF_ADR_OPTIONS: opts,
+                     CF_ADR_DECISION: dec, CF_ADR_CONSEQUENCES: cons, CF_ADR_STATUS: st}
+        if "req_source" in spec:
+            extra[CF_REQUIREMENT_SOURCE] = spec["req_source"]
+        if spec["type"] == "design":
+            extra[CF_ITERATION_COUNT] = 3
+            extra[CF_ACCESSIBILITY_CHECKED] = True
+
+        out.append({
+            "key": key,
+            "fields": {
+                "summary": spec["summary"],
+                "issuetype": {"name": spec["type"]},
+                "status": {"name": status, "statusCategory": STATUS_CATEGORY[status]},
+                "assignee": {"displayName": spec["assignee"]},
+                "created": _iso(created),
+                "updated": _iso(resolved or created),
+                "resolutiondate": _iso(resolved) if resolved else None,
+                "fixVersions": [],
+                "versions": [],
+                "labels": spec.get("labels", []),
+                "components": [],
+                CF_STORY_POINTS: spec["sp"],
+                "priority": {"name": spec["prio"]},
+                "resolution": {"name": "Fixed"} if status == "Done" else None,
+                **({CF_SEVERITY: spec["sev"]} if "sev" in spec else {}),
+                CF_SPRINT: _sprint("closed" if status == "Done" else "active"),
+                CF_EPIC_LINK: f"{config.project_key}-EPIC-{stage + 1}",
+                CF_OKR_TAG: "Доверие к сохранности работы",
+                **extra,
+            },
+            "changelog": {"histories": changelog},
+            "issuelinks": issuelinks,
+            "_squad_key": spec["squad"],
+        })
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -1885,12 +2155,23 @@ def get_dash_issues() -> list[dict]:
                 "миграция + латентный техдолг + RPO, не «забыли бэкапы»). Дальше — кадр-уровень + DASH-101 (отрисовка)."
             )),
         _di("DASH-97", "Блок 6 · Пересоздание Motif: Jira-данные + наполнение вкладок",
-            "To Do", "Task", "DEV", _DASH_EPICS["E10"], 4, 8, "Claude Code",
+            "Done", "Task", "DEV", _DASH_EPICS["E10"], 4, 8, "Claude Code",
             created="2026-07-11T10:00:00.000+0000",
+            started="2026-07-17T14:00:00.000+0000",
+            resolved="2026-07-17T18:00:00.000+0000",
             labels=["content", "data"], priority="High",
             description="Вшить историю (Блок 1) + дневники (Блок 2) в MOTIF-данные и наполнение вкладок "
                         "дашборда: Jira-задачи по тайм-канве, роли, кризисы, Goals легенды. Объединяет DASH-69. "
-                        "ЗАВИСИТ от Блоков 1-2, идёт ПАРАЛЛЕЛЬНО комиксу (Блоки 3-5) — комикс не предпосылка данных."),
+                        "ЗАВИСИТ от Блоков 1-2, идёт ПАРАЛЛЕЛЬНО комиксу (Блоки 3-5) — комикс не предпосылка данных.",
+            decision_note=(
+                "ГОТОВ (17.07). Подход: story-aware генератор (спайн + тело), а не ручной датасет — "
+                "статистическое тело держит аналитику (rework/RICE/предсказуемость/дефекты), спайн даёт "
+                "историю. Сделано: (1) вся доменная лексика KP→Motif (ADR, гипотезы, инсайты, OKR-теги, "
+                "заголовки по сквадам); (2) ассайни = каст (SquadConfig.assignees/summaries); (3) 16 hero-"
+                "тикетов A1 «Потеря арта» на канве спринта v2→демо: ставка→живая миграция→QA-риск→🔴инцидент"
+                "→фикс(RPO)→recovery-UX(Ая)→постмортем(Реми)→демо Даниэлю→найм бэкендера, со статусами/линками. "
+                "Итог: 118 задач (102 тело + 16 спайн), 0 KP-остатков. Проверено через adapter.load_issues."
+            )),
         _di("DASH-98", "Карточки персон команды: цитаты, JTBD, RACI",
             "Done", "Story", "DESIGN", _DASH_EPICS["E10"], 4, 3, "Guzel K.",
             created="2026-07-11T10:00:00.000+0000",
@@ -2291,6 +2572,10 @@ def get_dash_issues() -> list[dict]:
         "DASH-100": [_block("DASH-101")],                            # Блок 3 сценарий → Блок 4 отрисовка
         "DASH-101": [_block("DASH-102"), _block("DASH-122")],        # отрисовка → встройка + музыка
         "DASH-65": [_link("Relates", "DASH-97")],                    # дневники питают данные
+        # DASH-97 (наполнение MOTIF-данных) опирается на user stories и user flows участников:
+        "DASH-97": [_link("Relates", "DASH-44"),                     # user stories (17 ролей → каст)
+                    _link("Relates", "DASH-98"),                     # персоны + JTBD участников
+                    _link("Relates", "DASH-99")],                    # user flows: карта обмена артефактами ролей
         "DASH-103": [_block("DASH-106")],                            # деплой блокирует Framer-сборку
         "DASH-104": [_block("DASH-106")],
         "DASH-105": [_block("DASH-106")],
