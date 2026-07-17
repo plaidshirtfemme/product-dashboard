@@ -9,6 +9,7 @@ import reflex as rx
 from .states import NavState, ProjectState
 from .components.empty_state import empty_state
 from .pages.about import about_tab
+from .pages.motif_about import motif_about_tab
 from .pages.overview import overview_tab
 from .pages.backlog import backlog_tab
 from .pages.kanban import kanban_tab, dash_kanban_tab
@@ -69,7 +70,11 @@ def _coming_soon(title: str, reason: str, icon: str) -> rx.Component:
 def _build_page_content() -> rx.Component:
     """Build a nested rx.cond chain from a flat list of (tab_id, component) entries."""
     entries: list[tuple[str, rx.Component]] = [
-        ("about", about_tab()),
+        ("about", _by_project(
+            motif=motif_about_tab(),
+            kp=about_tab(),
+            dash=about_tab(),
+        )),
         ("kanban", _by_project(
             motif=kanban_tab(),
             kp=_demo_only(
