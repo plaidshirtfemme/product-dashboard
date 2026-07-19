@@ -901,6 +901,15 @@ _DASH_EPICS = {
     "E12": "DASH-EPIC-12", # Кейс опубликован (business)
     "E13": "DASH-EPIC-13", # Деплой и инженерная готовность (enabler → E12)
     "E14": "DASH-EPIC-14", # Figma MCP (enabler → E9)
+    # Перенарезка 18.07.2026 (DASH-95 2-я итерация): дедлайн снят с жёсткого,
+    # CV готов, комикс понижен. Работа перенарезана по ПРОЦЕССНЫМ этапам —
+    # каждый этап = веха продуктового процесса. Ценностные E9-E12 остаются
+    # историей (их done-работа не переписывается); открытые задачи легли на этапы.
+    "E15": "DASH-EPIC-15", # Этап 1 · Double Diamond по пользователям (business)
+    "E16": "DASH-EPIC-16", # Этап 2 · Вайрфреймы в Figma из готового UX (business)
+    "E17": "DASH-EPIC-17", # Этап 3 · Дизайн-система, hi-fi, round-trip (business)
+    "E18": "DASH-EPIC-18", # Этап 4 · Сборка портфолио (business)
+    "E19": "DASH-EPIC-19", # Этап 5 · Валидация и отклик (business)
 }
 
 EPIC_NAMES: dict[str, str] = {
@@ -918,6 +927,11 @@ EPIC_NAMES: dict[str, str] = {
     "DASH-EPIC-12": "Кейс опубликован",
     "DASH-EPIC-13": "Деплой и инженерная готовность",
     "DASH-EPIC-14": "Figma MCP",
+    "DASH-EPIC-15": "Этап 1 · Double Diamond по пользователям",
+    "DASH-EPIC-16": "Этап 2 · Вайрфреймы в Figma",
+    "DASH-EPIC-17": "Этап 3 · Дизайн-система, hi-fi, round-trip",
+    "DASH-EPIC-18": "Этап 4 · Сборка портфолио",
+    "DASH-EPIC-19": "Этап 5 · Валидация и отклик",
 }
 
 # Тип эпика: business — ценность зрителю кейса, enabler — разблокирует business-эпик,
@@ -937,6 +951,11 @@ EPIC_TYPES: dict[str, str] = {
     "DASH-EPIC-12": "business",
     "DASH-EPIC-13": "enabler",
     "DASH-EPIC-14": "enabler",
+    "DASH-EPIC-15": "business",
+    "DASH-EPIC-16": "business",
+    "DASH-EPIC-17": "business",
+    "DASH-EPIC-18": "business",
+    "DASH-EPIC-19": "business",
 }
 
 # Enabler-эпик обязан явно ссылаться на то, что разблокирует.
@@ -965,6 +984,11 @@ EPIC_OKR: dict[str, str] = {
     "DASH-EPIC-12": "O0 · North Star",      # публикация кейса = путь к офферу
     "DASH-EPIC-13": "O0 · North Star",      # деплой разблокирует публикацию
     "DASH-EPIC-14": "O2 · Design Process",  # Figma MCP питает дизайн-артефакты
+    "DASH-EPIC-15": "O2 · Design Process",  # DD по пользователям = дизайн-процесс
+    "DASH-EPIC-16": "O2 · Design Process",  # вайрфреймы
+    "DASH-EPIC-17": "O2 · Design Process",  # дизайн-система + hi-fi
+    "DASH-EPIC-18": "O1 · Portfolio",       # сборка портфолио
+    "DASH-EPIC-19": "O0 · North Star",      # валидация + отклик = путь к офферу
 }
 
 # Инвариант параллельных словарей: каждый эпик из NAMES обязан иметь тип, и
@@ -2278,9 +2302,20 @@ def get_dash_issues() -> list[dict]:
                 "• Затык 'no access' → project select."
             )),
         _di("DASH-104", "Переписать CV под позиционирование «продуктовый дизайнер»",
-            "To Do", "Task", "PM", _DASH_EPICS["E12"], 4, 3, "Guzel K.",
+            "Done", "Task", "PM", _DASH_EPICS["E12"], 4, 3, "Guzel K.",
             created="2026-07-11T10:00:00.000+0000",
-            labels=["content", "release"], priority="High"),
+            started="2026-07-18T12:00:00.000+0000",
+            resolved="2026-07-18T20:00:00.000+0000",
+            labels=["content", "release"], priority="High",
+            decision_note=(
+                "ГОТОВ (18.07). Финал: CV_v3_Muse_Guzel_Karimova.pdf (EN, 2-колоночный editorial, "
+                "мастер — CV_v3_print.html). Evidence-based, guardrails соблюдены; каждая строка "
+                "выдерживает проверку. Позиционирование: «Product Designer с systems-thinking для сложных "
+                "data-dense/expert инструментов». Проверено с Guzel построчно: C4 (Galamart), usability "
+                "testing (Sportmaster 1C:ERP), performance-aware design, «clear/implementable» вместо "
+                "developer-ready. Дашборд — self-initiated строка, не Experience. Muse-хук: «design for the "
+                "software I use as a working musician» + Beyond Work (саксофон). Файлы в cv_product_designer/."
+            )),
         _di("DASH-105", "Hero-блоки остальных кейсов портфолио (реальные показатели-достижения)",
             "To Do", "Task", "DESIGN", _DASH_EPICS["E12"], 4, 3, "Guzel K.",
             created="2026-07-11T10:00:00.000+0000",
@@ -2523,6 +2558,97 @@ def get_dash_issues() -> list[dict]:
             labels=["ux", "backlog"], priority="Low",
             description="Возобновляет отложенный план «сортировка таблиц» (memory project_table_sorting): "
                         "клик по заголовку — asc/desc/сброс, индикатор стрелкой. Позже — поиск по колонкам."),
+
+        # ── Перенарезка 18.07: новые задачи по этапам процесса (E15-E19) ──────────
+        _di("DASH-129", "Architecture showcase: C4 + Figma-интеграция + схема Goal→Epic→Issue + ADR",
+            "To Do", "Story", "ARCH", _DASH_EPICS["E17"], 5, 5, "Guzel K.",
+            created="2026-07-18T10:00:00.000+0000",
+            labels=["architecture", "content", "ux"], priority="High",
+            description=(
+                "Апгрейд вкладки Architecture (dash-режим): показать СОБСТВЕННУЮ архитектуру проекта как "
+                "артефакт. Состав: (1) C4-диаграмма дашборда (System Context / Container / Component); "
+                "(2) Figma-интеграция — цепочка design_tokens.json ↔ Tokens Studio ↔ Figma Variables + "
+                "token round-trip (см. DASH-133); (3) схема сущностей Goal→Epic→Issue; (4) ключевые ADR "
+                "(decision_notes). ЦЕЛЬ: сделать видимой многоролевую работу Guzel (PM/SA/архитектор), но "
+                "как ГЛУБИНУ под дизайн-заголовком (systems-thinking Product Designer), НЕ как конкурирующий "
+                "заголовок «я архитектор». Мета: дашборд документирует свою же архитектуру (self-hosting). "
+                "Инициатива Guzel 18.07: «артефакты ВСЕЙ моей работы должны быть видны, не только дизайн»."
+            )),
+        _di("DASH-130", "Mobile / cross-platform hero-tile: флоу Galamart (app) + stealth mobile web",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E18"], 5, 3, "Guzel K.",
+            created="2026-07-18T10:00:00.000+0000",
+            labels=["ux", "content", "portfolio"], priority="High",
+            description=(
+                "Закрыть пробел №1 (mobile) ЛЁГКО — hero + короткое описание, не полный кейс (силы беречь). "
+                "Показать ЧЕСТНО, по guardrails: Galamart — свои флоу и состояния (регистрация/консент/QR/"
+                "баллы) для web И мобильного приложения; финальный UI делали дизайнеры → формулировка "
+                "«cross-platform flows incl. mobile app», НЕ «mobile app design». Артефакт = сами флоу/"
+                "state-диаграммы (её реальная работа и её сила). Stealth — responsive mobile web (WordPress), "
+                "mobile = большинство трафика; скрины БЕЗ идентифицирующего контента (NDA/безопасность). "
+                "Абзац продублирован в CV-чат, формулировки согласованы."
+            )),
+        _di("DASH-131", "Фотогалерея плёночных фото (портфолио на Framer)",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E18"], 5, 3, "Guzel K.",
+            created="2026-07-18T10:00:00.000+0000",
+            labels=["ux", "portfolio"], priority="Medium",
+            description=(
+                "Раздел портфолио с плёночными фото — показывает визуальный вкус + творческий вектор "
+                "(Beyond Work: фотография, музыка). Найти классный UI/UX-паттерн фотогалереи: собрать "
+                "виджетами / embed в Framer ИЛИ готовый компонент галереи в Framer. Аккуратная сетка + "
+                "лайтбокс, не перегружать. Отобрать лучшие кадры. Не критический путь, но усиливает «человека "
+                "за дизайнером»."
+            )),
+        _di("DASH-132", "Таблица соответствия CV ↔ портфолио (каждая строка CV = чем подтверждена)",
+            "To Do", "Task", "PM", _DASH_EPICS["E19"], 5, 2, "Guzel K.",
+            created="2026-07-18T10:00:00.000+0000",
+            labels=["content", "process"], priority="High",
+            description=(
+                "Финальный артефакт И гейт перед откликом. Таблица: каждая строка CV_v3 (skill / опыт / "
+                "утверждение) → артефакт в портфолио, который её ПОДТВЕРЖДАЕТ (кейс / флоу / вкладка дашборда / "
+                "метрика / C4 / mobile-tile). Двойная польза: (1) не-дизайнерские компетенции (PM/SA/C4/mobile) "
+                "видны и привязаны к доказательствам; (2) ловит «нечем подтвердить» ДО того, как поймает "
+                "интервьюер. Прогонять перед КАЖДЫМ откликом. Инициатива Guzel 18.07."
+            )),
+        _di("DASH-133", "Проверка token round-trip: Figma → design_tokens.json → Reflex",
+            "To Do", "Task", "ARCH", _DASH_EPICS["E17"], 5, 2, "Claude Code",
+            created="2026-07-18T10:00:00.000+0000",
+            labels=["architecture", "design-system"], priority="Medium",
+            description=(
+                "Убедиться, что правки токенов в Figma (через Tokens Studio) удобно забираются обратно в "
+                "Reflex-дашборд по цепочке design_tokens.json → tokens.py → компоненты. ВАЖНАЯ РЕАЛЬНОСТЬ "
+                "(DASH-119): round-trip только для ТОКЕНОВ (цвета/отступы/типографика), НЕ для layout/"
+                "компонентов — Figma→code генерация про JS, не Reflex. Проверка: меняю токен в Figma → "
+                "экспорт в JSON → tokens.py отдаёт новое значение → компонент обновился. Задокументировать "
+                "процесс как SA-артефакт «single source of truth» (питает DASH-129)."
+            )),
+        _di("DASH-134", "Подготовка к живому Figma-тесту (SilentRoom): auto-layout, variants, tokens",
+            "To Do", "Task", "DESIGN", _DASH_EPICS["E16"], 5, 5, "Guzel K.",
+            created="2026-07-19T10:00:00.000+0000",
+            labels=["ux", "process", "interview"], priority="Highest",
+            description=(
+                "ГЕЙТ вакансии SilentRoom: живой 10-минутный тест на Zoom — собрать сложное модальное окно "
+                "из готового UI-kit. Это названное слабое место Guzel → тренировать РУКАМИ, не чтением. "
+                "Программа: (1) auto-layout — вложенные фреймы, resizing (hug/fill/fixed), spacing, padding; "
+                "(2) components + variants (состояния: default/hover/disabled/error) и swap инстансов; "
+                "(3) переменные/токены — цвет, spacing, типографика; (4) сборка модалки из чужого UI-kit "
+                "НА ВРЕМЯ (таймер 10 мин, 3-5 повторов до автоматизма). Критерий готовности: собираю "
+                "модальное окно с формой и состояниями за 10 мин без подсказок. Пересекается с этапом 2-3 "
+                "(вайрфреймы/hi-fi) — практика и портфолио-артефакты усиливают друг друга."
+            )),
+        _di("DASH-135", "Отклик SilentRoom: портфолио-ссылка через Telegram-бот",
+            "To Do", "Task", "PM", _DASH_EPICS["E19"], 5, 1, "Guzel K.",
+            created="2026-07-19T10:00:00.000+0000",
+            labels=["release", "process", "interview"], priority="Highest",
+            description=(
+                "Второй target (Habr Career): Product UX/UI Designer, part-time, SaaS AI-редактор, remote, "
+                "$1000-2000/мес, 10-20 ч/нед. Подача — Telegram @silentroom_hr_bot + ССЫЛКА НА ПОРТФОЛИО. "
+                "CV и cover НЕ нужны → порог входа низкий. Фит сильный: «сложные многопанельные интерфейсы "
+                "(редакторы, IDE, productivity)» = позиционирование Guzel; AI-редактор ≈ домен Mirum. "
+                "ПРАВИЛО: не доводить портфолио до идеала — им нужна ссылка. Откликаться на 80% готовности "
+                "(Mirum-hero + живой дашборд), финансы поджимают, цена задержки реальна. Блокируется "
+                "DASH-106 (портфолио должно быть живым). Бонус: работа закрывает пробел «self-owned shipped "
+                "SaaS UI». Разбор — cv_product_designer/SILENTROOM_vacancy_19072026.md."
+            )),
     ]
 
     # ── Issue links ───────────────────────────────────────────────────────────
@@ -2585,10 +2711,41 @@ def get_dash_issues() -> list[dict]:
         "DASH-112": [_block("DASH-113")],   # сначала UI истории, потом бэкфилл данных
         "DASH-113": [_link("Relates", "DASH-87")],
         "DASH-114": [_link("Relates", "DASH-115")],
+        # Перенарезка 18.07 — связи новых задач и гейтов этапов:
+        "DASH-124": [_block("DASH-107")],                            # аудит кодовой базы ДО публикации
+        "DASH-129": [_link("Relates", "DASH-106"), _link("Relates", "DASH-127")],  # architecture showcase → сборка; relates ds
+        "DASH-130": [_block("DASH-106")],                            # mobile-tile → Framer-сборка
+        "DASH-131": [_block("DASH-106")],                            # фотогалерея → Framer-сборка
+        "DASH-132": [_block("DASH-107")],                            # таблица CV↔портфолио = гейт перед откликом
+        "DASH-133": [_link("Relates", "DASH-129")],                  # token round-trip питает architecture showcase
+        "DASH-68":  [_link("Relates", "DASH-107")],                  # usability-валидация перед откликом
+        # SilentRoom (2-й target, 19.07): портфолио-ссылка → отклик; Figma-тест — гейт интервью
+        "DASH-135": [_block("DASH-106")],                            # отклик блокируется живым портфолио
+        "DASH-134": [_link("Relates", "DASH-135"), _link("Relates", "DASH-63")],  # практика Figma ↔ отклик и hi-fi
     }
     for issue in issues:
         key = issue["key"]
         if key in links_map:
             issue["issuelinks"] = links_map[key]
+
+    # ── Перенарезка эпиков 18.07 (DASH-95, 2-я итерация) ──────────────────────
+    # Открытые задачи перевешены с ценностных эпиков (E9-E12) на ПРОЦЕССНЫЕ этапы
+    # (E15-E19). Done-историю НЕ трогаем — она осталась под E9-E12 (честная история
+    # «команда снова перенарезала — теперь по этапам процесса»). Flex/внутренняя
+    # полировка (49/50/65/70/108/112/113/114/115) остаётся под старыми эпиками.
+    _STAGE_REASSIGN = {
+        _DASH_EPICS["E15"]: ["DASH-57", "DASH-58", "DASH-59", "DASH-60", "DASH-53", "DASH-117", "DASH-94"],
+        _DASH_EPICS["E16"]: ["DASH-61", "DASH-62"],
+        _DASH_EPICS["E17"]: ["DASH-63", "DASH-92", "DASH-93", "DASH-80", "DASH-81", "DASH-91",
+                             "DASH-110", "DASH-126", "DASH-127", "DASH-129", "DASH-133"],
+        _DASH_EPICS["E18"]: ["DASH-105", "DASH-106", "DASH-124", "DASH-125", "DASH-130", "DASH-131",
+                             "DASH-101", "DASH-102", "DASH-122"],
+        _DASH_EPICS["E19"]: ["DASH-68", "DASH-107", "DASH-132"],
+    }
+    _key_to_stage = {k: ep for ep, keys in _STAGE_REASSIGN.items() for k in keys}
+    for issue in issues:
+        _ep = _key_to_stage.get(issue["key"])
+        if _ep and issue["fields"]["status"]["name"] != "Done":
+            issue["fields"][CF_EPIC_LINK] = _ep
 
     return issues
