@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..tokens import SPACING, BORDER, STATUS_COLORS
-from ..components import stat_card, stat_card_row, status_badge, data_source_badge, mono_text, section_header, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
+from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs, sprint_trends, dev_person_wip
 
@@ -175,8 +175,7 @@ def dev_tab() -> rx.Component:
 
     return rx.box(
         section_header("Dev & Pipeline Health",
-                       subtitle="Метрики разработки и пайплайна · DEV squad",
-                       action=data_source_badge("mock")),
+                       subtitle="Метрики разработки и пайплайна · DEV squad"),
         stat_card_row(
             stat_card("Задач выполнено", f"{s.done}/{s.total} ({s.done_pct}%)",
                       tooltip="Доля завершённых задач в DEV squad."),
@@ -188,22 +187,18 @@ def dev_tab() -> rx.Component:
                       tooltip="Суммарные откаты статуса в DEV squad."),
         ),
         rx.box(height=SPACING["xl"]),
-        section_header("Bug Register", subtitle=f"Баги в DEV squad · {len(bugs)} записей",
-                       action=data_source_badge("mock")),
+        section_header("Bug Register", subtitle=f"Баги в DEV squad · {len(bugs)} записей"),
         _bug_table(bugs) if bugs else rx.text("Нет багов", size="2", color=rx.color("gray", 9)),
         rx.box(height=SPACING["xl"]),
-        section_header("Tasks & Stories", subtitle=f"Задачи DEV squad (без багов) · {len(tasks)} записей",
-                       action=data_source_badge("mock")),
+        section_header("Tasks & Stories", subtitle=f"Задачи DEV squad (без багов) · {len(tasks)} записей"),
         _tasks_table(tasks),
         rx.box(height=SPACING["xl"]),
         section_header("Per-person WIP",
-                       subtitle="Нагрузка по разработчикам · DEV squad · WIP ≥ 3 = перегрузка",
-                       action=data_source_badge("mock")),
+                       subtitle="Нагрузка по разработчикам · DEV squad · WIP ≥ 3 = перегрузка"),
         _person_wip_table(person_wip),
         rx.box(height=SPACING["xl"]),
         section_header("Flow Trends",
-                       subtitle="Динамика по спринтам · все команды агрегированы",
-                       action=data_source_badge("mock")),
+                       subtitle="Динамика по спринтам · все команды агрегированы"),
         rx.flex(
             _trend_bars(trends, "throughput", "Throughput (issues Done)", "teal"),
             _trend_bars(trends, "sp_done", "Story Points Done", "iris"),

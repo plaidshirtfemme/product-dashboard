@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..tokens import SPACING, BORDER
-from ..components import section_header, data_source_badge
+from ..components import section_header
 
 
 # ---------------------------------------------------------------------------
@@ -351,7 +351,6 @@ def info_tab() -> rx.Component:
         section_header(
             "Info",
             subtitle="Опорный документ: процессы команды, роли, логика дашборда",
-            action=data_source_badge("real"),
         ),
 
         # ── Блок 1 ──────────────────────────────────────────────────────────

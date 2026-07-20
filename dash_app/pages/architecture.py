@@ -15,7 +15,6 @@ from ..components import (
     stat_card,
     stat_card_row,
     status_badge,
-    data_source_badge,
     mono_text,
     section_header,
 )
@@ -213,7 +212,6 @@ def architecture_tab() -> rx.Component:
         section_header(
             "Architecture Health",
             subtitle="Статус архитектурных решений и поставки · ARCHITECTURE squad",
-            action=data_source_badge("mock"),
         ),
         stat_card_row(
             stat_card(
@@ -245,7 +243,6 @@ def architecture_tab() -> rx.Component:
         section_header(
             "ADR Register",
             subtitle="Architecture Decision Records · контекст → решение → последствия",
-            action=data_source_badge("mock"),
         ),
         rx.flex(
             *[_adr_card(r) for r in adrs],
@@ -260,7 +257,6 @@ def architecture_tab() -> rx.Component:
         section_header(
             "Architecture Tasks",
             subtitle=f"Задачи ARCHITECTURE squad (без ADR) · {len(tasks)} записей",
-            action=data_source_badge("mock"),
         ),
         _tasks_table(tasks),
 

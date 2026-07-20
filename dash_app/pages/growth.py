@@ -16,7 +16,6 @@ from ..components import (
     progress_bar,
     stat_card,
     stat_card_row,
-    data_source_badge,
     mono_text,
     section_header,
 )
@@ -277,7 +276,6 @@ def growth_tab() -> rx.Component:
         section_header(
             "Growth Health",
             subtitle="Экспериментирование и поставка · Growth squad метрики",
-            action=data_source_badge("mock"),
         ),
         stat_card_row(
             stat_card(
@@ -313,7 +311,6 @@ def growth_tab() -> rx.Component:
         section_header(
             "Experiment Log",
             subtitle="A/B эксперименты · Контроль vs Тест · результаты",
-            action=data_source_badge("mock"),
         ),
         _experiment_table(exp_rows),
 
@@ -323,7 +320,6 @@ def growth_tab() -> rx.Component:
         section_header(
             "Release Delivery",
             subtitle="Выполнение плана по релизам · просроченные задачи",
-            action=data_source_badge("mock"),
         ),
         _release_delivery(releases),
 
@@ -333,7 +329,6 @@ def growth_tab() -> rx.Component:
         section_header(
             "Activation Funnel",
             subtitle="Воронка активации пользователей пайплайна ⚠️ симуляция",
-            action=data_source_badge("mock"),
         ),
         _activation_funnel(),
 

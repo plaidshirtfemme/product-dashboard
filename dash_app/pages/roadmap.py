@@ -10,7 +10,6 @@ from ..components import (
     stat_card,
     stat_card_row,
     progress_bar,
-    data_source_badge,
 )
 from ..data.adapter import load_issues
 from ..data.okr_dash import load_dash_okrs
@@ -168,7 +167,6 @@ def _goals_section() -> rx.Component:
             gap=SPACING["md"],
             flex_wrap="wrap",
         ),
-        data_source_badge("mock"),
     )
 
 
@@ -265,7 +263,6 @@ def _timeline_section() -> rx.Component:
         ),
         *[_epic_row(epic, issues)
           for epic, issues in sorted(by_epic.items(), key=lambda kv: epic_sort_key(kv[0]))],
-        data_source_badge("mock"),
     )
 
 
@@ -330,7 +327,6 @@ def _sprint_review_section() -> rx.Component:
             border_bottom=f"1.5px solid {rx.color('gray', 4)}",
         ),
         *[_sprint_review_row(name, issues) for name, issues in sorted_sprints],
-        data_source_badge("mock"),
     )
 
 
