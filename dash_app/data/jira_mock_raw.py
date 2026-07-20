@@ -1438,7 +1438,7 @@ def get_dash_issues() -> list[dict]:
             created="2026-07-05T10:00:00.000+0000",
             labels=["❌-missing"]),
         _di("DASH-50", "Создать Design Tech Debt tab (вложена в Backlog)",
-            "To Do", "story", "DEV", _DASH_EPICS["E10"], 4, 5, "Claude Code",
+            "To Do", "story", "DEV", _DASH_EPICS["E17"], 4, 5, "Claude Code",
             created="2026-07-05T10:00:00.000+0000",
             labels=["❌-missing"]),
         _di("DASH-51", "Переименовать Info → Practices & Rules и переместить сразу после About project",
@@ -1820,7 +1820,7 @@ def get_dash_issues() -> list[dict]:
 
         # ── Технический долг (рефакторинг из плана) ──────────────────────────
         _di("DASH-70", "Рефакторинг компонентов: универсальный data_table, вынос молекул",
-            "In Progress", "Task", "DEV", _DASH_EPICS["E13"], 5, 5, "Claude Code",
+            "In Progress", "Task", "DEV", _DASH_EPICS["E17"], 5, 5, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
             started="2026-07-12T13:00:00.000+0000",
             labels=["tech-debt", "architecture"],
@@ -2332,7 +2332,7 @@ def get_dash_issues() -> list[dict]:
 
         # ── Backlog UX-улучшения (стейкхолдер-ревью 11.07 вечером) ───────────
         _di("DASH-108", "Backlog: мультивыбор в фильтрах (Squad, Type, Status и др.)",
-            "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 3, "Claude Code",
+            "To Do", "Story", "DEV", _DASH_EPICS["E17"], 5, 3, "Claude Code",
             created="2026-07-11T18:00:00.000+0000",
             labels=["ux", "backlog"],
             description="Заменить одиночные select на мультивыбор (checkbox-список в дропдауне). "
@@ -2471,7 +2471,11 @@ def get_dash_issues() -> list[dict]:
                 "Охват: архитектурный дрейф, дублирование через файлы (DASH-70: ~20 самодельных таблиц), "
                 "мёртвый код, консистентность паттернов, безопасность (что уезжает в деплой), качество "
                 "для рекрутера. Многоагентный, глубокий. План — Сб 18 (вместе с UI/UX-полировкой, "
-                "качество кода = часть «5+»), но можем раньше. После — обновить строку 'последний аудит' в CLAUDE.md."
+                "качество кода = часть «5+»), но можем раньше. После — обновить строку 'последний аудит' в CLAUDE.md.\n"
+                "ПРОВЕРИТЬ ОТДЕЛЬНО (решение Guzel 20.07): константа FLEX_OUT_OF_SPRINT в sprint_calendar.py "
+                "сейчас нигде не используется — это документация в коде, не данные для UI. Оставлена намеренно. "
+                "Если к финальному аудиту так и не пригодилась (не выведена на Kanban как «вне спринта») — УДАЛИТЬ, "
+                "чтобы не копить мёртвый код."
             )),
         _di("DASH-125", "Аналитика посещений + тепловые карты (Framer + Reflex-дашборд)",
             "To Do", "Story", "PA", _DASH_EPICS["E12"], 5, 5, "Guzel K.",
@@ -2553,7 +2557,7 @@ def get_dash_issues() -> list[dict]:
                 "Дневники/Цитаты/Бэкстори/Сценарий) + грейды/инвестор/MVP. DnD завёлся (кастомный _DragDiv)."
             )),
         _di("DASH-115", "Backlog: сортировка по клику на заголовок колонки",
-            "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 5, "Claude Code",
+            "To Do", "Story", "DEV", _DASH_EPICS["E17"], 5, 5, "Claude Code",
             created="2026-07-11T18:00:00.000+0000",
             labels=["ux", "backlog"], priority="Low",
             description="Возобновляет отложенный план «сортировка таблиц» (memory project_table_sorting): "
@@ -2719,6 +2723,9 @@ def get_dash_issues() -> list[dict]:
         "DASH-101": [_block("DASH-102"), _block("DASH-122")],        # отрисовка → встройка + музыка
         "DASH-65": [_link("Relates", "DASH-97")],                    # дневники питают данные
         # DASH-97 (наполнение MOTIF-данных) опирается на user stories и user flows участников:
+        # Консолидация компонентов ОБЯЗАНА идти до переноса DS в Figma (решение Guzel 20.07):
+        # иначе в Figma уедет дублированный набор (32 инлайн-молекулы, _tasks_table ×4) и Figma разойдётся с кодом.
+        "DASH-70": [_block("DASH-92")],                              # рефактор → ревизия DS → hi-fi (63)
         "DASH-97": [_link("Relates", "DASH-44"),                     # user stories (17 ролей → каст)
                     _link("Relates", "DASH-98"),                     # персоны + JTBD участников
                     _link("Relates", "DASH-99")],                    # user flows: карта обмена артефактами ролей
