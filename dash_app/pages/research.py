@@ -16,7 +16,6 @@ from ..components import (
     stat_card,
     stat_card_row,
     status_badge,
-    data_source_badge,
     section_header,
     vault_coverage_chart,
 )
@@ -218,7 +217,6 @@ def research_tab() -> rx.Component:
         section_header(
             "Research Velocity",
             subtitle="Спайки по исследованиям — от гипотезы до применённого решения",
-            action=data_source_badge("mock"),
         ),
         stat_card_row(
             stat_card(
@@ -249,7 +247,6 @@ def research_tab() -> rx.Component:
         section_header(
             "Research Journal",
             subtitle="Гипотеза → метод → метрика → инсайт → решение",
-            action=data_source_badge("mock"),
         ),
         _journal_table(spikes),
 
@@ -259,7 +256,6 @@ def research_tab() -> rx.Component:
         section_header(
             "Vault Content Coverage",
             subtitle="Количество заметок по папкам · красные = пробелы (< 5 заметок)",
-            action=data_source_badge("real"),
         ),
         vault_coverage_chart(folders),
 
@@ -269,7 +265,6 @@ def research_tab() -> rx.Component:
         section_header(
             "Usability Testing",
             subtitle="Alpha-сессии · TSR ≥ 75% и SUS ≥ 70 — целевые пороги ⚠️ симуляция",
-            action=data_source_badge("mock"),
         ),
         rx.callout(
             "Данные симулированы — реальных usability-тестов пока не проводилось. "

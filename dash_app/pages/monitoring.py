@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..tokens import SPACING, BORDER, STATUS_COLORS
-from ..components import stat_card, stat_card_row, status_badge, data_source_badge, mono_text, section_header, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
+from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs
 
@@ -122,8 +122,7 @@ def monitoring_tab() -> rx.Component:
 
     return rx.box(
         section_header("Monitoring & Support Health",
-                       subtitle="Баги в production и поддержка пользователей · MONITORING squad",
-                       action=data_source_badge("mock")),
+                       subtitle="Баги в production и поддержка пользователей · MONITORING squad"),
         stat_card_row(
             stat_card("Задач выполнено", f"{s.done}/{s.total} ({s.done_pct}%)",
                       tooltip="Доля завершённых задач в MONITORING squad."),
@@ -138,22 +137,18 @@ def monitoring_tab() -> rx.Component:
         ),
         rx.box(height=SPACING["xl"]),
         section_header("Bug Board",
-                       subtitle=f"Баги в MONITORING squad · {len(bugs)} записей · Blocker/Critical выделены красным",
-                       action=data_source_badge("mock")),
+                       subtitle=f"Баги в MONITORING squad · {len(bugs)} записей · Blocker/Critical выделены красным"),
         _bug_table(bugs) if bugs else rx.text("Нет багов", size="2", color=rx.color("gray", 9)),
         rx.box(height=SPACING["xl"]),
         section_header("Support → Bug linkage",
-                       subtitle="Баги MONITORING squad · количество связанных обращений пользователей",
-                       action=data_source_badge("mock")),
+                       subtitle="Баги MONITORING squad · количество связанных обращений пользователей"),
         _support_linkage_table(bugs, support),
         rx.box(height=SPACING["xl"]),
         section_header("Support Tickets",
-                       subtitle="Обращения пользователей",
-                       action=data_source_badge("mock")),
+                       subtitle="Обращения пользователей"),
         _support_table(support),
         rx.box(height=SPACING["xl"]) if other_tasks else rx.box(),
-        section_header("Monitoring Tasks", subtitle=f"Прочие задачи MONITORING squad · {len(other_tasks)} записей",
-                       action=data_source_badge("mock")) if other_tasks else rx.box(),
+        section_header("Monitoring Tasks", subtitle=f"Прочие задачи MONITORING squad · {len(other_tasks)} записей") if other_tasks else rx.box(),
         _bug_table([]) if not other_tasks else rx.box(),
         padding=SPACING["xl"], max_width="1100px", margin="0 auto",
     )

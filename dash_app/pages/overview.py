@@ -17,7 +17,6 @@ from ..components import (
     stat_card,
     stat_card_row,
     status_badge,
-    data_source_badge,
     data_table,
     mono_text,
     section_header,
@@ -82,7 +81,6 @@ def _north_star(note_count: int) -> rx.Component:
                         },
                         color=rx.color("teal", 11),
                     ),
-                    data_source_badge("real"),
                     gap=SPACING["md"],
                     align="center",
                 ),
@@ -397,7 +395,6 @@ def overview_tab() -> rx.Component:
         section_header(
             "Flow Metrics",
             subtitle="Скорость и предсказуемость поставки · Flow Metrics (Mik Kersten)",
-            action=data_source_badge("mock"),
         ),
         stat_card_row(
             stat_card(
@@ -456,7 +453,6 @@ def overview_tab() -> rx.Component:
         section_header(
             "MVP Timeline",
             subtitle=f"Апр 2026 → Авг 2026 · {_TOTAL_DAYS} дней",
-            action=data_source_badge("mock"),
         ),
         _mvp_timeline(),
 
@@ -466,7 +462,6 @@ def overview_tab() -> rx.Component:
         section_header(
             "Squad Health",
             subtitle="Spotify-светофор по 9 командам — Flow Efficiency и rework",
-            action=data_source_badge("mock"),
         ),
         data_table(
             columns=["Команда", "Готово", "Заблокировано", "Rework", "Статус"],
@@ -488,7 +483,6 @@ def overview_tab() -> rx.Component:
         section_header(
             "OKR · Q2 2026",
             subtitle="Objectives + Key Results · статус на сегодня",
-            action=data_source_badge("mock"),
         ),
         _okr_section(okr_objectives, okr_rows),
 
@@ -498,7 +492,6 @@ def overview_tab() -> rx.Component:
         section_header(
             "RICE-скоринг бэклога",
             subtitle="По эпикам, отсортировано по score · RICE = (Reach × Impact × Confidence) / Effort",
-            action=data_source_badge("mock"),
         ),
         data_table(
             columns=["Эпик", "OKR", "Reach", "Impact", "Conf.", "Effort", "RICE", "Прогресс"],

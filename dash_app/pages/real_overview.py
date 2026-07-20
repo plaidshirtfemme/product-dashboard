@@ -1,7 +1,7 @@
 """Overview tab — Real project mode."""
 
 import reflex as rx
-from ..components import stat_card, stat_card_row, section_header, data_source_badge, real_page_header, real_page_wrapper
+from ..components import stat_card, stat_card_row, section_header, real_page_header, real_page_wrapper
 from ..data.real_project_extract import (
     TOTAL_URLS_PROCESSED, TOTAL_NOTES_CREATED, TOTAL_IP_BLOCKS,
     TOTAL_TOO_LONG, TOTAL_NO_TEXT, PROJECT_DESCRIPTION, STACK,

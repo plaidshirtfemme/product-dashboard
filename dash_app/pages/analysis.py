@@ -17,7 +17,6 @@ from ..components import (
     stat_card,
     stat_card_row,
     status_badge,
-    data_source_badge,
     mono_text,
     section_header,
 )
@@ -247,7 +246,6 @@ def analysis_tab() -> rx.Component:
         section_header(
             "Requirements Health",
             subtitle="Качество и стабильность требований · BA+SA метрики",
-            action=data_source_badge("mock"),
         ),
         stat_card_row(
             stat_card(
@@ -280,7 +278,6 @@ def analysis_tab() -> rx.Component:
         section_header(
             "Requirements Register",
             subtitle=f"Реестр требований · {s.total_requirements} записей · {s.approved} согласовано",
-            action=data_source_badge("mock"),
         ),
         _requirements_table(req_rows),
 
@@ -290,7 +287,6 @@ def analysis_tab() -> rx.Component:
         section_header(
             "Requirements by Source",
             subtitle="Откуда приходят требования",
-            action=data_source_badge("mock"),
         ),
         _source_bars(sources),
 
@@ -300,7 +296,6 @@ def analysis_tab() -> rx.Component:
         section_header(
             "Dependency Map",
             subtitle="Внешние зависимости и изменения API-контрактов",
-            action=data_source_badge("mock"),
         ),
         _dependencies_table(dep_rows),
 

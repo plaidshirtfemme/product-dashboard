@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..tokens import SPACING, BORDER
-from ..components import stat_card, stat_card_row, status_badge, data_source_badge, mono_text, section_header, table_container
+from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_container
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_non_bugs, release_plan, slipped_issues
 
@@ -88,8 +88,7 @@ def release_tab() -> rx.Component:
 
     return rx.box(
         section_header("Release Health",
-                       subtitle="Статус поставки по релизам · RELEASE squad",
-                       action=data_source_badge("mock")),
+                       subtitle="Статус поставки по релизам · RELEASE squad"),
         stat_card_row(
             stat_card("Задач выполнено", f"{s.done}/{s.total} ({s.done_pct}%)",
                       tooltip="Доля завершённых задач в RELEASE squad."),
@@ -104,17 +103,14 @@ def release_tab() -> rx.Component:
         ),
         rx.box(height=SPACING["xl"]),
         section_header("Release Plan",
-                       subtitle="Прогресс выполнения по релизным версиям",
-                       action=data_source_badge("mock")),
+                       subtitle="Прогресс выполнения по релизным версиям"),
         _release_cards(releases),
         rx.box(height=SPACING["xl"]),
         section_header("Slipped Tasks",
-                       subtitle="Задачи, сдвинутые относительно исходного срока",
-                       action=data_source_badge("mock")),
+                       subtitle="Задачи, сдвинутые относительно исходного срока"),
         _slipped_table(slipped),
         rx.box(height=SPACING["xl"]),
-        section_header("Release Tasks", subtitle=f"Все задачи RELEASE squad · {len(tasks)} записей",
-                       action=data_source_badge("mock")),
+        section_header("Release Tasks", subtitle=f"Все задачи RELEASE squad · {len(tasks)} записей"),
         _tasks_table(tasks),
         padding=SPACING["xl"], max_width="1100px", margin="0 auto",
     )

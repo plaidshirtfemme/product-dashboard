@@ -13,7 +13,7 @@ import math
 import reflex as rx
 
 from ..tokens import SPACING, BORDER
-from ..components import section_header, data_source_badge, stat_card, stat_card_row, table_container, progress_bar
+from ..components import section_header, stat_card, stat_card_row, table_container, progress_bar
 from ..data.adapter import load_issues
 from ..data.metrics import growth_experiments
 
@@ -556,7 +556,6 @@ def analytics_tab() -> rx.Component:
         section_header(
             "Funnel Analysis",
             subtitle="Активация пользователей · сегменты: новые vs вернувшиеся · красный = критический отток",
-            action=data_source_badge("mock"),
         ),
         _funnel_section(),
 
@@ -566,7 +565,6 @@ def analytics_tab() -> rx.Component:
         section_header(
             "Cohort Retention",
             subtitle="Удержание пользователей по когортам · неделя регистрации × неделя после",
-            action=data_source_badge("mock"),
         ),
         _cohort_section(),
 
@@ -576,7 +574,6 @@ def analytics_tab() -> rx.Component:
         section_header(
             "A/B Significance",
             subtitle="Эксперименты · конверсия, 95% CI, p-value · зелёный = значимый результат",
-            action=data_source_badge("mock"),
         ),
         _ab_section(exp_rows),
 
@@ -586,7 +583,6 @@ def analytics_tab() -> rx.Component:
         section_header(
             "SQL Showcase",
             subtitle="ClickHouse-запросы PA · статические примеры с результатами",
-            action=data_source_badge("mock"),
         ),
         rx.callout(
             "Реальное подключение к ClickHouse не реализовано — запросы и результаты статические. "

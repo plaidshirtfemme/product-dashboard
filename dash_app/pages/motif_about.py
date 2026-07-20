@@ -17,7 +17,7 @@ from __future__ import annotations
 import reflex as rx
 
 from ..tokens import SPACING, BORDER
-from ..components import section_header, data_source_badge
+from ..components import section_header
 from ..data.motif_world import (
     ABOUT, CAST, BANKS, ARTIFACTS,
     SCHEDULE_CEREMONIES, SCHEDULE_WEEKS, SCHEDULE_COMMENTARY,
@@ -1201,7 +1201,6 @@ def motif_about_tab() -> rx.Component:
         section_header(
             "About project",
             subtitle="Команда Motif · рабочий стол истории (источник правды для дашборда и комикса)",
-            action=data_source_badge("mock"),
         ),
         _about_block(),
         _team_block(),

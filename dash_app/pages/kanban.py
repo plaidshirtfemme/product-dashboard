@@ -4,7 +4,7 @@ from datetime import date
 
 import reflex as rx
 from ..tokens import SPACING, BORDER
-from ..components import data_source_badge, section_header, color_legend
+from ..components import section_header, color_legend
 from ..data.adapter import load_issues, Issue
 from ..data.jira_mock_raw import DASH_CONFIG
 from ..data.sprint_calendar import SPRINT_DAYS, SPRINT_ROWS, DEADLINE_KEYS
@@ -421,8 +421,6 @@ def _sprint_calendar(issues: list[Issue]) -> rx.Component:
             "Календарь спринта · 11–17 июля",
             subtitle="Дни × эпики · обход: зелёный — сделано, жёлтый — в работе, "
                      "красный — просрочено (переносим) · ⏰ — промежуточный дедлайн",
-            # Временно mock — как соседние DASH-поверхности; честная метка logged придёт в DASH-117
-            action=data_source_badge("mock"),
         ),
         rx.box(
             rx.table.root(
@@ -457,7 +455,6 @@ def _kanban_for(issues) -> rx.Component:
         section_header(
             "Kanban Board",
             subtitle="Read-only · swimlanes по 9 командам · 6 колонок · WIP limits",
-            action=data_source_badge("mock"),
         ),
         # summary strip
         rx.flex(

@@ -17,7 +17,6 @@ from ..components import (
     stat_card,
     stat_card_row,
     status_badge,
-    data_source_badge,
     mono_text,
     section_header,
 )
@@ -289,7 +288,6 @@ def design_tab() -> rx.Component:
         section_header(
             "Design Health",
             subtitle="Метрики дизайн-процесса · итерации, accessibility, rework",
-            action=data_source_badge("mock"),
         ),
         stat_card_row(
             stat_card(
@@ -323,7 +321,6 @@ def design_tab() -> rx.Component:
         section_header(
             "Accessibility Audit",
             subtitle="Покрытие проверкой доступности перед handoff в разработку",
-            action=data_source_badge("mock"),
         ),
         _a11y_audit(rows, s.a11y_checked, s.a11y_total),
 
@@ -333,7 +330,6 @@ def design_tab() -> rx.Component:
         section_header(
             "Design Register",
             subtitle=f"Реестр design-задач · {s.total_design_issues} задач",
-            action=data_source_badge("mock"),
         ),
         _design_table(rows),
 
@@ -343,7 +339,6 @@ def design_tab() -> rx.Component:
         section_header(
             "Iteration Depth",
             subtitle="Число итераций на задачу · 4+ = сигнал о сложности или нестабильном брифе",
-            action=data_source_badge("mock"),
         ),
         _iteration_depth(rows),
 

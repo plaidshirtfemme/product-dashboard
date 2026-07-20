@@ -3,7 +3,7 @@
 from collections import Counter
 import reflex as rx
 from ..tokens import SPACING, BORDER, STATUS_COLORS
-from ..components import stat_card, stat_card_row, status_badge, data_source_badge, mono_text, section_header, table_container, progress_bar, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
+from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_container, progress_bar, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs, go_no_go_criteria
 
@@ -161,8 +161,7 @@ def quality_tab() -> rx.Component:
 
     return rx.box(
         section_header("Quality Health",
-                       subtitle="Метрики качества · баги по severity · QUALITY squad",
-                       action=data_source_badge("mock")),
+                       subtitle="Метрики качества · баги по severity · QUALITY squad"),
         stat_card_row(
             stat_card("Всего багов (проект)", str(len(all_bugs)),
                       tooltip="Суммарное число задач типа bug по всем 9 squad."),
@@ -177,22 +176,18 @@ def quality_tab() -> rx.Component:
         ),
         rx.box(height=SPACING["xl"]),
         section_header("Bug Severity Distribution",
-                       subtitle=f"Все {len(all_bugs)} багов по severity · по всему проекту",
-                       action=data_source_badge("mock")),
+                       subtitle=f"Все {len(all_bugs)} багов по severity · по всему проекту"),
         _severity_distribution(all_bugs),
         rx.box(height=SPACING["xl"]),
         section_header("Bug Register",
-                       subtitle=f"Все баги проекта · {len(all_bugs)} записей · отсортировано по severity",
-                       action=data_source_badge("mock")),
+                       subtitle=f"Все баги проекта · {len(all_bugs)} записей · отсортировано по severity"),
         _bug_table(all_bugs),
         rx.box(height=SPACING["xl"]),
-        section_header("QA Tasks", subtitle=f"Задачи QUALITY squad (без багов) · {len(tasks)} записей",
-                       action=data_source_badge("mock")),
+        section_header("QA Tasks", subtitle=f"Задачи QUALITY squad (без багов) · {len(tasks)} записей"),
         _tasks_table(tasks),
         rx.box(height=SPACING["xl"]),
         section_header("Go / No-Go Checklist",
-                       subtitle="Критерии готовности к релизу · проверяется перед каждым деплоем",
-                       action=data_source_badge("mock")),
+                       subtitle="Критерии готовности к релизу · проверяется перед каждым деплоем"),
         _go_no_go_checklist(criteria),
         padding=SPACING["xl"], max_width="1100px", margin="0 auto",
     )
