@@ -13,6 +13,10 @@ NAV_TABS: list[tuple[str, str, str]] = [
     ("analysis",      "Requirements · BA/SA",       "file-text"),
     ("design",        "Design",                    "pen-tool"),
     ("ds",            "Design System",             "palette"),
+    ("discover",      "Discover",                  "search"),
+    ("define",        "Define",                    "target"),
+    ("develop",       "Develop",                   "hammer"),
+    ("deliver",       "Deliver",                   "rocket"),
     ("dev",           "Dev & Pipeline",            "file-code-2"),
     ("quality",       "Quality",                   "shield-check"),
     ("release",       "Instructions & Release",    "package"),
@@ -20,7 +24,7 @@ NAV_TABS: list[tuple[str, str, str]] = [
     ("growth",        "Growth",                    "trending-up"),
 ]
 
-BUILT_TABS = {"about", "roadmap", "overview", "backlog", "kanban", "research", "analytics", "analysis", "design", "growth", "architecture", "dev", "quality", "release", "monitoring", "ds", "info"}
+BUILT_TABS = {"about", "roadmap", "overview", "backlog", "kanban", "research", "analytics", "analysis", "design", "growth", "architecture", "dev", "quality", "release", "monitoring", "ds", "info", "discover", "define", "develop", "deliver"}
 
 
 class NavState(rx.State):

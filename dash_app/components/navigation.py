@@ -155,7 +155,7 @@ def _project_dropdown() -> rx.Component:
 def _sidebar_item(key: str, label: str, icon: str) -> rx.Component:
     is_active = NavState.active_tab == key
     is_built = key in BUILT_TABS
-    is_sub = key == "ds"
+    is_sub = key in {"ds", "discover", "define", "develop", "deliver"}
 
     item = rx.flex(
         rx.icon(icon, size=16),
@@ -209,7 +209,13 @@ def _design_accordion() -> rx.Component:
         ),
         rx.cond(
             NavState.design_open,
-            _sidebar_item("ds", "Design System", "palette"),
+            rx.fragment(
+                _sidebar_item("ds", "Design System", "palette"),
+                _sidebar_item("discover", "Discover", "search"),
+                _sidebar_item("define", "Define", "target"),
+                _sidebar_item("develop", "Develop", "hammer"),
+                _sidebar_item("deliver", "Deliver", "rocket"),
+            ),
             rx.fragment(),
         ),
     )
@@ -220,7 +226,7 @@ def _sidebar_items() -> list[rx.Component]:
     for key, label, icon in NAV_TABS:
         if key == "design":
             items.append(_design_accordion())
-        elif key == "ds":
+        elif key in {"ds", "discover", "define", "develop", "deliver"}:
             pass  # rendered inside _design_accordion
         else:
             items.append(_sidebar_item(key, label, icon))
