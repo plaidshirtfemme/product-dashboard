@@ -592,7 +592,10 @@ def _card_chip(card: str, cell_id, text) -> rx.Component:
     )
 
 
-def _cast_card(m: dict) -> rx.Component:
+def _cast_card(m: dict, compact: bool = False) -> rx.Component:
+    """Карточка персонажа — компонент с 2 вариантами (по аналогии с Figma variants):
+    full (по умолчанию, Develop) — вся информация + чипсы назначенных черт из банков;
+    compact (Define) — та же карточка, но чипсы скрыты (усечённый вид под персону)."""
     initials = m["name"][:2]
     return _drag_div(
         rx.flex(
@@ -616,7 +619,7 @@ def _cast_card(m: dict) -> rx.Component:
             ),
             gap=SPACING["md"], align="start",
         ),
-        rx.flex(
+        rx.fragment() if compact else rx.flex(
             rx.foreach(
                 MotifAboutState.assignments_map[m["name"]],
                 lambda p: _card_chip(m["name"], p[0], p[1]),
@@ -629,6 +632,12 @@ def _cast_card(m: dict) -> rx.Component:
                "border": f"{BORDER} {rx.color('gray', 4)}",
                "borderRadius": "var(--radius-3)"},
     )
+
+
+def _team_cards_grid(compact: bool = False) -> rx.Component:
+    """Общий грид карточек персонажей — единый источник для Develop (full) и Define (compact)."""
+    return rx.grid(*[_cast_card(m, compact=compact) for m in CAST],
+                    columns="3", gap=SPACING["md"], width="100%")
 
 
 def _investor_card() -> rx.Component:
@@ -653,8 +662,7 @@ def _investor_card() -> rx.Component:
 
 def _team_block() -> rx.Component:
     left = rx.box(
-        rx.grid(*[_cast_card(m) for m in CAST],
-                columns="3", gap=SPACING["md"], width="100%"),
+        _team_cards_grid(),
         _investor_card(),
         flex="2", min_width="420px",
         overflow_y="auto", min_height="0", padding_right="6px",
@@ -741,25 +749,54 @@ def _goals_block() -> rx.Component:
 # Артефакты обмена
 # ---------------------------------------------------------------------------
 
-def _spoke(sp: dict) -> rx.Component:
+# Роль контрагента по имени — из самих ARTIFACTS (DRY). Составные "Лея / Марко"
+# разбиваем и мапим каждого; generic ("Вся команда", "Продукт") — сами себе роль.
+_ART_ROLE_BY_NAME: dict[str, str] = {m["name"]: m["role"] for m in ARTIFACTS}
+
+
+def _with_role_text(with_str: str) -> str:
+    parts = [p.strip() for p in with_str.split("/")]
+    return " / ".join(_ART_ROLE_BY_NAME.get(p, p) for p in parts)
+
+
+def _spoke(sp: dict, compact: bool = False) -> rx.Component:
+    role_text = _with_role_text(sp["with"])
+    is_generic = role_text == sp["with"]   # generic-контрагент: имя == роль, не дублируем
     return rx.flex(
         rx.text(_DIR_GLYPH[sp["dir"]], size="3", weight="bold",
                 color=rx.color(_DIR_COLOR[sp["dir"]], 10), width="20px",
                 flex_shrink="0", text_align="center"),
-        rx.text(sp["artifact"], size="2", color=rx.color("gray", 11), flex="1"),
-        rx.badge(sp["with"], variant="soft", color_scheme="gray", size="1"),
+        rx.text(sp["artifact"], size="2", color=rx.color("gray", 11), flex="1", min_width="0"),
+        # full: бейдж имени; роль текстом (в обоих вариантах, у generic — только текст)
+        rx.fragment() if compact else rx.badge(sp["with"], variant="soft",
+                                               color_scheme="gray", size="1", flex_shrink="0"),
+        rx.fragment() if (not compact and is_generic) else rx.text(
+            role_text, size="1", color=rx.color("gray", 9),
+            flex_shrink="0", text_align="right", max_width="180px",
+        ),
         gap="8px", align="center", width="100%",
     )
 
 
-def _artifact_hub(m: dict) -> rx.Component:
-    return rx.box(
+def _artifact_hub(m: dict, compact: bool = False) -> rx.Component:
+    """Хаб обмена артефактами — вариант компонента (как Figma variants):
+    full (Motif/About) — с именами персонажей; compact (Dash/Discover) — только роли,
+    имена (m['name'] и sp['with']) скрыты, т.к. Discover про домен, не про историю."""
+    header = (
+        rx.flex(
+            rx.text(m["role"], size="2", weight="bold", color=rx.color(m["accent"], 11)),
+            align="center", margin_bottom="10px",
+        )
+        if compact else
         rx.flex(
             rx.badge(m["name"], variant="solid", color_scheme=m["accent"], size="2"),
             rx.text(m["role"], size="1", color=rx.color("gray", 9)),
             gap="8px", align="center", margin_bottom="10px",
-        ),
-        rx.flex(*[_spoke(sp) for sp in m["spokes"]], direction="column", gap="6px"),
+        )
+    )
+    return rx.box(
+        header,
+        rx.flex(*[_spoke(sp, compact) for sp in m["spokes"]], direction="column", gap="6px"),
         padding=SPACING["md"],
         background=rx.color("gray", 1),
         border=f"{BORDER} {rx.color(m['accent'], 4)}",
@@ -767,13 +804,18 @@ def _artifact_hub(m: dict) -> rx.Component:
     )
 
 
-def _artifacts_block() -> rx.Component:
+def _artifacts_block(compact: bool = False) -> rx.Component:
+    intro = (
+        "Кто какими артефактами обменивается по ролям: что роль даёт (→), получает (←) "
+        "или двусторонне (↔)."
+        if compact else
+        "Кто чем обменивается: участник в центре, спицы — что даёт (→), "
+        "получает (←) или двусторонне (↔) и с кем."
+    )
     return _collapsible(
-        "artifacts", "Артефакты обмена",
-        rx.text("Кто чем обменивается: участник в центре, спицы — что даёт (→), "
-                "получает (←) или двусторонне (↔) и с кем.",
-                size="1", color=rx.color("gray", 9), margin_bottom=SPACING["md"]),
-        rx.grid(*[_artifact_hub(m) for m in ARTIFACTS],
+        "artifacts_compact" if compact else "artifacts", "Артефакты обмена",
+        rx.text(intro, size="1", color=rx.color("gray", 9), margin_bottom=SPACING["md"]),
+        rx.grid(*[_artifact_hub(m, compact) for m in ARTIFACTS],
                 columns="2", gap=SPACING["md"], width="100%"),
         accent="violet",
     )
@@ -1197,20 +1239,19 @@ def _script_block() -> rx.Component:
 # ---------------------------------------------------------------------------
 
 def motif_about_tab() -> rx.Component:
+    # Инструменты дизайн-процесса (карточки команды, JTBD, RACI, карта артефактов,
+    # интерактивный воркбенч) переехали в Discover/Define/Develop (аккордеон Design,
+    # решение Guzel 20.07) — эта вкладка теперь чистый нарратив про Motif.
+    # Наполнение "как должно быть для самой команды" — отдельная задача, не сегодня.
     return rx.box(
         section_header(
             "About project",
-            subtitle="Команда Motif · рабочий стол истории (источник правды для дашборда и комикса)",
+            subtitle="Команда Motif · история проекта",
         ),
         _about_block(),
-        _team_block(),
-        _jtbd_block(),
-        _raci_block(),
         _goals_block(),
-        _artifacts_block(),
+        _artifacts_block(),          # полный вариант (с именами персонажей) — история Motif
         _schedule_block(),
-        _factors_block(),
-        _layout_export(),
         _diaries_block(),
         _quotes_block(),
         _backstory_block(),

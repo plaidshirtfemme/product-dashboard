@@ -34,6 +34,10 @@ from .pages.real_monitoring import real_monitoring_tab
 from .pages.real_research import real_research_tab
 from .pages.real_design import real_design_tab
 from .pages.roadmap import roadmap_tab
+from .pages.dash_discover import dash_discover_tab
+from .pages.dash_define import dash_define_tab
+from .pages.dash_develop import dash_develop_tab
+from .pages.dash_deliver import dash_deliver_tab
 
 _WIP = rx.box(
     rx.text("В разработке", color=rx.color("gray", 9), size="3"),
@@ -154,6 +158,62 @@ def _build_page_content() -> rx.Component:
             dash=roadmap_tab(),
         )),
         ("ds",   ds_tab()),
+        ("discover", _by_project(
+            motif=_coming_soon(
+                "Discover",
+                "Discover-этап дизайн-процесса доступен только в режиме Product Dashboard. "
+                "Переключитесь на 'Product Dashboard' в селекторе проекта.",
+                "search",
+            ),
+            kp=_coming_soon(
+                "Discover",
+                "Discover-этап дизайн-процесса доступен только в режиме Product Dashboard.",
+                "search",
+            ),
+            dash=dash_discover_tab(),
+        )),
+        ("define", _by_project(
+            motif=_coming_soon(
+                "Define",
+                "Define-этап дизайн-процесса доступен только в режиме Product Dashboard. "
+                "Переключитесь на 'Product Dashboard' в селекторе проекта.",
+                "target",
+            ),
+            kp=_coming_soon(
+                "Define",
+                "Define-этап дизайн-процесса доступен только в режиме Product Dashboard.",
+                "target",
+            ),
+            dash=dash_define_tab(),
+        )),
+        ("develop", _by_project(
+            motif=_coming_soon(
+                "Develop",
+                "Develop-этап дизайн-процесса доступен только в режиме Product Dashboard. "
+                "Переключитесь на 'Product Dashboard' в селекторе проекта.",
+                "hammer",
+            ),
+            kp=_coming_soon(
+                "Develop",
+                "Develop-этап дизайн-процесса доступен только в режиме Product Dashboard.",
+                "hammer",
+            ),
+            dash=dash_develop_tab(),
+        )),
+        ("deliver", _by_project(
+            motif=_coming_soon(
+                "Deliver",
+                "Deliver-этап дизайн-процесса доступен только в режиме Product Dashboard. "
+                "Переключитесь на 'Product Dashboard' в селекторе проекта.",
+                "rocket",
+            ),
+            kp=_coming_soon(
+                "Deliver",
+                "Deliver-этап дизайн-процесса доступен только в режиме Product Dashboard.",
+                "rocket",
+            ),
+            dash=dash_deliver_tab(),
+        )),
         ("info", info_tab()),
     ]
 
