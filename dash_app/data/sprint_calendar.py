@@ -31,10 +31,10 @@ from datetime import date
 
 # Дни: дата, подпись, этап, фокус.
 SPRINT_DAYS: list[dict] = [
-    {"date": date(2026, 7, 20), "label": "Пн 20", "stage": "Этап 1 · флоу + контейнер",
-     "focus": "User flows по пользователям (59); Design Process tab — дом артефактов (60); провенанс (117)"},
+    {"date": date(2026, 7, 20), "label": "Пн 20", "stage": "Этап 1 · Discover/Define/Develop контейнеры",
+     "focus": "Design Process → 4 таба (60); провенанс (117); перенос JTBD/RACI/Artifacts/воркбенча из About"},
     {"date": date(2026, 7, 21), "label": "Вт 21", "stage": "Этап 1 · define + discover",
-     "focus": "Journey map рекрутера (57); HMW (58); competitive (94); онбординг рекрутера (53)"},
+     "focus": "Journey map рекрутера (57); HMW (58); user flows (59); competitive (94); онбординг рекрутера (53)"},
     {"date": date(2026, 7, 22), "label": "Ср 22", "stage": "Этап 2 · Вайрфреймы в Figma",
      "focus": "Figma MCP — механизм переноса UX (61); вайрфреймы по user flows (62)"},
     {"date": date(2026, 7, 23), "label": "Чт 23", "stage": "Этап 3 · DS + UI-аудиты",
@@ -50,7 +50,7 @@ SPRINT_DAYS: list[dict] = [
 # Строки = ЭТАПЫ процесса (эпики E15-E19), ячейки = ключи задач по дням.
 SPRINT_ROWS: list[dict] = [
     {"name": "1. Double Diamond по пользователям", "epic": "DASH-EPIC-15", "cells": [
-        ["DASH-59", "DASH-60", "DASH-117"], ["DASH-57", "DASH-58", "DASH-94", "DASH-53"],
+        ["DASH-60", "DASH-117"], ["DASH-57", "DASH-58", "DASH-59", "DASH-94", "DASH-53"],
         [], [], [], [], [],
     ]},
     {"name": "2. Вайрфреймы в Figma", "epic": "DASH-EPIC-16", "cells": [
@@ -86,6 +86,8 @@ FLEX_OUT_OF_SPRINT: list[str] = [
     # Старые эпики, вне процессной нарезки:
     "DASH-49", "DASH-65",
     "DASH-112", "DASH-113", "DASH-114",
+    # Техдолг, заведённый по ходу 20.07 — Low, не блокирует неделю:
+    "DASH-137", "DASH-138", "DASH-139",
 ]
 # Решение Guzel 20.07: пограничные DASH-50 / 108 / 115 ЗАТЯНУТЫ в этап 3
 # («окончательный UI дашборда») — их эпик сменён на E17 в jira_mock_raw.

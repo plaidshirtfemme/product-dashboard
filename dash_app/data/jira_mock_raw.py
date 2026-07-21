@@ -1633,13 +1633,34 @@ def get_dash_issues() -> list[dict]:
             )),
 
         _di("DASH-60", "Создать вкладку Design Process в дашборде",
-            "To Do", "Story", "DESIGN", _DASH_EPICS["E9"], 5, 5, "Claude Code",
+            "In Progress", "Story", "DESIGN", _DASH_EPICS["E15"], 5, 8, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
+            started="2026-07-20T14:00:00.000+0000",
             labels=["ux", "content"],
             description=(
                 "Новая вкладка в router.py: показывает Double Diamond процесс, "
                 "Journey map, HMW-вопросы, User flow. "
                 "Делает дизайн-процесс видимым рекрутеру прямо внутри продукта."
+            ),
+            decision_note=(
+                "ПРОГРЕСС 20.07 (Пн, этап 1): переросла исходный тикет — не 1 вкладка, а 4 в аккордеоне "
+                "Design (решение Guzel): Discover / Define / Develop / Deliver, каждая dash-режим only "
+                "(_coming_soon в motif/kp, как Roadmap). Перенесено из About project: карта артефактов "
+                "→ Discover; JTBD, RACI, компактные персона-карточки команды → Define; интерактивный "
+                "воркбенч (карточки+DnD, таймлайн/спайн, экспорт раскладки) → Develop, как рабочий "
+                "прототип, не диаграмма. Новый variant-компонент _cast_card(compact=bool) — full "
+                "(Develop, с чипсами банков) / compact (Define, без чипсов), общий грид "
+                "_team_cards_grid(). Код физически остался в motif_about.py (риск-avoidance, техдолг "
+                "DASH-138). About project сузился до чистого нарратива про Motif — дозаполнение "
+                "отдельной задачей, не сегодня.\n"
+                "ОСТАЁТСЯ: Journey map (57) и HMW (58) — Вт 21, по плану. User flows (59) — перенесена "
+                "на Вт 21 (решение Guzel 20.07, была на сегодня). Deliver — пока плейсхолдер (63/62 позже "
+                "на неделе).\n"
+                "21.07 — Discover Q3 (проблемы взаимодействия): собран артефакт wiki/interaction_problems_"
+                "research.md (Оси A/B, source-блоки verbatim, verified). ⚠️ ЧЕКАП НУЖЕН (Guzel, 22.07): "
+                "колонки «Как учтено сейчас (команда)» местами неточны (Claude писал по догадке), и "
+                "производная колонка «рекрутер» из-за этого тоже может быть неверна — сверить обе. "
+                "Проблема-цитаты (verbatim) и «цель» — выверены. Ещё не собрано вкладкой Discover (компонент)."
             )),
 
         # ── Figma integration ─────────────────────────────────────────────────
@@ -2471,6 +2492,35 @@ def get_dash_issues() -> list[dict]:
                 "по pages/, но все они удалены из рендера при закрытии DASH-117 — секционных мест для этой "
                 "таксономии сейчас НЕТ. Если решим вернуть провенанс на уровень секций (не только переключателя) "
                 "— тогда этот тикет и станет актуален. Пока не блокирует ничего, включая работу с DS (80/81/92/93)."
+            )),
+        _di("DASH-139", "Техдолг: переименовать USER_STORIES.md → activities_user_stories.md",
+            "To Do", "Task", "DEV", _DASH_EPICS["E15"], 4, 1, "Claude Code",
+            created="2026-07-20T18:30:00.000+0000",
+            labels=["tech-debt", "content"], priority="Low",
+            description=(
+                "Решение 20.07: файл несёт ДВА слоя — «Активности роли» (Discover, research предметной "
+                "области) и «User Stories» (Develop). Имя отражает только второй. Честнее "
+                "activities_user_stories.md. Сейчас дорого: ~15 ссылок (README.md/README_RU.md, CLAUDE.md, "
+                "wiki/comic_script.md, wiki/team_world_bible.md) + исторические decision_note (DASH-44/45 и "
+                "др.) — последние ПЕРЕПИСЫВАТЬ НЕЛЬЗЯ (летопись, отражают имя на момент события). Поэтому "
+                "переименование + правка только НЕ-исторических ссылок — отдельной спокойной задачей, "
+                "не блокирует Discover/Define (там тянем нужные блоки по смыслу независимо от имени файла)."
+            )),
+        _di("DASH-138", "Техдолг: физически разнести код Discover/Define/Develop из motif_about.py",
+            "To Do", "Task", "DEV", _DASH_EPICS["E15"], 4, 2, "Claude Code",
+            created="2026-07-20T18:00:00.000+0000",
+            labels=["tech-debt", "refactor"], priority="Low",
+            description=(
+                "Ответвление от DASH-60 (перенарезка 20.07 — переезд интерактивного воркбенча + "
+                "JTBD/RACI/Artifacts из About в Discover/Define/Develop). Решение 'Вариант A': код "
+                "(MotifAboutState, _team_block, _factors_block, _jtbd_block, _raci_block, "
+                "_artifacts_block и их хелперы) осознанно ОСТАВЛЕН физически в motif_about.py — риск-"
+                "avoidance для LocalStorage-данных пользователя и рабочей DnD-логики (несколько дней "
+                "отладки). Новые страницы (dash_discover.py/dash_define.py/dash_develop.py) импортируют "
+                "функции оттуда. На производительность и на UX это НЕ влияет (Reflex компилирует всё "
+                "дерево компонентов при сборке, физическое расположение .py-файлов роли не играет) — "
+                "чистый вопрос организации кода. Когда будет спокойное время без риска для рабочих "
+                "данных — физически разнести по файлам-владельцам."
             )),
         _di("DASH-123", "Баг: Backlog Issues без детерминированной сортировки (порядок «плывёт» при фильтре)",
             "Done", "Bug", "DEV", _DASH_EPICS["E9"], 5, 2, "Claude Code",
