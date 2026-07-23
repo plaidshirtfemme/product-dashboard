@@ -27,6 +27,7 @@ from .pages.info import info_tab
 from .pages.ds import ds_tab
 from .pages.real_overview import real_overview_tab
 from .pages.real_architecture import real_architecture_tab
+from .pages.dash_architecture import dash_architecture_tab
 from .pages.real_dev import real_dev_tab
 from .pages.real_quality import real_quality_tab
 from .pages.real_release import real_release_tab
@@ -116,7 +117,7 @@ def _build_page_content() -> rx.Component:
                 "bar-chart-2",
             ),
         )),
-        ("architecture",  _by_project(motif=architecture_tab(),  kp=real_architecture_tab())),
+        ("architecture",  _by_project(motif=architecture_tab(),  kp=real_architecture_tab(), dash=dash_architecture_tab())),
         ("analysis",      _by_project(
             motif=analysis_tab(),
             kp=_demo_only(
