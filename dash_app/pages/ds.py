@@ -12,6 +12,7 @@ from ..tokens import (
 )
 from ..components import section_header, stat_card, stat_card_row, progress_bar, color_legend
 from ..components.empty_state import empty_state
+from ..states.dash_ds_state import DsState
 
 _PAD = f"0 {SPACING['xl']} {SPACING['xl']}"
 _MAX = PAGE_MAX_WIDTH
@@ -194,10 +195,10 @@ def _component_card(name: str, description: str, preview: rx.Component) -> rx.Co
 
 
 # ---------------------------------------------------------------------------
-# Main tab
+# Sub-view 1 — Токены и компоненты (живая справка)
 # ---------------------------------------------------------------------------
 
-def ds_tab() -> rx.Component:
+def _tokens_view() -> rx.Component:
     return rx.box(
 
         # ── 1. Цвета ──────────────────────────────────────────────────────
@@ -351,4 +352,373 @@ def ds_tab() -> rx.Component:
         padding=_PAD,
         max_width=_MAX,
         margin="0 auto",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Sub-view 2 — DS rules (стандарты работы с дизайн-системой, research фазы 1)
+# ---------------------------------------------------------------------------
+
+def _bullet(text: str) -> rx.Component:
+    return rx.flex(
+        rx.text("•", size="2", color=rx.color("teal", 9),
+                flex_shrink="0", line_height="1.5"),
+        rx.text(text, size="2", color=rx.color("gray", 11), line_height="1.5"),
+        gap=SPACING["sm"],
+        align="start",
+    )
+
+
+def _rule_card(title: str, icon: str, color: str, items: list[str]) -> rx.Component:
+    return rx.box(
+        rx.flex(
+            rx.icon(icon, size=16, color=rx.color(color, 9), flex_shrink="0"),
+            rx.text(title, size="2", weight="bold", color=rx.color("gray", 12)),
+            align="center",
+            gap=SPACING["sm"],
+            margin_bottom=SPACING["md"],
+        ),
+        rx.flex(
+            *[_bullet(i) for i in items],
+            direction="column",
+            gap=SPACING["xs"],
+        ),
+        padding=SPACING["lg"],
+        border=f"{BORDER} {rx.color('gray', 4)}",
+        border_radius="var(--radius-3)",
+        background=rx.color("gray", 1),
+        flex="1",
+        min_width="280px",
+    )
+
+
+def _quote(text: str, source: str) -> rx.Component:
+    return rx.flex(
+        rx.box(width="3px", flex_shrink="0",
+               background=rx.color("teal", 6), border_radius="2px"),
+        rx.flex(
+            rx.text(f"«{text}»", size="1", color=rx.color("gray", 11),
+                    line_height="1.5", style={"font_style": "italic"}),
+            rx.text(f"— {source}", size="1", weight="medium",
+                    color=rx.color("gray", 9)),
+            direction="column",
+            gap="2px",
+        ),
+        gap=SPACING["sm"],
+        align="stretch",
+    )
+
+
+def _rules_view() -> rx.Component:
+    return rx.box(
+
+        rx.callout(
+            "Стандарты работы с дизайн-системой — конспект research фазы 1 (подготовка к тесту "
+            "HTML → Figma). Источники: Figma Learn, Figma best-practices, LogRocket, atomic design "
+            "(Brad Frost). Конкретику Бычкова / Ефремова веб-поиск не отдаёт — сверять у них напрямую.",
+            icon="info", color_scheme="teal", variant="soft", size="1",
+            margin_bottom=SPACING["xl"],
+        ),
+
+        # ── 1. Мастер-компонент vs variant set ────────────────────────────
+        section_header(
+            "Мастер-компонент vs variant set",
+            subtitle="Когда достаточно набора вариантов, а когда нужен отдельный мастер",
+        ),
+        rx.callout(
+            "Решение — не «мастер или варианты», а выбор из 5 инструментов: отдельный мастер · "
+            "variant set · boolean · instance swap · text. Variants и properties — слои одного "
+            "решения, не конкуренты.",
+            icon="lightbulb", color_scheme="gray", variant="surface", size="1",
+            margin_bottom=SPACING["md"],
+        ),
+        rx.flex(
+            _rule_card("Variant set — когда все условия", "layers", "teal", [
+                "Одно назначение / роль — «одна и та же вещь в разных обличьях»",
+                "Общая анатомия — сопоставимый скелет слоёв (иначе переключение ломается)",
+                "Взаимоисключающие состояния вдоль именованной оси (Type, Size, State)",
+                "Пользователь переключается «на месте», не пересобирая макет",
+            ]),
+            _rule_card("Отдельный мастер — когда", "lock", "amber", [
+                "Разное назначение / семантика (navbar vs footer, button vs input)",
+                "Несводимая анатомия (нужны пустые слои-заглушки → это два мастера)",
+                "У подтипов разные оси состояний (набор начинает «протекать»)",
+            ]),
+            direction="row", wrap="wrap", gap=SPACING["lg"],
+        ),
+        rx.box(height=SPACING["md"]),
+        rx.callout(
+            "Оси должны быть ортогональны: раздельные свойства Type + Size, а не одно свойство "
+            "Style со значениями «Primary-Large» — так работает mix-and-match (Figma Learn).",
+            icon="info", color_scheme="teal", variant="soft", size="1",
+        ),
+
+        rx.box(height=SPACING["2xl"]),
+
+        # ── 2. Base-компонент vs плоский variant set ──────────────────────
+        section_header(
+            "Base-компонент vs плоский variant set",
+            subtitle="Почему иногда сначала делают отдельный компонент, а потом из него variant set",
+        ),
+        rx.callout(
+            "«Variant set без мастера» не существует: component set — контейнер, который может "
+            "содержать только компоненты, поэтому каждый вариант внутри сета сам по себе "
+            "main-компонент. Реальная развилка — две архитектуры одной и той же вещи.",
+            icon="info", color_scheme="amber", variant="soft", size="1",
+            margin_bottom=SPACING["md"],
+        ),
+        rx.flex(
+            _rule_card("Плоский variant set", "layers", "gray", [
+                "Варианты строишь напрямую; общая анатомия продублирована в каждом варианте",
+                "Figma синхронит через multi-edit по совпадающим именам слоёв",
+                "Дефолт, пока анатомия тривиальна, а различия — только состояния / косметика",
+            ]),
+            _rule_card("Base-компонент → потом variant set", "lock", "teal", [
+                "Сначала отдельный base с общей анатомией → его инстанс вложен в каждый вариант",
+                "Variant set несёт только различия; base = единый источник правды по структуре",
+                "Это и есть «сначала мастер, из него variant set»",
+            ]),
+            direction="row", wrap="wrap", gap=SPACING["lg"],
+        ),
+        rx.box(height=SPACING["md"]),
+        rx.text("Когда выносить base-компонент — триггеры из источников:",
+                size="2", weight="medium", color=rx.color("gray", 12),
+                margin_bottom=SPACING["sm"]),
+        rx.flex(
+            _quote(
+                "changing the button shape, I can simply go back and edit the original component "
+                "and the change affects all of the components which are based off of it",
+                "Figma best-practices · Component architecture",
+            ),
+            _quote(
+                "when you want to change the hierarchy or add new elements to all variants… "
+                "you'll quickly find yourself duplicating efforts across every variant",
+                "LogRocket · Nesting Figma components",
+            ),
+            _quote(
+                "separate that property into its own variant and then nest it back… "
+                "reduce complexity significantly",
+                "LogRocket · Nesting Figma components",
+            ),
+            direction="column",
+            gap=SPACING["md"],
+            padding=SPACING["md"],
+            background=rx.color("gray", 1),
+            border=f"{BORDER} {rx.color('gray', 4)}",
+            border_radius="var(--radius-3)",
+        ),
+        rx.box(height=SPACING["md"]),
+        rx.callout(
+            "Решение: плоско, пока анатомия тривиальна; как только скелет сложный и обязан быть "
+            "идентичен во всех вариантах / вариантов много и предвидятся глобальные правки "
+            "структуры / ось раздувает матрицу → base-компонент, вложенный в варианты. Это НЕ "
+            "«другое назначение» — base для той же вещи, ради источника правды по анатомии.",
+            icon="circle-check", color_scheme="teal", variant="soft", size="1",
+        ),
+
+        rx.box(height=SPACING["2xl"]),
+
+        # ── 3. Что делать компонентом, а что нет ──────────────────────────
+        section_header(
+            "Что делать компонентом, а что нет",
+            subtitle="Критерии, чтобы не переусложнять — «переиспользуемое» ≠ «компонент»",
+        ),
+        rx.flex(
+            _rule_card("Делать компонентом", "circle-check", "teal", [
+                "Переиспользуется 3+ (правило трёх) или заведомо будет",
+                "Нужен single source of truth — изменил раз, применилось везде",
+                "Несёт именованную семантику (Button, Card, Toast)",
+                "Инкапсулирует состояния и отступы, дорогие для ручной пересборки",
+            ]),
+            _rule_card("НЕ делать — сигналы переусложнения", "circle-x", "tomato", [
+                "One-off, нет горизонта переиспользования (YAGNI)",
+                "Это на самом деле токен / стиль: цвет → variable, шрифт → text style, тень → effect style",
+                "Это просто расстановка → auto-layout, не компонент",
+                "Паттерн ещё не стабилизировался — рано абстрагировать",
+                "Обёртка над одним примитивом без добавленного смысла",
+            ]),
+            direction="row", wrap="wrap", gap=SPACING["lg"],
+        ),
+        rx.box(height=SPACING["md"]),
+        rx.callout(
+            "Atomic design (Brad Frost) — ментальная модель, не догма: правильно применённый даёт "
+            "меньше компонентов, а не больше. Воронка кандидата: токен / стиль? → только расстановка "
+            "(auto-layout)? → 3+ или single source of truth? → что осью варианта, а что property? → "
+            "паттерн стабилен?",
+            icon="lightbulb", color_scheme="gray", variant="surface", size="1",
+        ),
+
+        rx.box(height=SPACING["2xl"]),
+
+        # ── 4. Карантин при импорте (staging) ─────────────────────────────
+        section_header(
+            "Карантин при импорте (staging)",
+            subtitle="Сырой вход не касается канона DS, пока не отревизован и не нормализован",
+        ),
+        rx.flex(
+            _rule_card("Разделение по локации", "lock", "amber", [
+                "Подписанное — отдельно от WIP (иначе «wrong asset in production»)",
+                "Отдельная страница под file-specific элементы (не в глобальную DS)",
+                "Отдельная team под DS — чтобы unvetted-компоненты не загрязняли канон",
+                "Нумерация страниц (00 Foundations → 10 Core → 99 Docs); Playground read-only; устаревшее → Archive",
+            ]),
+            _rule_card("Ветвление (Figma Branching)", "layers", "teal", [
+                "Ветка = изолированная среда: правишь библиотеку, не трогая оригинал",
+                "Всё активное — в ветке, независимо от размера правки",
+                "Merge в main только после peer-review (как код-PR)",
+            ]),
+            _rule_card("На тесте: сырой HTML-макет", "lightbulb", "gray", [
+                "Вход → отдельная staging-страница («🚧 Import / Incoming / Sandbox»)",
+                "Там нормализуешь под токены и существующие компоненты",
+                "В канон — только после ревизии; иначе чужие радиусы / цвета ломают консистентность",
+            ]),
+            direction="row", wrap="wrap", gap=SPACING["lg"], margin_top=SPACING["sm"],
+        ),
+        rx.box(height=SPACING["md"]),
+        rx.flex(
+            _quote(
+                "keep everything that has been signed off and shipped in a separate location from "
+                "work in progress files — you don't want to use the wrong asset in production!",
+                "Figma best-practices · Team & file organization",
+            ),
+            _quote(
+                "Branches are controlled environments that allow you to explore changes to designs, "
+                "prototypes, and libraries, without editing the original file",
+                "Figma · Best practices for branching",
+            ),
+            direction="column",
+            gap=SPACING["md"],
+            padding=SPACING["md"],
+            background=rx.color("gray", 1),
+            border=f"{BORDER} {rx.color('gray', 4)}",
+            border_radius="var(--radius-3)",
+        ),
+
+        rx.box(height=SPACING["2xl"]),
+
+        # ── 5. Документация DS: дизайнеры vs фронтендеры ───────────────────
+        section_header(
+            "Документация DS: дизайнеры vs фронтендеры",
+            subtitle="Разные инструменты, один принцип — single source of truth, не дрейфовать",
+        ),
+        rx.flex(
+            _rule_card("Дизайнеры", "pen-tool", "teal", [
+                "Внутри Figma: cover, Getting Started, component descriptions, do/don't",
+                "Doc-платформы: zeroheight (синкается с Figma) vs Notion (гибко, но дрейфует)",
+                "Страница компонента: анатомия · варианты / состояния · do/don't с РЕАЛЬНЫМИ скринами",
+            ]),
+            _rule_card("Фронтендеры", "hammer", "teal", [
+                "Storybook — стандарт (Polaris, Carbon, Lightning)",
+                "MDX + Doc Blocks: авто prop-таблицы из TypeScript / PropTypes",
+                "Доки живут в коде → не дрейфуют; Code Connect = мост Figma ↔ код",
+            ]),
+            direction="row", wrap="wrap", gap=SPACING["lg"], margin_top=SPACING["sm"],
+        ),
+        rx.box(height=SPACING["md"]),
+        rx.flex(
+            _quote(
+                "Stories are executable, testable, and remain in sync with production code",
+                "Storybook · docs",
+            ),
+            _quote(
+                "dead links and deprecated guidelines erode trust faster than incomplete documentation",
+                "zeroheight · documentation best practices",
+            ),
+            direction="column",
+            gap=SPACING["md"],
+            padding=SPACING["md"],
+            background=rx.color("gray", 1),
+            border=f"{BORDER} {rx.color('gray', 4)}",
+            border_radius="var(--radius-3)",
+        ),
+        rx.box(height=SPACING["md"]),
+        rx.callout(
+            "Мост миров: токены = единый источник (design_tokens.json W3C ✅) · дизайн-доки = «когда / "
+            "зачем», код-доки = «как» (API, props), связывать не дублировать · наш Reflex (Python) → "
+            "Storybook / Code Connect неприменимы, аналог wiki = design_system_canon.md + эта вкладка.",
+            icon="info", color_scheme="teal", variant="soft", size="1",
+        ),
+
+        rx.box(height=SPACING["2xl"]),
+
+        # ── Источники ─────────────────────────────────────────────────────
+        section_header("Источники", subtitle="На чём основан конспект"),
+        _rule_card("Ссылки", "list", "gray", [
+            "Figma Learn — Create and use variants, component sets (help.figma.com)",
+            "Figma best-practices — Component architecture, Team & file organization, Branching",
+            "LogRocket — Nesting Figma components; component properties (blog.logrocket.com)",
+            "Brad Frost — Atomic Design, методология (atomicdesign.bradfrost.com)",
+            "zeroheight — documentation best practices; Storybook — docs / MDX",
+            "Бычков (alexeybychkov.study, t.me/a1exeybychkov) и Ефремов (t.me/dushnyj_design) — "
+            "сверять напрямую: веб-поиск их конкретику не индексирует",
+        ]),
+
+        padding=_PAD,
+        max_width=_MAX,
+        margin="0 auto",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Section switcher (segmented control) + main tab
+# ---------------------------------------------------------------------------
+
+_SECTIONS = [
+    ("tokens", "Токены и компоненты",
+     "Живая справка: цвета, отступы, типографика, компоненты"),
+    ("rules", "DS rules",
+     "Стандарты: мастер vs variant set, что делать компонентом"),
+]
+
+
+def _section_button(section: str, label: str, sub: str) -> rx.Component:
+    is_active = DsState.section == section
+    return rx.flex(
+        rx.text(label, size="2", weight="medium",
+                color=rx.cond(is_active, rx.color("teal", 11), rx.color("gray", 11))),
+        rx.text(sub, size="1",
+                color=rx.cond(is_active, rx.color("teal", 10), rx.color("gray", 9))),
+        direction="column",
+        gap="0",
+        padding=f"{SPACING['sm']} {SPACING['md']}",
+        border_radius="var(--radius-2)",
+        cursor="pointer",
+        flex="1",
+        min_width="240px",
+        background=rx.cond(is_active, rx.color("teal", 3), rx.color("gray", 2)),
+        border=rx.cond(
+            is_active,
+            f"{BORDER} {rx.color('teal', 7)}",
+            f"{BORDER} {rx.color('gray', 4)}",
+        ),
+        _hover={"background": rx.cond(is_active, rx.color("teal", 3), rx.color("gray", 3))},
+        on_click=DsState.set_section(section),
+    )
+
+
+def _section_switcher() -> rx.Component:
+    return rx.box(
+        rx.flex(
+            *[_section_button(s, l, sub) for s, l, sub in _SECTIONS],
+            direction="row",
+            wrap="wrap",
+            gap=SPACING["sm"],
+            width="100%",
+        ),
+        padding=f"{SPACING['md']} {SPACING['xl']} 0",
+        max_width=_MAX,
+        margin="0 auto",
+    )
+
+
+def ds_tab() -> rx.Component:
+    return rx.box(
+        _section_switcher(),
+        rx.box(height=SPACING["lg"]),
+        rx.match(
+            DsState.section,
+            ("tokens", _tokens_view()),
+            ("rules", _rules_view()),
+            _tokens_view(),
+        ),
     )
