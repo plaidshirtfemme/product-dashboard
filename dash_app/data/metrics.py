@@ -474,6 +474,49 @@ def arch_adrs(issues: list[Issue]) -> list[AdrRow]:
     ]
 
 
+@dataclass
+class DashAdrRow:
+    """One key architecture decision for the DASH project (self-hosted ADR register)."""
+    key: str
+    status: str
+    summary: str
+    squad_key: str
+    labels: list[str]
+    decision: str
+
+
+def dash_adrs(issues: list[Issue]) -> list[DashAdrRow]:
+    """Key architecture decisions for the DASH project itself (DASH-129 ч.4).
+
+    Source = `decision_note` on real DASH issues tagged `architecture` or in the
+    ARCHITECTURE squad — not a separate Motif ADR dataset. Free-text rationale
+    lives on the task (as in real Jira: decision recorded where the work happened).
+    Sorted chronologically by issue number so the register reads as the project's
+    architecture evolution.
+    """
+    def _num(key: str) -> int:
+        tail = key.rsplit("-", 1)[-1]
+        return int(tail) if tail.isdigit() else 0
+
+    sig = [
+        i for i in issues
+        if i.decision_note
+        and ("architecture" in (i.labels or []) or i.squad_key == "ARCHITECTURE")
+    ]
+    sig.sort(key=lambda i: _num(i.key))
+    return [
+        DashAdrRow(
+            key=i.key,
+            status=i.status,
+            summary=i.summary,
+            squad_key=i.squad_key,
+            labels=i.labels or [],
+            decision=i.decision_note,
+        )
+        for i in sig
+    ]
+
+
 def arch_tasks(issues: list[Issue]) -> list[ArchTaskRow]:
     arch_non_adr = [i for i in issues if i.squad_key == "ARCHITECTURE" and i.issue_type != "adr"]
     order = {"In Progress": 0, "In Review": 1, "To Do": 2, "Done": 3}
