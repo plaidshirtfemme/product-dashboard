@@ -28,6 +28,17 @@
       "danger":  { "$value": "tomato", "$type": "string", "$description": "Blocked / overdue / red light" },
       "info":    { "$value": "teal",   "$type": "string", "$description": "Neutral informational, matches accent" },
       "neutral": { "$value": "slate",  "$type": "string", "$description": "Backlog / not-started / no signal" }
+    },
+
+    "role": {
+      "$description": "Component-level color roles → Radix (scale.step). Encodes WHICH Radix step plays WHICH role, so code stops hardcoding steps and the role-map lives in tokens, not comments. NB: current convention is lighter than Radix canon (text step 9 vs canon 11-12, border step 4 vs canon 6-8) — aligning to canon is a separate task (see DASH backlog), decided with visual review. Consume via tokens.py COLOR_ROLE / ROLE.",
+      "text-primary":   { "$value": "gray.12", "$type": "color", "$description": "High-contrast text — titles, values, key labels" },
+      "text-secondary": { "$value": "gray.9",  "$type": "color", "$description": "Secondary text, captions, table labels" },
+      "text-muted":     { "$value": "gray.8",  "$type": "color", "$description": "Muted — monospace IDs, timestamps" },
+      "border-default": { "$value": "gray.4",  "$type": "color", "$description": "Default border / card outline / divider" },
+      "border-subtle":  { "$value": "gray.3",  "$type": "color", "$description": "Subtle inner divider (row separators)" },
+      "bg-card":        { "$value": "gray.1",  "$type": "color", "$description": "Card / panel background" },
+      "bg-subtle":      { "$value": "gray.2",  "$type": "color", "$description": "Subtle component preview / inset background" }
     }
   },
 

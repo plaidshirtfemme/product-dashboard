@@ -62,6 +62,32 @@ EPIC_TYPE_COLORS: dict[str, str] = {
 }
 
 # ---------------------------------------------------------------------------
+# Semantic color roles (component-level) → Radix (scale, step).
+# Encodes WHICH Radix step plays WHICH role, so code stops hardcoding steps and
+# the role-map lives in tokens, not scattered comments. This is the semantic /
+# component layer on top of the Radix Colors primitive scale.
+# NB: current convention is lighter than Radix canon (text step 9 vs canon 11-12,
+# border step 4 vs canon 6-8). Aligning to canon = separate task (visual review).
+# ---------------------------------------------------------------------------
+
+_ROLE_NAMES = (
+    "text-primary", "text-secondary", "text-muted",
+    "border-default", "border-subtle", "bg-card", "bg-subtle",
+)
+
+
+def _role_pair(name: str) -> tuple[str, int]:
+    scale, step = _val(f"color.role.{name}").split(".")
+    return scale, int(step)
+
+
+# name -> (radix_scale, step) — for showcase / introspection
+COLOR_ROLE: dict[str, tuple[str, int]] = {n: _role_pair(n) for n in _ROLE_NAMES}
+
+# name -> rx.color(...) Var — ready to drop straight into component props
+ROLE: dict = {n: rx.color(s, st) for n, (s, st) in COLOR_ROLE.items()}
+
+# ---------------------------------------------------------------------------
 # Spacing scale — use for gap, padding, margin.
 # ---------------------------------------------------------------------------
 
