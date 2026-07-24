@@ -1622,6 +1622,22 @@ def get_dash_issues() -> list[dict]:
                 "Зафиксировать в wiki/ и вкладке Design Process."
             )),
 
+        _di("DASH-143", "Персоны + JTBD: явный артефакт (рекрутер + 2-3 архетипа команды)",
+            "To Do", "Story", "DESIGN", _DASH_EPICS["E9"], 3, 3, "Guzel K.",
+            created="2026-07-24T09:00:00.000+0000",
+            labels=["ux", "discovery"], priority="High",
+            description=(
+                "Оформить персоны и Jobs To Be Done как ЯВНЫЙ артефакт дизайн-процесса. Сейчас они "
+                "свёрнуты в proto-personas внутри USER_STORIES.md (17 ролей активностей) — явной карточки "
+                "персоны и JTBD-формулировок нет (пробел из таблицы Double Diamond в CLAUDE.md: «Не хватает "
+                "цитат, Jobs To Be Done, визуальной карточки персоны»).\n\n"
+                "Состав: (1) главная персона — РЕКРУТЕР (роль, цели, боли, контекст, цитата) + 2-3 архетипа "
+                "команды (PM / SA / Designer), НЕ все 11 ролей Motif; (2) JTBD-формулировки в каноне «Когда "
+                "<ситуация>, я хочу <мотив>, чтобы <результат>» для рекрутера и ключевых ролей; (3) визуальная "
+                "карточка персоны. Опирается на USER_STORIES.md (роли/потребности) и питает journey map (57) "
+                "и user flows (59). Хранение: вкладка Design Process (Define) + Figma."
+            )),
+
         _di("DASH-59", "User flow: ключевые сценарии взаимодействия с дашбордом",
             "To Do", "Story", "DESIGN", _DASH_EPICS["E9"], 3, 2, "Guzel K.",
             created="2026-07-09T10:00:00.000+0000",
@@ -1665,8 +1681,9 @@ def get_dash_issues() -> list[dict]:
 
         # ── Figma integration ─────────────────────────────────────────────────
         _di("DASH-61", "Настроить Figma MCP: подключить к Claude Code",
-            "To Do", "Spike", "ARCH", _DASH_EPICS["E14"], 3, 2, "Claude Code",
+            "Done", "Spike", "ARCH", _DASH_EPICS["E14"], 3, 2, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
+            started="2026-07-23T18:00:00.000+0000", resolved="2026-07-23T22:00:00.000+0000",
             labels=["spike", "architecture"],
             description=(
                 "ЦЕЛЬ GUZEL (из прошлых сессий): token-first архитектура — design_tokens.json "
@@ -1708,7 +1725,13 @@ def get_dash_issues() -> list[dict]:
                 "команде (published libraries, права/seats, ветки, dev handoff). Для позиционирования "
                 "«продуктовый дизайнер в команде» владение этим — прямая ценность и сильный сигнал "
                 "рекрутеру. Т.е. решение об апгрейде взвешивать не только по дедлайну кейса, но и как "
-                "профессиональное вложение. Тайминг — по итогам DASH-118/119 (сделаны) + личного приоритета."
+                "профессиональное вложение. Тайминг — по итогам DASH-118/119 (сделаны) + личного приоритета.\n\n"
+                "✅ ЗАКРЫТО 23.07: подключены ДВА Figma MCP к Claude Code — официальный remote "
+                "(mcp.figma.com/mcp, OAuth) и community ClaudeTalkToFigma (плагин-мост, любой аккаунт). "
+                "Прошлый вывод «Dev Mode = платно» НЕАКТУАЛЕН: официальный remote-сервер пишет на "
+                "free/starter (variables 1 мода доступны; Dev Mode seat не потребовался). Оба проверены "
+                "на живом кейсе StatCard (component set + variants + tokens). Сравнение и выбор инструмента — "
+                "в CLAUDE.md «Figma MCP: два инструмента»; для теста Company 2 (134/140) предпочтение use_figma."
             )),
 
         _di("DASH-62", "Wireframes ключевых экранов дашборда в Figma",
@@ -1841,9 +1864,9 @@ def get_dash_issues() -> list[dict]:
 
         # ── Технический долг (рефакторинг из плана) ──────────────────────────
         _di("DASH-70", "Рефакторинг компонентов: универсальный data_table, вынос молекул",
-            "In Progress", "Task", "DEV", _DASH_EPICS["E17"], 5, 5, "Claude Code",
+            "Done", "Task", "DEV", _DASH_EPICS["E17"], 5, 5, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
-            started="2026-07-12T13:00:00.000+0000",
+            started="2026-07-12T13:00:00.000+0000", resolved="2026-07-24T03:40:00.000+0000",
             labels=["tech-debt", "architecture"],
             description=(
                 "32 инлайн-молекулы в page-файлах → вынести в components/. "
@@ -1852,7 +1875,28 @@ def get_dash_issues() -> list[dict]:
             ),
             decision_note="Частично (сверка 12.07): components/data_table.py СОЗДАН, но 6 файлов "
                           "(architecture, dev, info, monitoring, quality, release) ещё держат свои "
-                          "_bug_table/_legend — миграция не завершена. Остаток: перевести их на data_table."),
+                          "_bug_table/_legend — миграция не завершена.\n\n"
+                          "НАХОДКА DS audit (24.07, DASH-141 P3): «дубли» _bug_table ×3 / _tasks_table ×3 / "
+                          "_decision_badge ×2 — В ОСНОВНОМ КОЛЛИЗИЯ ИМЁН, не копипаст. Функции реально "
+                          "различаются колонками/логикой/подсветкой (quality: Rework+severity-tint; monitoring: "
+                          "severity; dev: show_squad/Blocked), а _decision_badge в research vs growth — вообще "
+                          "разные домены и сигнатуры. Все таблицы УЖЕ делят примитивы table_container / "
+                          "status_badge / sev_badge / mono_text. Реальный дубль был только boilerplate построения "
+                          "grid (header + zebra-row).\n\n"
+                          "СДЕЛАНО (P3, завершено 24.07): добавлен парный хелпер table_row к существующему "
+                          "table_header; на них мигрированы ВСЕ grid-таблицы (14 функций): dev/quality/monitoring/"
+                          "release (bug/tasks) + research (_journal/_usability) + analysis (_requirements/"
+                          "_dependencies) + growth (_experiment) + monitoring (_support_linkage). Zero visual "
+                          "change — зебра/severity-подсветка/accent + спец-строки «Итого»/summary сохранены "
+                          "(проверено в браузере по всем вкладкам, консоль чистая). "
+                          "НЕ трогали (не table-boilerplate): _legend (info/architecture) — это цветные chips, не "
+                          "grid-таблица; _decision_badge ×2 — разные домены, не дубль. Табличная дедупликация "
+                          "закрыта; остаток DASH-70 (вынос прочих молекул _*_card/_*_chip) — низкий приоритет.\n\n"
+                          "✅ ЗАКРЫТО 24.07 (решение Guzel): табличная дедупликация завершена (14 grid-таблиц "
+                          "на table_header/table_row, проверено). _card/_chip-молекулы НЕ выносим: по DS audit "
+                          "они в основном легитимно различаются (не дубль), извлечение = переусложнение против "
+                          "самой идеи чекапа. Тикет = ограниченная завершаемая единица; держать In Progress ради "
+                          "низкоценного остатка = ложный сигнал. Всплывёт реальный дубль — новый тикет."),
 
         _di("DASH-71", "Рефакторинг кода: router, god-файл kp_dashboard.py",
             "Done", "Task", "DEV", _DASH_EPICS["E13"], 3, 3, "Claude Code",
@@ -2167,15 +2211,82 @@ def get_dash_issues() -> list[dict]:
                 "Открытые задачи (25 шт.) переназначены на новые эпики."
             )),
         _di("DASH-92", "Дизайн-система дашборда: ревизия токенов и компонентов перед hi-fi",
-            "To Do", "Task", "DESIGN", _DASH_EPICS["E9"], 3, 3, "Guzel K.",
+            "Done", "Task", "DESIGN", _DASH_EPICS["E9"], 3, 3, "Guzel K.",
             created="2026-07-11T10:00:00.000+0000",
+            started="2026-07-24T01:00:00.000+0000", resolved="2026-07-24T03:35:00.000+0000",
             labels=["ux", "design-system"], priority="High",
             description="Ревизия design_tokens.json и компонентов: консистентность цветов, типографики, "
                         "отступов. База для hi-fi макетов (DASH-63) и Tokens Studio.\n\n"
                         "ВОПРОС (из DASH-117, 20.07): переключатель продукта в navigation.py сейчас честно "
                         "показывает Real/Demo обычным серым текстом («Real · этот дашборд…»). Усилить до "
                         "настоящего бейджа (иконка+цвет, как data_source_badge) для визуального веса — "
-                        "или оставить текстом? Решить в рамках визуальной ревизии."),
+                        "или оставить текстом? Решить в рамках визуальной ревизии.\n\n"
+                        "ФИКС (найдено 24.07): в pages/ds.py под-вкладка «Токены и компоненты» зовёт "
+                        "section_header(title, 'palette') — 2-й позиционный арг уходит в subtitle, а "
+                        "параметра иконки у section_header нет → подписи секций рендерят имена иконок "
+                        "(«palette», «ruler», «type», «file-json»). Убрать имена иконок из вызовов "
+                        "(или добавить icon-параметр в section_header). Новый подраздел DS rules зовёт "
+                        "section_header корректно — образец.",
+            decision_note=(
+                "✅ ЗАКРЫТО 24.07 (решение Guzel): содержательная DS-ревизия выполнена в DASH-141 "
+                "(semantic color.role, консистентность, section_header/palette-фиксы, миграция таблиц). "
+                "Остаточный микро-вопрос — усилить ли текст Real/Demo в переключателе продукта до бейджа "
+                "(иконка+цвет) — отдельная точечная визуальная полировка, НЕ про Radix-канон (142). "
+                "Решается при финальном UI-проходе; отдельный тикет не заводим (классический could — "
+                "живёт заметкой).")),
+        _di("DASH-141", "DS audit: инвентаризация дизайн-системы (токены / компоненты / консистентность)",
+            "Done", "Task", "DESIGN", _DASH_EPICS["E17"], 3, 3, "Claude Code",
+            created="2026-07-24T01:00:00.000+0000",
+            started="2026-07-24T01:00:00.000+0000", resolved="2026-07-24T03:30:00.000+0000",
+            labels=["design-system", "tech-debt", "audit"], priority="High",
+            description=(
+                "Read-only инвентаризация ДС дашборда (24.07, чекап фаза 2 Company 2, на основе теории "
+                "фазы 1 — см. вкладку DS rules).\n\n"
+                "СЛОЙ 1 · ТОКЕНЫ (design_tokens.json → tokens.py): theme (teal / slate / medium), status ×5, "
+                "spacing ×7, border, radius px (для recharts), layout ×3, typography (2 шрифта + 5 размеров), "
+                "CHART_COLORS, EPIC_TYPE_COLORS. ГЭПЫ: (1) шаг Radix-шкалы 1–12 не закодирован в токенах — "
+                "выбирается в коде rx.color(name, step) вручную, карта ролей только в комментариях ds.py → "
+                "главный источник дрейфа; (2) плоская структура, нет уровня component (card.bg, border.default); "
+                "(3) gray vs slate непоследовательно (theme.gray=slate, но в коде оба).\n\n"
+                "СЛОЙ 2 · КОМПОНЕНТЫ (10 файлов): дубли _tasks_table ×3 (release/quality/dev), _bug_table ×3 "
+                "(quality/monitoring/dev), ~10 самодельных _*_table при наличии components/data_table.py "
+                "(миграция не завершена); _decision_badge ×2 + ~8 локальных _*_badge при наличии badge.py; "
+                "десятки инлайн _*_card / _chip / _row.\n\n"
+                "СЛОЙ 3 · КОНСИСТЕНТНОСТЬ: section_header(title, 'palette') — имя иконки в subtitle по ~20 "
+                "вызовам; хардкод hex только в real_design.py (_COLOR_PALETTE, дублирует живой ds.py + red-9 "
+                "вместо токена tomato); использование шагов Radix — на дисциплине.\n\n"
+                "МОСТ К RADIX: наша ДС = Radix Themes (компоненты) + Radix Colors (шкала 1–12) + тонкий "
+                "design_tokens.json (semantic) + свои молекулы. Radix = primitive-слой; JSON должен стать "
+                "явным semantic-слоем поверх Radix-шагов, а не плоским списком имён."
+            ),
+            decision_note=(
+                "Приоритеты правок (решение Guzel 24.07 — делаем все, порядок на усмотрение Claude): "
+                "P1 (быстро / видимо) — icon-параметр в section_header + рендер иконок (чинит ~20 подписей "
+                "разом); real_design hex → живой rx.color, red-9 → tomato. "
+                "P2 (архитектура) — токены primitive → semantic → component: закодировать роли Radix-шагов "
+                "как component-токены (чинит гэпы 1–2 слоя 1). "
+                "P3 (крупно) — доехать миграцию таблиц / бейджей на data_table / badge, вынести дубли (DASH-70). "
+                "Идём P1 → P2 → P3, верификация в браузере по каждому этапу.\n\n"
+                "ИТОГ (24.07): P1 ✅ (section_header icon-param, real_design hex→rx.color), P2 ✅ (color.role → "
+                "COLOR_ROLE/ROLE, живой блок ролей в DS-вкладке; DASH-142 = сближение с Radix-каноном). P3 — "
+                "ВАЖНАЯ НАХОДКА: «дубли» DASH-70 в основном коллизия имён, не копипаст (разные колонки/логика); "
+                "добавлен table_row, мигрированы ВСЕ 14 grid-таблиц (dev/quality/monitoring/release/research/"
+                "analysis/growth) zero-visual, спец-строки сохранены. Всё проверено в браузере, консоль чистая."
+            )),
+        _di("DASH-142", "DS: сблизить шаги цвета с каноном Radix (текст 11-12, бордер 6-8)",
+            "To Do", "Task", "DESIGN", _DASH_EPICS["E17"], 4, 2, "Guzel K.",
+            created="2026-07-24T01:30:00.000+0000",
+            labels=["design-system", "ux"], priority="Medium",
+            description=(
+                "Ответвление от DASH-141 (P2, гибрид-решение Guzel 24.07). Сейчас COLOR_ROLE "
+                "кодирует ТЕКУЩУЮ конвенцию (text-secondary=gray-9, border-default=gray-4) — она "
+                "светлее канона Radix (Radix: текст 11-12, бордеры 6-8, фон 1-2). P2 только НАЗВАЛ "
+                "роли в токенах, визуал не трогал.\n\n"
+                "Эта задача — осознанно решить, сближать ли с каноном: поменять шаги в COLOR_ROLE "
+                "(design_tokens.json → color.role) и посмотреть ГЛАЗАМИ (дашборд станет контрастнее / "
+                "темнее по границам и тексту). Требует визуальной сверки, не механической правки. "
+                "Плюс: после миграции консюмеров на ROLE (P3) смена канона = правка в одном месте."
+            )),
         _di("DASH-96", "История команды: кризисы + Goals легенды (финансирование, бизнес-метрики)",
             "Done", "Story", "PM", _DASH_EPICS["E10"], 3, 5, "Guzel K.",
             created="2026-07-11T10:00:00.000+0000",
@@ -2645,8 +2756,9 @@ def get_dash_issues() -> list[dict]:
 
         # ── Перенарезка 18.07: новые задачи по этапам процесса (E15-E19) ──────────
         _di("DASH-129", "Architecture showcase: C4 + Figma-интеграция + схема Goal→Epic→Issue + ADR",
-            "To Do", "Story", "ARCH", _DASH_EPICS["E17"], 5, 5, "Guzel K.",
-            created="2026-07-18T10:00:00.000+0000",
+            "Done", "Story", "ARCH", _DASH_EPICS["E17"], 5, 5, "Guzel K.",
+            created="2026-07-18T10:00:00.000+0000", started="2026-07-23T12:00:00.000+0000",
+            resolved="2026-07-23T20:00:00.000+0000",
             labels=["architecture", "content", "ux"], priority="High",
             description=(
                 "Апгрейд вкладки Architecture (dash-режим): показать СОБСТВЕННУЮ архитектуру проекта как "
@@ -2657,11 +2769,20 @@ def get_dash_issues() -> list[dict]:
                 "как ГЛУБИНУ под дизайн-заголовком (systems-thinking Product Designer), НЕ как конкурирующий "
                 "заголовок «я архитектор». Мета: дашборд документирует свою же архитектуру (self-hosting). "
                 "Инициатива Guzel 18.07: «артефакты ВСЕЙ моей работы должны быть видны, не только дизайн»."
+            ),
+            decision_note=(
+                "Все 4 артефакта построены нативным Reflex на токенах, одной вкладкой (dash-режим), "
+                "сверху вниз: C4 (3 уровня с переключателем) → схема токенов код↔Figma (честный round-trip: "
+                "едут только токены, компоненты руками — DASH-119) → ERD Goal→Epic→Issue на живых данных "
+                "(4 Goals / 12 KR / 19 Epics / ~140 Issues) → реестр ADR из decision_note реальных задач. "
+                "Реестр ADR — data-driven (dash_adrs: метка architecture / squad ARCHITECTURE), поэтому "
+                "ЭТО решение видно в собственном реестре — предельный self-hosting. Форму (native vs SVG, "
+                "3 уровня) выбирала Guzel; детальную вёрстку под user flows правим на этапе 1."
             )),
         _di("DASH-130", "Mobile / cross-platform hero-tile: флоу Galamart (app) + stealth mobile web",
             "To Do", "Story", "DESIGN", _DASH_EPICS["E18"], 5, 3, "Guzel K.",
             created="2026-07-18T10:00:00.000+0000",
-            labels=["ux", "content", "portfolio"], priority="High",
+            labels=["ux", "content", "portfolio"], priority="Medium",
             description=(
                 "Закрыть пробел №1 (mobile) ЛЁГКО — hero + короткое описание, не полный кейс (силы беречь). "
                 "Показать ЧЕСТНО, по guardrails: Galamart — свои флоу и состояния (регистрация/консент/QR/"
@@ -2674,7 +2795,7 @@ def get_dash_issues() -> list[dict]:
         _di("DASH-131", "Фотогалерея плёночных фото (портфолио на Framer)",
             "To Do", "Story", "DESIGN", _DASH_EPICS["E18"], 5, 3, "Guzel K.",
             created="2026-07-18T10:00:00.000+0000",
-            labels=["ux", "portfolio"], priority="Medium",
+            labels=["ux", "portfolio"], priority="Low",
             description=(
                 "Раздел портфолио с плёночными фото — показывает визуальный вкус + творческий вектор "
                 "(Beyond Work: фотография, музыка). Найти классный UI/UX-паттерн фотогалереи: собрать "
@@ -2696,7 +2817,7 @@ def get_dash_issues() -> list[dict]:
         _di("DASH-133", "Проверка token round-trip: Figma → design_tokens.json → Reflex",
             "To Do", "Task", "ARCH", _DASH_EPICS["E17"], 5, 2, "Claude Code",
             created="2026-07-18T10:00:00.000+0000",
-            labels=["architecture", "design-system"], priority="Medium",
+            labels=["architecture", "design-system"], priority="High",
             description=(
                 "Убедиться, что правки токенов в Figma (через Tokens Studio) удобно забираются обратно в "
                 "Reflex-дашборд по цепочке design_tokens.json → tokens.py → компоненты. ВАЖНАЯ РЕАЛЬНОСТЬ "
@@ -2724,14 +2845,17 @@ def get_dash_issues() -> list[dict]:
             created="2026-07-19T10:00:00.000+0000",
             labels=["release", "process", "interview"], priority="Highest",
             description=(
-                "Второй target (Habr Career): Product UX/UI Designer, part-time, SaaS AI-редактор, remote, "
-                "$1000-2000/мес, 10-20 ч/нед. Подача — Telegram @silentroom_hr_bot + ССЫЛКА НА ПОРТФОЛИО. "
-                "CV и cover НЕ нужны → порог входа низкий. Фит сильный: «сложные многопанельные интерфейсы "
-                "(редакторы, IDE, productivity)» = позиционирование Guzel; AI-редактор ≈ домен Mirum. "
-                "ПРАВИЛО: не доводить портфолио до идеала — им нужна ссылка. Откликаться на 80% готовности "
-                "(Mirum-hero + живой дашборд), финансы поджимают, цена задержки реальна. Блокируется "
-                "DASH-106 (портфолио должно быть живым). Бонус: работа закрывает пробел «self-owned shipped "
-                "SaaS UI». Разбор — cv_product_designer/SILENTROOM_vacancy_19072026.md."
+                "Второй target (Habr Career): Product UX/UI Designer, part-time, SaaS AI-среда для авторов, "
+                "remote, $1500-3000/мес, 10-20 ч/нед. Подача — Telegram @silentroom_hr_bot + ССЫЛКА НА "
+                "ПОРТФОЛИО (Behance/Dprofile/Notion/Framer). CV и cover НЕ нужны → порог входа низкий. Фит "
+                "сильный: «сложные многопанельные интерфейсы (редакторы, IDE, productivity)» = позиционирование "
+                "Guzel; сам продукт — редактор ≈ домен Mirum. ПЕРЕСВЕРКА (вакансию переписали): AI-инструменты "
+                "переехали из nice-to-have в ЯДРО — «Claude Cowork/Code + Figma: HTML→Figma с токенами»; живой "
+                "тест → HTML-макет в Figma через Claude Cowork (дрилл DASH-140, фундамент DASH-134). ПРАВИЛО "
+                "(обновлено 19.07, отменяет прежнее «откликаться на 80%»): портфолио-ссылка = сама заявка, "
+                "смотрят сеньора и оценивают аккуратность → сначала КАЧЕСТВО (гейт DASH-136), только потом "
+                "отклик. Блокируется DASH-106 (портфолио живым) + DASH-136 (планка). Бонус: закрывает пробел "
+                "«self-owned shipped SaaS UI». Разбор — cv_product_designer/SILENTROOM_vacancy_19072026.md."
             )),
         _di("DASH-136", "Чек-лист аккуратности перед откликом (гейт качества портфолио и дашборда)",
             "To Do", "Task", "QUALITY", _DASH_EPICS["E19"], 5, 3, "Guzel K.",
@@ -2753,6 +2877,38 @@ def get_dash_issues() -> list[dict]:
                 "5) Провенанс данных честный (real/mock не путается — см. DASH-117).\n"
                 "ВСЁ, ЧТО ВНЕ СПИСКА — после отклика. Блокирует DASH-135."
             )),
+        _di("DASH-140", "Дрилл живого теста Company 2 (RE-SCOPED): HTML-макет → Figma с токенами/компонентами через Claude Cowork",
+            "To Do", "Task", "DESIGN", _DASH_EPICS["E16"], 5, 3, "Guzel K.",
+            created="2026-07-19T19:00:00.000+0000",
+            labels=["ux", "process", "interview"], priority="Highest",
+            description=(
+                "ГЕЙТ Company 2 — тест ИЗМЕНИЛСЯ (пересверка вакансии, см. cv_product_designer/"
+                "SILENTROOM_vacancy_19072026.md): живой Zoom-тест теперь — конвертировать HTML-макет в "
+                "Figma с компонентами и токенами через Claude Cowork, оценка «speed, confidence, system "
+                "logic». Было: собрать модалку из UI-kit (DASH-134) → теперь 134 = Figma-фундамент под "
+                "этот дрилл.\n"
+                "ПОДГОТОВКА ЗАРАНЕЕ (не в день теста): (1) уточнить, что за инструмент «Claude Cowork» "
+                "(вероятно Claude рядом с тобой, правящий Figma — не то же, что Claude Code); (2) поднять "
+                "связку Claude↔Figma (Figma MCP/плагин), авторизация Figma заранее — на тесте это чинить "
+                "нельзя (= DASH-61); (3) стартовый Figma-файл с базовыми variables.\n"
+                "CORE LOOP (до автоматизма): сначала ТОКЕНЫ (цвет/spacing/типографика → Figma Variables) → "
+                "компоненты из повторяющихся элементов + variants (default/hover/disabled/error) → сборка "
+                "auto-layout'ом → максимум гнать через Claude, быстро ревьюить его вывод. Именно «токены как "
+                "источник правды + компоненты/variants» = «system logic», которую оценивают.\n"
+                "СКОРОСТЬ: таймер 10 мин, сэмпл HTML (модалка/форма) → Figma с токенами+компонентами, 3-5 "
+                "повторов до беглости.\n"
+                "EDGE Guzel: уже работает HTML↔дизайн-система через Claude Code (дашборд: design_tokens.json "
+                "↔ Tokens Studio ↔ Figma) — это её территория, а не экзамен. Слабое — Figma-руки "
+                "(variables/components/variants/auto-layout speed) + сам инструмент Cowork. Материал для "
+                "практики — свои HTML (Mirum-виджет, CV-embed): двойная польза (тренировка + Figma-артефакт).\n"
+                "КРИТЕРИЙ ГОТОВНОСТИ: за 10 мин из данного HTML уверенно собираю Figma с токенами, "
+                "компонентами и состояниями, через Cowork, проговаривая system logic."
+            ),
+            decision_note=(
+                "Тест Company 2 переописан 19.07: HTML→Figma via Claude Cowork (было — модалка из UI-kit). "
+                "140 = сценарий-дрилл под новый тест; 134 остаётся как Figma-фундамент (auto-layout/variants/"
+                "tokens), который в него питается. AI-инструменты в вакансии переехали из nice-to-have в ядро."
+            )),
     ]
 
     # ── Issue links ───────────────────────────────────────────────────────────
@@ -2762,6 +2918,7 @@ def get_dash_issues() -> list[dict]:
                            "inwardIssue": {"key": key}}
 
     links_map = {
+        "DASH-140": [_link("Relates", "DASH-134"), _link("Relates", "DASH-133"), _link("Relates", "DASH-129")],
         "DASH-4":  [_link("Relates", "DASH-5"), _link("Relates", "DASH-6")],
         "DASH-5":  [_link("Relates", "DASH-4")],
         "DASH-10": [_block("DASH-26"), _block("DASH-27")],
@@ -2783,6 +2940,7 @@ def get_dash_issues() -> list[dict]:
         "DASH-58": [_link("Relates", "DASH-57")],
         "DASH-59": [_link("Relates", "DASH-57"), _link("Relates", "DASH-58")],
         "DASH-60": [_link("Relates", "DASH-57"), _link("Relates", "DASH-58"), _link("Relates", "DASH-59")],
+        "DASH-143": [_link("Relates", "DASH-57"), _link("Relates", "DASH-59")],
         "DASH-62": [_block("DASH-61")],
         "DASH-63": [_block("DASH-62")],
         "DASH-64": [_block("DASH-65")],
@@ -2845,7 +3003,7 @@ def get_dash_issues() -> list[dict]:
         _DASH_EPICS["E15"]: ["DASH-57", "DASH-58", "DASH-59", "DASH-60", "DASH-53", "DASH-117", "DASH-94"],
         _DASH_EPICS["E16"]: ["DASH-61", "DASH-62"],
         _DASH_EPICS["E17"]: ["DASH-63", "DASH-92", "DASH-93", "DASH-80", "DASH-81", "DASH-91",
-                             "DASH-110", "DASH-126", "DASH-127", "DASH-129", "DASH-133"],
+                             "DASH-110", "DASH-126", "DASH-127", "DASH-129", "DASH-133", "DASH-141", "DASH-142"],
         _DASH_EPICS["E18"]: ["DASH-105", "DASH-106", "DASH-124", "DASH-125", "DASH-130", "DASH-131",
                              "DASH-101", "DASH-102", "DASH-122"],
         _DASH_EPICS["E19"]: ["DASH-68", "DASH-107", "DASH-132"],
