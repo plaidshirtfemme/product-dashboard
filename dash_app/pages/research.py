@@ -13,6 +13,8 @@ import reflex as rx
 from ..tokens import SPACING, BORDER
 from ..components import (
     table_container,
+    table_header,
+    table_row,
     stat_card,
     stat_card_row,
     status_badge,
@@ -76,26 +78,15 @@ def _method_badge(method: str | None) -> rx.Component:
 # ---------------------------------------------------------------------------
 
 def _journal_table(spikes) -> rx.Component:
-    header = rx.grid(
-        rx.text("Статус", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Гипотеза", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Метод", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Метрика", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Инсайт", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Решение", size="1", weight="medium", color=rx.color("gray", 9)),
-        columns="90px 1fr 170px 150px 60px 110px",
-        gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}",
-        background=rx.color("gray", 2),
-        border_radius="var(--radius-2) var(--radius-2) 0 0",
-    )
+    _COL = "90px 1fr 170px 150px 60px 110px"
+    header = table_header(["Статус", "Гипотеза", "Метод", "Метрика", "Инсайт", "Решение"], _COL)
 
     rows = []
     for i, spike in enumerate(spikes):
         hyp = (spike.hypothesis or "—")
         hyp_short = hyp[:72] + "…" if len(hyp) > 72 else hyp
 
-        row = rx.grid(
+        rows.append(table_row([
             status_badge(_jira_status_key(spike.status)),
             rx.tooltip(
                 rx.text(hyp_short, size="2", color=rx.color("gray", 12)),
@@ -105,19 +96,9 @@ def _journal_table(spikes) -> rx.Component:
             rx.text(spike.research_metric or "—", size="2", color=rx.color("gray", 11)),
             _insight_indicator(spike.insight),
             _decision_badge(spike.decision),
-            columns="90px 1fr 170px 150px 60px 110px",
-            gap=SPACING["md"],
-            align="center",
-            padding=f"10px {SPACING['md']}",
-            background="white" if i % 2 == 0 else rx.color("gray", 1),
-            border_top=f"{BORDER} {rx.color('gray', 3)}",
-        )
-        rows.append(row)
+        ], _COL, i))
 
-    return table_container(
-        header,
-        *rows
-    )
+    return table_container(header, *rows)
 
 
 # ---------------------------------------------------------------------------
@@ -131,39 +112,21 @@ def _journal_table(spikes) -> rx.Component:
 # ---------------------------------------------------------------------------
 
 def _usability_table() -> rx.Component:
-    header = rx.grid(
-        rx.text("Сессия", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Дата", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Участников", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Task Success Rate", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("SUS score", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Найдено проблем", size="1", weight="medium", color=rx.color("gray", 9)),
-        columns="repeat(6, 1fr)",
-        gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}",
-        background=rx.color("gray", 2),
-        border_radius="var(--radius-2) var(--radius-2) 0 0",
-    )
+    _COL = "repeat(6, 1fr)"
+    header = table_header(
+        ["Сессия", "Дата", "Участников", "Task Success Rate", "SUS score", "Найдено проблем"], _COL)
     rows = []
     for i, s in enumerate(_USABILITY_SESSIONS):
         tsr_color = "teal" if s["tsr_pct"] >= 75 else "amber"
         sus_color = "teal" if s["sus"] >= 70 else "amber"
-        rows.append(
-            rx.grid(
-                rx.text(s["session"], size="2", weight="medium"),
-                rx.text(s["date"], size="2", color=rx.color("gray", 11)),
-                rx.text(str(s["participants"]), size="2"),
-                rx.badge(f'{s["tsr_pct"]}%', color_scheme=tsr_color, variant="soft", size="1"),
-                rx.badge(str(s["sus"]), color_scheme=sus_color, variant="soft", size="1"),
-                rx.text(str(s["issues"]), size="2"),
-                columns="repeat(6, 1fr)",
-                gap=SPACING["md"],
-                align="center",
-                padding=f"10px {SPACING['md']}",
-                background="white" if i % 2 == 0 else rx.color("gray", 1),
-                border_top=f"{BORDER} {rx.color('gray', 3)}",
-            )
-        )
+        rows.append(table_row([
+            rx.text(s["session"], size="2", weight="medium"),
+            rx.text(s["date"], size="2", color=rx.color("gray", 11)),
+            rx.text(str(s["participants"]), size="2"),
+            rx.badge(f'{s["tsr_pct"]}%', color_scheme=tsr_color, variant="soft", size="1"),
+            rx.badge(str(s["sus"]), color_scheme=sus_color, variant="soft", size="1"),
+            rx.text(str(s["issues"]), size="2"),
+        ], _COL, i))
 
     # Aggregate row
     avg_tsr = round(sum(s["tsr_pct"] for s in _USABILITY_SESSIONS) / len(_USABILITY_SESSIONS))

@@ -13,6 +13,8 @@ import reflex as rx
 from ..tokens import SPACING, BORDER
 from ..components import (
     table_container,
+    table_header,
+    table_row,
     progress_bar,
     stat_card,
     stat_card_row,
@@ -60,45 +62,26 @@ def _decision_badge(result: str | None, status: str) -> rx.Component:
 
 def _experiment_table(rows) -> rx.Component:
     COL = "90px 100px 180px 1fr 140px 110px"
-    header = rx.grid(
-        rx.text("Ключ", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Статус", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Вариант A (контроль)", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Вариант B (тест)", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Результат", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Решение", size="1", weight="medium", color=rx.color("gray", 9)),
-        columns=COL,
-        gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}",
-        background=rx.color("gray", 2),
-        border_radius="var(--radius-2) var(--radius-2) 0 0",
-    )
+    header = table_header(
+        ["Ключ", "Статус", "Вариант A (контроль)", "Вариант B (тест)", "Результат", "Решение"], COL)
 
     table_rows = []
     for idx, r in enumerate(rows):
         status_color = "grass" if r.status == "Done" else "amber"
         decision = _decision_badge(r.result, r.status)
-        table_rows.append(
-            rx.grid(
-                mono_text(r.key),
-                rx.badge(
-                    "Готово" if r.status == "Done" else r.status,
-                    color_scheme=status_color,
-                    variant="soft",
-                    size="1",
-                ),
-                rx.text(r.variant_a, size="2", color=rx.color("gray", 10)),
-                rx.text(r.variant_b, size="2", color=rx.color("gray", 12), weight="medium"),
-                _result_badge(r.result),
-                decision,
-                columns=COL,
-                gap=SPACING["md"],
-                align="center",
-                padding=f"10px {SPACING['md']}",
-                background="white" if idx % 2 == 0 else rx.color("gray", 1),
-                border_top=f"{BORDER} {rx.color('gray', 3)}",
-            )
-        )
+        table_rows.append(table_row([
+            mono_text(r.key),
+            rx.badge(
+                "Готово" if r.status == "Done" else r.status,
+                color_scheme=status_color,
+                variant="soft",
+                size="1",
+            ),
+            rx.text(r.variant_a, size="2", color=rx.color("gray", 10)),
+            rx.text(r.variant_b, size="2", color=rx.color("gray", 12), weight="medium"),
+            _result_badge(r.result),
+            decision,
+        ], COL, idx))
 
     # Summary row
     b_wins = sum(1 for r in rows if r.result == "Вариант B лучше")

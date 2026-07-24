@@ -62,19 +62,15 @@ def _support_linkage_table(bugs, support_issues) -> rx.Component:
     linked = [(b, bug_to_support.get(b.key, _mock_counts.get(b.severity or "", 0))) for b in bugs]
     linked = sorted(linked, key=lambda x: -x[1])
 
-    header = rx.grid(
-        *[rx.text(c, size="1", weight="medium", color=rx.color("gray", 9))
-          for c in ["Баг", "Статус", "Severity", "Обращений", "Приоритет реакции"]],
-        columns="90px 110px 100px 110px 160px", gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}", background=rx.color("gray", 2),
-        border_radius="var(--radius-2) var(--radius-2) 0 0",
-    )
+    _TPL = "90px 110px 100px 110px 160px"
+    header = table_header(["Баг", "Статус", "Severity", "Обращений", "Приоритет реакции"], _TPL)
     rows = []
     for idx, (b, count) in enumerate(linked):
         sev_color = _SEV_COLORS.get(b.severity or "", "gray")
+        crit = b.severity in ("Blocker", "Critical")
         urgency = "Немедленно" if count >= 5 else ("Высокий" if count >= 2 else ("Плановый" if count >= 1 else "—"))
         urgency_color = "tomato" if count >= 5 else ("amber" if count >= 2 else ("blue" if count >= 1 else "gray"))
-        rows.append(rx.grid(
+        rows.append(table_row([
             mono_text(b.key),
             status_badge({"Done": "done", "In Progress": "in_progress", "In Review": "in_review", "To Do": "not_started"}.get(b.status, "backlog")),
             _sev_badge(b.severity),
@@ -85,13 +81,9 @@ def _support_linkage_table(bugs, support_issues) -> rx.Component:
                 align="center", gap="5px",
             ),
             rx.badge(urgency, color_scheme=urgency_color, variant="soft", size="1"),
-            columns="90px 110px 100px 110px 160px", gap=SPACING["md"], align="center",
-            padding=f"10px {SPACING['md']}",
-            background=rx.color(sev_color, 1) if b.severity in ("Blocker", "Critical") else (
-                "white" if idx % 2 == 0 else rx.color("gray", 1)),
-            border_top=f"{BORDER} {rx.color('gray', 3)}",
-            border_left=f"3px solid {rx.color(sev_color, 7)}" if b.severity in ("Blocker", "Critical") else "3px solid transparent",
-        ))
+        ], _TPL, idx,
+            bg=rx.color(sev_color, 1) if crit else None,
+            accent=f"3px solid {rx.color(sev_color, 7)}" if crit else "3px solid transparent"))
     return table_container(header, *rows)
 
 

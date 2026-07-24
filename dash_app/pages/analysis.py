@@ -13,6 +13,8 @@ import reflex as rx
 from ..tokens import SPACING, BORDER
 from ..components import (
     table_container,
+    table_header,
+    table_row,
     progress_bar,
     stat_card,
     stat_card_row,
@@ -61,65 +63,43 @@ from .utils import jira_status_key as _req_status_key
 
 
 def _requirements_table(rows) -> rx.Component:
-    header = rx.grid(
-        rx.text("Ключ", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Статус", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Источник", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Спецификация", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Неясности", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Изменений", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Согласовано", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Дней до апрув.", size="1", weight="medium", color=rx.color("gray", 9)),
-        columns="90px 110px 1fr 110px 80px 80px 100px 110px",
-        gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}",
-        background=rx.color("gray", 2),
-        border_radius="var(--radius-2) var(--radius-2) 0 0",
-    )
+    _COL = "90px 110px 1fr 110px 80px 80px 100px 110px"
+    header = table_header(
+        ["Ключ", "Статус", "Источник", "Спецификация", "Неясности", "Изменений",
+         "Согласовано", "Дней до апрув."], _COL)
 
     table_rows = []
     for idx, r in enumerate(rows):
-        table_rows.append(
-            rx.grid(
-                mono_text(r.key),
-                status_badge(_req_status_key(r.status)),
-                rx.text(r.source or "—", size="2", color=rx.color("gray", 11)),
-                _spec_bar(r.spec_completeness),
-                rx.badge(
-                    str(r.ambiguity_questions),
-                    color_scheme="amber" if (r.ambiguity_questions or 0) > 0 else "gray",
-                    variant="soft",
-                    size="1",
-                ) if r.ambiguity_questions is not None else rx.text("—", size="2", color=rx.color("gray", 8)),
-                rx.badge(
-                    str(r.change_count),
-                    color_scheme="tomato" if r.change_count > 2 else "amber" if r.change_count > 0 else "gray",
-                    variant="soft",
-                    size="1",
-                ),
-                rx.icon(
-                    "circle_check" if r.approved else "circle",
-                    size=16,
-                    color=rx.color("teal", 10) if r.approved else rx.color("gray", 7),
-                ),
-                rx.text(
-                    f"{r.time_to_approval_days} дн." if r.time_to_approval_days is not None else "—",
-                    size="2",
-                    color=rx.color("gray", 11),
-                ),
-                columns="90px 110px 1fr 110px 80px 80px 100px 110px",
-                gap=SPACING["md"],
-                align="center",
-                padding=f"10px {SPACING['md']}",
-                background="white" if idx % 2 == 0 else rx.color("gray", 1),
-                border_top=f"{BORDER} {rx.color('gray', 3)}",
-            )
-        )
+        table_rows.append(table_row([
+            mono_text(r.key),
+            status_badge(_req_status_key(r.status)),
+            rx.text(r.source or "—", size="2", color=rx.color("gray", 11)),
+            _spec_bar(r.spec_completeness),
+            rx.badge(
+                str(r.ambiguity_questions),
+                color_scheme="amber" if (r.ambiguity_questions or 0) > 0 else "gray",
+                variant="soft",
+                size="1",
+            ) if r.ambiguity_questions is not None else rx.text("—", size="2", color=rx.color("gray", 8)),
+            rx.badge(
+                str(r.change_count),
+                color_scheme="tomato" if r.change_count > 2 else "amber" if r.change_count > 0 else "gray",
+                variant="soft",
+                size="1",
+            ),
+            rx.icon(
+                "circle_check" if r.approved else "circle",
+                size=16,
+                color=rx.color("teal", 10) if r.approved else rx.color("gray", 7),
+            ),
+            rx.text(
+                f"{r.time_to_approval_days} дн." if r.time_to_approval_days is not None else "—",
+                size="2",
+                color=rx.color("gray", 11),
+            ),
+        ], _COL, idx))
 
-    return table_container(
-        header,
-        *table_rows
-    )
+    return table_container(header, *table_rows)
 
 
 # ---------------------------------------------------------------------------
@@ -174,55 +154,35 @@ def _dependencies_table(dep_rows) -> rx.Component:
     if not dep_rows:
         return rx.text("Нет зависимостей в данных", size="2", color=rx.color("gray", 9))
 
-    header = rx.grid(
-        rx.text("Ключ", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Эпик", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Внешняя зависимость", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("API-контракт изменён", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Задокументировано", size="1", weight="medium", color=rx.color("gray", 9)),
-        columns="100px 1fr 170px 170px 150px",
-        gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}",
-        background=rx.color("gray", 2),
-        border_radius="var(--radius-2) var(--radius-2) 0 0",
-    )
+    _COL = "100px 1fr 170px 170px 150px"
+    header = table_header(
+        ["Ключ", "Эпик", "Внешняя зависимость", "API-контракт изменён", "Задокументировано"], _COL)
 
     rows = []
     for i, d in enumerate(dep_rows):
-        rows.append(
-            rx.grid(
-                mono_text(d.key),
-                rx.text(d.epic, size="2", color=rx.color("gray", 11)),
-                rx.badge(
-                    "Да" if d.has_external else "Нет",
-                    color_scheme="amber" if d.has_external else "gray",
-                    variant="soft",
-                    size="1",
-                ),
-                rx.badge(
-                    str(d.api_contract_changes),
-                    color_scheme="tomato" if d.api_contract_changes > 0 else "gray",
-                    variant="soft",
-                    size="1",
-                ),
-                rx.icon(
-                    "circle_check" if d.documented else "circle_x",
-                    size=16,
-                    color=rx.color("teal", 10) if d.documented else rx.color("tomato", 9),
-                ),
-                columns="100px 1fr 170px 170px 150px",
-                gap=SPACING["md"],
-                align="center",
-                padding=f"10px {SPACING['md']}",
-                background="white" if i % 2 == 0 else rx.color("gray", 1),
-                border_top=f"{BORDER} {rx.color('gray', 3)}",
-            )
-        )
+        rows.append(table_row([
+            mono_text(d.key),
+            rx.text(d.epic, size="2", color=rx.color("gray", 11)),
+            rx.badge(
+                "Да" if d.has_external else "Нет",
+                color_scheme="amber" if d.has_external else "gray",
+                variant="soft",
+                size="1",
+            ),
+            rx.badge(
+                str(d.api_contract_changes),
+                color_scheme="tomato" if d.api_contract_changes > 0 else "gray",
+                variant="soft",
+                size="1",
+            ),
+            rx.icon(
+                "circle_check" if d.documented else "circle_x",
+                size=16,
+                color=rx.color("teal", 10) if d.documented else rx.color("tomato", 9),
+            ),
+        ], _COL, i))
 
-    return table_container(
-        header,
-        *rows
-    )
+    return table_container(header, *rows)
 
 
 # ---------------------------------------------------------------------------
