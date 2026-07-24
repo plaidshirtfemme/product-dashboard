@@ -87,15 +87,17 @@ _DECISIONS = [
     },
 ]
 
+# (color, shade, usage) — живые Radix-токены через rx.color (не хардкод hex).
+# Совпадает с showcase в pages/ds.py; danger = tomato (как status-токен), не red.
 _COLOR_PALETTE = [
-    ("teal-9",  "#00927b", "Primary action, active state, 'real' badge"),
-    ("amber-9", "#f59f00", "Warning, demo-only badge, IP-blocks"),
-    ("red-9",   "#e5484d", "Danger, bad trend, security items"),
-    ("blue-9",  "#0090ff", "Coming soon, info, neutral-positive"),
-    ("gray-12", "#1c1c1c", "Primary text"),
-    ("gray-9",  "#8d8d8d", "Secondary text, labels"),
-    ("gray-4",  "#e8e8e8", "Borders, dividers"),
-    ("gray-1",  "#fcfcfc", "Card backgrounds"),
+    ("teal",   9,  "Primary action, active state, 'real' badge"),
+    ("amber",  9,  "Warning, demo-only badge, IP-blocks"),
+    ("tomato", 9,  "Danger, bad trend, security items"),
+    ("blue",   9,  "Coming soon, info, neutral-positive"),
+    ("gray",   12, "Primary text"),
+    ("gray",   9,  "Secondary text, labels"),
+    ("gray",   4,  "Borders, dividers"),
+    ("gray",   1,  "Card backgrounds"),
 ]
 
 
@@ -146,19 +148,18 @@ def _dd_section(label: str, text: str, icon: str, color: str) -> rx.Component:
     )
 
 
-def _palette_row(token: str, hex_val: str, usage: str) -> rx.Component:
+def _palette_row(color: str, shade: int, usage: str) -> rx.Component:
+    token = f"{color}-{shade}"
     return rx.flex(
         rx.box(
             width="32px", height="32px",
             border_radius="var(--radius-2)",
-            background=hex_val,
+            background=rx.color(color, shade),
             border=f"{BORDER} {rx.color('gray', 4)}",
             flex_shrink="0",
         ),
         rx.flex(
             rx.text(token, size="2", weight="medium", color=rx.color("gray", 12),
-                    font_family="monospace"),
-            rx.text(hex_val, size="1", color=rx.color("gray", 8),
                     font_family="monospace"),
             direction="column",
             gap="0",
@@ -189,7 +190,7 @@ def real_design_tab() -> rx.Component:
         # Color palette
         section_header("Color Palette · Radix Themes", "palette"),
         rx.box(
-            *[_palette_row(t, h, u) for t, h, u in _COLOR_PALETTE],
+            *[_palette_row(c, s, u) for c, s, u in _COLOR_PALETTE],
             padding=f"{SPACING['sm']} {SPACING['md']}",
             border=f"{BORDER} {rx.color('gray', 4)}",
             border_radius="var(--radius-3)",

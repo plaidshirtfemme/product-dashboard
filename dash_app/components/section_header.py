@@ -4,8 +4,11 @@ SectionHeader — divides a tab into named blocks (e.g. on the Analysis tab:
 slot for things like "Открыть спринт ->" buttons.
 
 Usage:
-    section_header("Специфичные метрики SA", subtitle="Этап 6")
+    section_header("Цвета · Color Tokens", "palette")            # icon left of title
+    section_header("Специфичные метрики SA", subtitle="Этап 6")  # subtitle under title
     section_header("Реестр требований", action=rx.button("Добавить"))
+
+Note: 2nd positional arg is `icon` (Lucide name). Pass subtitle/action by keyword.
 """
 
 import reflex as rx
@@ -14,15 +17,23 @@ from ..tokens.tokens import SPACING, TYPE_SCALE, BORDER
 
 def section_header(
     title: str,
+    icon: str | None = None,
     subtitle: str | None = None,
     action: rx.Component | None = None,
 ) -> rx.Component:
+    title_block = rx.flex(
+        rx.text(title, style={"font_size": TYPE_SCALE["heading"], "font_weight": "500"}),
+        rx.text(subtitle, size="1", color=rx.color("gray", 9)) if subtitle is not None else rx.fragment(),
+        direction="column",
+        gap="2px",
+    )
     return rx.flex(
         rx.flex(
-            rx.text(title, style={"font_size": TYPE_SCALE["heading"], "font_weight": "500"}),
-            rx.text(subtitle, size="1", color=rx.color("gray", 9)) if subtitle is not None else rx.fragment(),
-            direction="column",
-            gap="2px",
+            rx.icon(icon, size=18, color=rx.color("gray", 11), flex_shrink="0")
+            if icon is not None else rx.fragment(),
+            title_block,
+            align="center",
+            gap=SPACING["sm"],
         ),
         action if action is not None else rx.fragment(),
         justify="between",
