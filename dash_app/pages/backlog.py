@@ -234,6 +234,27 @@ def _jira_field(label: str, value_component) -> rx.Component:
 # Popup content builders (no dialog root — shared by one dialog below)
 # ---------------------------------------------------------------------------
 
+def _history_row(h: dict) -> rx.Component:
+    """Одна запись истории статусов — как строка Jira Activity → History."""
+    return rx.box(
+        rx.flex(
+            rx.text(h["author"], size="1", weight="medium", color=rx.color("gray", 11)),
+            rx.text("·", size="1", color=rx.color("gray", 7)),
+            rx.text(h["date"], size="1", color=rx.color("gray", 9)),
+            align="center", gap="2",
+        ),
+        rx.flex(
+            _status_badge_small(h["from"]),
+            rx.icon("arrow_right", size=13, color=rx.color("gray", 8)),
+            _status_badge_small(h["to"]),
+            align="center", gap="2", margin_top="1",
+        ),
+        padding_y="8px",
+        border_bottom=f"1px solid {rx.color('gray', 3)}",
+        width="100%",
+    )
+
+
 def _issue_content() -> rx.Component:
     issue = BacklogState.selected_issue
     return rx.box(
@@ -364,6 +385,24 @@ def _issue_content() -> rx.Component:
                 border=f"{BORDER} {rx.color('gray', 4)}",
             ),
             gap="5", align="start",
+        ),
+        # ── Status history (Jira Activity → History; новые сверху) ──────────
+        rx.cond(
+            BacklogState.selected_status_history,
+            rx.box(
+                rx.flex(
+                    rx.icon("history", size=13, color=rx.color("gray", 9)),
+                    rx.text("История статусов", size="1", weight="medium",
+                            color=rx.color("gray", 9),
+                            style={"text_transform": "uppercase",
+                                   "letter_spacing": "0.04em"}),
+                    align="center", gap="1", margin_bottom="2",
+                ),
+                rx.foreach(BacklogState.selected_status_history, _history_row),
+                margin_top="5", padding_top="12px",
+                border_top=f"1px solid {rx.color('gray', 4)}",
+            ),
+            rx.box(),
         ),
     )
 

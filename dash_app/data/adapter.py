@@ -108,6 +108,7 @@ class Issue:
     labels: list[str] = field(default_factory=list)
     components: list[str] = field(default_factory=list)
     related_to: list[str] = field(default_factory=list)  # "Relates" links — dependency graph, not blocking
+    status_history: list[dict] = field(default_factory=list)  # [{author, date(datetime), from_status, to_status}] — DASH-112
 
     # Approval flow (BA requirements + Design) — derived from changelog,
     # not a native field (see _derive_flow_metrics)
@@ -189,6 +190,7 @@ def _derive_flow_metrics(raw_issue: dict) -> dict:
     approved_at: datetime | None = None
     requirement_change_count = 0
     api_contract_changes = 0
+    status_history: list[dict] = []
 
     for event in histories:
         for item in event["items"]:
@@ -196,6 +198,13 @@ def _derive_flow_metrics(raw_issue: dict) -> dict:
                 from_idx = WORKFLOW_INDEX.get(item["fromString"])
                 to_idx = WORKFLOW_INDEX.get(item["toString"])
                 ts = _parse_iso(event["created"])
+
+                status_history.append({
+                    "author": event.get("author", {}).get("displayName", ""),
+                    "date": ts,
+                    "from_status": item["fromString"],
+                    "to_status": item["toString"],
+                })
 
                 if to_idx == WORKFLOW_INDEX["In Progress"] and started_at is None:
                     started_at = ts
@@ -226,6 +235,7 @@ def _derive_flow_metrics(raw_issue: dict) -> dict:
         "approved_at": approved_at,
         "requirement_change_count": requirement_change_count,
         "api_contract_changes": api_contract_changes,
+        "status_history": status_history,
     }
 
 
@@ -300,6 +310,7 @@ def adapt_issue(raw: dict) -> Issue:
         lead_time_days=round(lead_time, 1) if lead_time is not None else None,
         rework_count=flow["rework_count"],
         assignee_churn=flow["assignee_churn"],
+        status_history=flow["status_history"],
         blocked_by=blocked_by,
         rice_reach=fields.get(CF_RICE_REACH, 0),
         rice_impact=fields.get(CF_RICE_IMPACT, 0),

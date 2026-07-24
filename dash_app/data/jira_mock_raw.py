@@ -353,6 +353,7 @@ def _gen_changelog(
         new_status = WORKFLOW[new_index]
         histories.append({
             "created": _iso(current),
+            "author": {"displayName": current_assignee},
             "items": [{"field": "status", "fieldtype": "jira", "fieldId": "status", "fromString": current_status, "toString": new_status}],
         })
         current_status = new_status
@@ -364,6 +365,7 @@ def _gen_changelog(
                 current += timedelta(hours=rng.randint(4, 72))
                 histories.append({
                     "created": _iso(current),
+                    "author": {"displayName": current_assignee},
                     "items": [{"field": "status", "fieldtype": "jira", "fieldId": "status", "fromString": current_status, "toString": final_status}],
                 })
                 last_forward_ts = current
@@ -375,6 +377,7 @@ def _gen_changelog(
             current += timedelta(hours=rng.randint(1, 24))
             histories.append({
                 "created": _iso(current),
+                "author": {"displayName": current_assignee},
                 "items": [{"field": "assignee", "fieldtype": "jira", "fieldId": "assignee", "fromString": current_assignee, "toString": new_assignee}],
             })
             current_assignee = new_assignee
@@ -1044,12 +1047,14 @@ def _di(
     if started:
         changelog_histories.append({
             "created": started,
+            "author": {"displayName": assignee},
             "items": [{"field": "status", "fieldtype": "jira", "fieldId": "status",
                        "fromString": "To Do", "toString": "In Progress"}],
         })
     if resolved and status == "Done":
         changelog_histories.append({
             "created": resolved,
+            "author": {"displayName": assignee},
             "items": [{"field": "status", "fieldtype": "jira", "fieldId": "status",
                        "fromString": "In Progress", "toString": "Done"}],
         })
@@ -2287,6 +2292,17 @@ def get_dash_issues() -> list[dict]:
                 "темнее по границам и тексту). Требует визуальной сверки, не механической правки. "
                 "Плюс: после миграции консюмеров на ROLE (P3) смена канона = правка в одном месте."
             )),
+        _di("DASH-144", "Техдолг: a11y — Radix Dialog без aria-describedby (warning в консоли)",
+            "To Do", "Task", "DEV", _DASH_EPICS["E17"], 2, 1, "Claude Code",
+            created="2026-07-24T21:00:00.000+0000",
+            labels=["tech-debt", "a11y"], priority="Low",
+            description=(
+                "При открытии любого попапа (rx.dialog.content в pages/backlog.py) консоль сыплет React-"
+                "warning: «Invalid prop aria-describedby supplied to React.Fragment». Radix Dialog ждёт "
+                "Description/aria-describedby у content — сейчас его нет. Пред­существующий (не регрессия, "
+                "нашли при проверке DASH-112 24.07). Фикс: добавить rx.dialog.description (можно визуально "
+                "скрытую) или aria-describedby к dialog.content. Не блокирует ничего — чистая a11y-гигиена."
+            )),
         _di("DASH-96", "История команды: кризисы + Goals легенды (финансирование, бизнес-метрики)",
             "Done", "Story", "PM", _DASH_EPICS["E10"], 3, 5, "Guzel K.",
             created="2026-07-11T10:00:00.000+0000",
@@ -2516,7 +2532,18 @@ def get_dash_issues() -> list[dict]:
                           "Process (E9/E14/E7), O3 Quality (E4/E8). Все теги резолвятся в названия целей. "
                           "Видно в UI после рестарта reflex (данные грузятся при импорте)."),
         _di("DASH-112", "История изменений статусов в попапах задач и эпиков (как в Jira)",
-            "To Do", "Story", "DEV", _DASH_EPICS["E9"], 5, 5, "Claude Code",
+            "Done", "Story", "DEV", _DASH_EPICS["E9"], 5, 5, "Claude Code",
+            started="2026-07-24T10:00:00.000+0000",
+            resolved="2026-07-24T21:00:00.000+0000",
+            decision_note=(
+                "Реализовано и проверено в браузере 24.07. Секция «История статусов» в попапе "
+                "(pages/backlog.py _issue_content — общий попап для Backlog и Kanban): новые сверху, "
+                "автор·дата, Было→Стало цветными бейджами — по образцу Jira Activity→History (сверено с "
+                "источником). Data: author(=assignee) добавлен в события changelog (_di + генератор); "
+                "adapter._derive_flow_metrics собирает status_history; типизированный "
+                "BacklogState.selected_status_history (иначе .length()/foreach на Any-var падают — поймали "
+                "при компиляции). Реальных авторов/дат вместо assignee подтянет DASH-113."
+            ),
             created="2026-07-11T18:00:00.000+0000",
             labels=["ux", "backlog"],
             description="Jira показывает History в Activity-секции: автор, поле, было → стало, дата. "

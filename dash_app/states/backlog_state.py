@@ -57,6 +57,13 @@ def _to_dict(i, okr_titles: dict) -> dict:
         "decision_note": i.decision_note or "",
         "labels": ", ".join(i.labels) if i.labels else "",
         "created_at": i.created_at.strftime("%Y-%m-%d") if i.created_at else "",
+        # DASH-112: статус-история для попапа (новые сверху, как в Jira History)
+        "status_history": [
+            {"author": h["author"] or i.assignee or "—",
+             "date": h["date"].strftime("%d.%m.%Y") if h["date"] else "",
+             "from": h["from_status"], "to": h["to_status"]}
+            for h in reversed(i.status_history)
+        ],
     }
 
 
@@ -262,6 +269,17 @@ class BacklogState(ProjectState):
                     "epic": name_to_key.get(new_name, r["epic"]),
                 }
         return {}
+
+    @rx.var
+    def selected_status_history(self) -> list[dict]:
+        # DASH-112: типизированный список для попапа (иначе .length()/foreach на Any падают).
+        if not self.selected_key:
+            return []
+        rows = _ALL_DASH if self.project_mode == "dash" else _ALL
+        for r in rows:
+            if r["key"] == self.selected_key:
+                return r.get("status_history", [])
+        return []
 
     @rx.var
     def selected_epic(self) -> dict:
