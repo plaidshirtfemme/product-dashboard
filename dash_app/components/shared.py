@@ -120,6 +120,34 @@ def table_header(labels: list[str], columns: str) -> rx.Component:
     )
 
 
+def table_row(
+    cells: list,
+    columns: str,
+    idx: int,
+    *,
+    bg=None,
+    accent: str | None = None,
+) -> rx.Component:
+    """Standard zebra table-body row (pairs with table_header / table_container).
+
+    idx drives white / gray-1 zebra. `bg` overrides the zebra background (e.g.
+    severity tint). `accent` sets a left border (e.g. "3px solid <color>");
+    pass "3px solid transparent" for non-accented rows in a table that accents
+    some rows, so column alignment stays consistent.
+    """
+    style = dict(
+        columns=columns,
+        gap=SPACING["md"],
+        align="center",
+        padding=f"10px {SPACING['md']}",
+        background=bg if bg is not None else ("white" if idx % 2 == 0 else rx.color("gray", 1)),
+        border_top=f"{BORDER} {rx.color('gray', 3)}",
+    )
+    if accent is not None:
+        style["border_left"] = accent
+    return rx.grid(*cells, **style)
+
+
 def table_container(*children, **kwargs) -> rx.Component:
     """Wraps header + rows with standard border, radius, overflow."""
     return rx.box(

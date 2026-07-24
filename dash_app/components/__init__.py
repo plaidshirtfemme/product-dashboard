@@ -6,7 +6,7 @@ from .section_header import section_header
 from .filter_bar import filter_bar
 from .navigation import sidebar_nav
 from .empty_state import empty_state
-from .shared import real_page_wrapper, real_page_header, progress_bar, vault_coverage_chart, color_legend, table_header, table_container
+from .shared import real_page_wrapper, real_page_header, progress_bar, vault_coverage_chart, color_legend, table_header, table_row, table_container
 
 __all__ = [
     "stat_card",
@@ -29,5 +29,6 @@ __all__ = [
     "vault_coverage_chart",
     "color_legend",
     "table_header",
+    "table_row",
     "table_container",
 ]

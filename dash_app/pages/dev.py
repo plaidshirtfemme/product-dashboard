@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..tokens import SPACING, BORDER, STATUS_COLORS
-from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
+from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs, sprint_trends, dev_person_wip
 
@@ -21,10 +21,7 @@ def _bug_table(bugs, show_squad=False) -> rx.Component:
         cols = ["Ключ", "Squad", "Статус", "Severity", "Priority", "SP"]
         col_template = "90px 120px 110px 100px 100px 40px"
 
-    header = rx.grid(*[rx.text(c, size="1", weight="medium", color=rx.color("gray", 9)) for c in cols],
-                     columns=col_template, gap=SPACING["md"],
-                     padding=f"8px {SPACING['md']}", background=rx.color("gray", 2),
-                     border_radius="var(--radius-2) var(--radius-2) 0 0")
+    header = table_header(cols, col_template)
 
     rows = []
     for idx, b in enumerate(bugs):
@@ -39,35 +36,25 @@ def _bug_table(bugs, show_squad=False) -> rx.Component:
         if not show_squad:
             cells.append(rx.text(f"{b.cycle_time_days} дн." if b.cycle_time_days else "—", size="2", color=rx.color("gray", 11)))
         cells = [c for c in cells if c is not None]
-        rows.append(rx.grid(*cells, columns=col_template, gap=SPACING["md"], align="center",
-                            padding=f"10px {SPACING['md']}",
-                            background="white" if idx % 2 == 0 else rx.color("gray", 1),
-                            border_top=f"{BORDER} {rx.color('gray', 3)}"))
+        rows.append(table_row(cells, col_template, idx))
 
     return table_container(header, *rows)
 
 
 def _tasks_table(tasks) -> rx.Component:
-    header = rx.grid(
-        *[rx.text(c, size="1", weight="medium", color=rx.color("gray", 9))
-          for c in ["Ключ", "Статус", "Тип", "Priority", "SP", "Cycle time", "Blocked"]],
-        columns="90px 110px 90px 100px 40px 90px 80px", gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}", background=rx.color("gray", 2),
-        border_radius="var(--radius-2) var(--radius-2) 0 0")
+    _TPL = "90px 110px 90px 100px 40px 90px 80px"
+    header = table_header(["Ключ", "Статус", "Тип", "Priority", "SP", "Cycle time", "Blocked"], _TPL)
 
     rows = []
     for idx, t in enumerate(tasks):
-        rows.append(rx.grid(
+        rows.append(table_row([
             mono_text(t.key), status_badge(_status_key(t.status)),
             rx.badge(t.issue_type, color_scheme="gray", variant="outline", size="1"),
             _pri_badge(t.priority), rx.text(str(t.story_points), size="2"),
             rx.text(f"{t.cycle_time_days} дн." if t.cycle_time_days else "—", size="2", color=rx.color("gray", 11)),
             rx.icon("circle_x" if t.blocked_by else "circle", size=14,
                     color=rx.color("tomato", 9) if t.blocked_by else rx.color("gray", 5)),
-            columns="90px 110px 90px 100px 40px 90px 80px", gap=SPACING["md"], align="center",
-            padding=f"10px {SPACING['md']}",
-            background="white" if idx % 2 == 0 else rx.color("gray", 1),
-            border_top=f"{BORDER} {rx.color('gray', 3)}"))
+        ], _TPL, idx))
 
     return table_container(header, *rows)
 

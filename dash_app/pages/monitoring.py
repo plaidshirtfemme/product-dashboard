@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..tokens import SPACING, BORDER, STATUS_COLORS
-from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
+from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs
 
@@ -11,52 +11,38 @@ from .utils import jira_status_key as _status_key
 
 
 def _bug_table(bugs) -> rx.Component:
-    header = rx.grid(
-        *[rx.text(c, size="1", weight="medium", color=rx.color("gray", 9))
-          for c in ["Ключ", "Статус", "Severity", "Priority", "SP", "Cycle time"]],
-        columns="90px 110px 100px 100px 40px 100px", gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}", background=rx.color("gray", 2),
-        border_radius="var(--radius-2) var(--radius-2) 0 0")
+    _TPL = "90px 110px 100px 100px 40px 100px"
+    header = table_header(["Ключ", "Статус", "Severity", "Priority", "SP", "Cycle time"], _TPL)
     rows = []
     for idx, b in enumerate(bugs):
         color = _SEV_COLORS.get(b.severity or "", "gray")
-        rows.append(rx.grid(
+        crit = b.severity in ("Blocker", "Critical")
+        rows.append(table_row([
             mono_text(b.key), status_badge(_status_key(b.status)),
             _sev_badge(b.severity),
             rx.badge(b.priority or "—", color_scheme="gray", variant="outline", size="1"),
             rx.text(str(b.story_points), size="2"),
             rx.text(f"{b.cycle_time_days} дн." if b.cycle_time_days else "—", size="2", color=rx.color("gray", 11)),
-            columns="90px 110px 100px 100px 40px 100px", gap=SPACING["md"], align="center",
-            padding=f"10px {SPACING['md']}",
-            background=rx.color(color, 1) if b.severity in ("Blocker", "Critical") else (
-                "white" if idx % 2 == 0 else rx.color("gray", 1)),
-            border_top=f"{BORDER} {rx.color('gray', 3)}",
-            border_left=f"3px solid {rx.color(color, 7)}" if b.severity in ("Blocker", "Critical") else "3px solid transparent",
-        ))
+        ], _TPL, idx,
+            bg=rx.color(color, 1) if crit else None,
+            accent=f"3px solid {rx.color(color, 7)}" if crit else "3px solid transparent"))
     return table_container(header, *rows)
 
 
 def _support_table(tickets) -> rx.Component:
     if not tickets:
         return rx.text("Нет обращений", size="2", color=rx.color("gray", 9))
-    header = rx.grid(
-        *[rx.text(c, size="1", weight="medium", color=rx.color("gray", 9))
-          for c in ["Ключ", "Статус", "Priority", "SP", "Cycle time"]],
-        columns="90px 110px 100px 40px 100px", gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}", background=rx.color("gray", 2),
-        border_radius="var(--radius-2) var(--radius-2) 0 0")
+    _TPL = "90px 110px 100px 40px 100px"
+    header = table_header(["Ключ", "Статус", "Priority", "SP", "Cycle time"], _TPL)
     rows = []
     for idx, t in enumerate(tickets):
-        rows.append(rx.grid(
+        rows.append(table_row([
             mono_text(t.key), status_badge(_status_key(t.status)),
             rx.badge(t.priority or "—", color_scheme="tomato" if t.priority == "Highest" else "gray",
                      variant="soft", size="1"),
             rx.text(str(t.story_points), size="2"),
             rx.text(f"{t.cycle_time_days} дн." if t.cycle_time_days else "—", size="2", color=rx.color("gray", 11)),
-            columns="90px 110px 100px 40px 100px", gap=SPACING["md"], align="center",
-            padding=f"10px {SPACING['md']}",
-            background="white" if idx % 2 == 0 else rx.color("gray", 1),
-            border_top=f"{BORDER} {rx.color('gray', 3)}"))
+        ], _TPL, idx))
     return table_container(header, *rows)
 
 
