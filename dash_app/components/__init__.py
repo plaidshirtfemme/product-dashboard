@@ -7,6 +7,7 @@ from .filter_bar import filter_bar
 from .navigation import sidebar_nav
 from .empty_state import empty_state
 from .shared import real_page_wrapper, real_page_header, progress_bar, vault_coverage_chart, color_legend, table_header, table_row, table_container
+from .reorderable_table import reorderable_table, Column
 
 __all__ = [
     "stat_card",
@@ -31,4 +32,6 @@ __all__ = [
     "table_header",
     "table_row",
     "table_container",
+    "reorderable_table",
+    "Column",
 ]

@@ -11,8 +11,11 @@ Backlog tab — полный реестр всех задач с интерак�
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER, EPIC_TYPE_COLORS
-from ..components import section_header
+from ..tokens import SPACING, BORDER, EPIC_TYPE_COLORS, FONTS
+from ..components import section_header, reorderable_table, Column, SEV_COLORS
+
+# Минимум видимой заливки прогресс-полоски (как min_pct у общего progress_bar).
+_BAR_MIN_PCT = 2
 from ..states.backlog_state import (
     BacklogState,
     STATUS_OPTIONS, PRIORITY_OPTIONS, SEVERITY_OPTIONS,
@@ -263,7 +266,7 @@ def _issue_content() -> rx.Component:
             rx.flex(
                 _type_badge(issue["issue_type"]),
                 rx.text(issue["key"],
-                        style={"font_family": "monospace", "font_size": "12px"},
+                        style={"font_family": FONTS["mono"], "font_size": "12px"},
                         color=rx.color("teal", 11)),
                 align="center", gap="2",
             ),
@@ -411,7 +414,7 @@ def _epic_child_row(child: dict) -> rx.Component:
     return rx.flex(
         _type_badge(child["issue_type"]),
         rx.text(child["key"], size="1",
-                style={"font_family": "monospace", "white_space": "nowrap"},
+                style={"font_family": FONTS["mono"], "white_space": "nowrap"},
                 color=rx.color("gray", 10), min_width="80px"),
         _status_badge_small(child["status"]),
         rx.text(child["summary"], size="2", color=rx.color("gray", 12),
@@ -433,7 +436,7 @@ def _epic_content() -> rx.Component:
             rx.flex(
                 rx.badge("epic", color_scheme="purple", variant="soft", size="1"),
                 rx.text(epic["epic_key"],
-                        style={"font_family": "monospace", "font_size": "12px"},
+                        style={"font_family": FONTS["mono"], "font_size": "12px"},
                         color=rx.color("purple", 11)),
                 _epic_type_chip(epic["epic_type"], epic["unlocks"]),
                 align="center", gap="2",
@@ -557,158 +560,154 @@ def _popup() -> rx.Component:
 # Issues table
 # ---------------------------------------------------------------------------
 
-def _issue_row(row: dict) -> rx.Component:
-    return rx.table.row(
-        # Epic Key (first column) — clickable → epic popup
-        rx.table.cell(
-            rx.text(row["epic"], size="1",
-                    style={"font_family": "monospace", "white_space": "nowrap",
-                           "cursor": "pointer",
-                           "_hover": {"text_decoration": "underline"}},
-                    color=rx.color("purple", 11),
-                    on_click=BacklogState.open_epic(row["epic"])),
-        ),
-        # Epic Name (second column) — clickable → epic popup
-        rx.table.cell(
-            rx.text(row["epic_name"], size="1", color=rx.color("teal", 11),
-                    style={"white_space": "nowrap", "max_width": "140px",
-                           "overflow": "hidden", "text_overflow": "ellipsis",
-                           "cursor": "pointer",
-                           "_hover": {"color": rx.color("purple", 11),
-                                      "text_decoration": "underline"}},
-                    on_click=BacklogState.open_epic(row["epic"])),
-        ),
-        # Squad
-        rx.table.cell(rx.text(row["squad_key"], size="1", color=rx.color("gray", 11))),
-        # Key (clickable → issue popup)
-        rx.table.cell(
-            rx.text(row["key"],
-                    style={"font_family": "monospace", "font_size": "12px",
-                           "white_space": "nowrap", "cursor": "pointer",
-                           "_hover": {"text_decoration": "underline"}},
-                    color=rx.color("gray", 10),
-                    on_click=BacklogState.open_issue(row["key"])),
-        ),
-        # Type
-        rx.table.cell(_type_badge(row["issue_type"])),
-        # Summary (clickable → issue popup)
-        rx.table.cell(
-            rx.text(
-                row["summary"],
-                size="2",
-                color=rx.color("gray", 12),
-                style={"cursor": "pointer", "max_width": "340px",
-                       "overflow": "hidden", "text_overflow": "ellipsis",
-                       "white_space": "nowrap",
-                       "_hover": {"color": rx.color("teal", 11),
-                                  "text_decoration": "underline"}},
-                on_click=BacklogState.open_issue(row["key"]),
+# Колонки таблицы Issues (DASH-114). id → рендерер ячейки; порядок/ширина
+# переставляются пользователем и персистятся через TableLayoutState.
+def _c_epic_key(row):
+    return rx.text(row["epic"], size="1",
+                   style={"font_family": FONTS["mono"], "white_space": "nowrap",
+                          "cursor": "pointer",
+                          "_hover": {"text_decoration": "underline"}},
+                   color=rx.color("purple", 11),
+                   on_click=BacklogState.open_epic(row["epic"]))
+
+
+def _c_epic_name(row):
+    return rx.text(row["epic_name"], size="1", color=rx.color("teal", 11),
+                   style={"white_space": "normal", "word_break": "break-word",
+                          "cursor": "pointer",
+                          "_hover": {"color": rx.color("purple", 11),
+                                     "text_decoration": "underline"}},
+                   on_click=BacklogState.open_epic(row["epic"]))
+
+
+def _c_squad(row):
+    return rx.text(row["squad_key"], size="1", color=rx.color("gray", 11))
+
+
+def _c_key(row):
+    return rx.text(row["key"],
+                   style={"font_family": FONTS["mono"], "font_size": "12px",
+                          "white_space": "nowrap", "cursor": "pointer",
+                          "_hover": {"text_decoration": "underline"}},
+                   color=rx.color("gray", 10),
+                   on_click=BacklogState.open_issue(row["key"]))
+
+
+def _c_summary(row):
+    return rx.text(
+        row["summary"], size="2", color=rx.color("gray", 12),
+        style={"cursor": "pointer", "white_space": "normal",
+               "word_break": "break-word",
+               "_hover": {"color": rx.color("teal", 11),
+                          "text_decoration": "underline"}},
+        on_click=BacklogState.open_issue(row["key"]),
+    )
+
+
+def _c_priority(row):
+    return rx.cond(
+        row["priority"] != "",
+        rx.badge(row["priority"],
+                 color_scheme=rx.match(row["priority"],
+                                       ("Highest", "tomato"), ("High", "amber"), "gray"),
+                 variant="outline", size="1"),
+        rx.text("—", size="1", color=rx.color("gray", 7)),
+    )
+
+
+def _c_severity(row):
+    # Цвета severity — из общего SEV_COLORS (components/badge.py), чтобы Backlog не
+    # расходился с Dev/Quality/Monitoring при правке токенов. sev_badge принимает
+    # только str, а здесь реактивный Var → разворачиваем словарь в rx.match.
+    return rx.cond(
+        row["severity"] != "",
+        rx.badge(row["severity"],
+                 color_scheme=rx.match(row["severity"],
+                                       *[(s, c) for s, c in SEV_COLORS.items()], "gray"),
+                 variant="soft", size="1"),
+        rx.text("—", size="1", color=rx.color("gray", 7)),
+    )
+
+
+def _c_okr(row):
+    """OKR-ячейка. Одна на обе таблицы (Issues и Epics) — поля называются одинаково."""
+    return rx.tooltip(
+        rx.text(row["okr_tag"], size="1", color=rx.color("violet", 11),
+                style={"cursor": "default", "text_decoration": "underline dotted"}),
+        content=row["okr_title"],
+    )
+
+
+def _c_count(field: str):
+    """Числовая ячейка-счётчик: >0 — красный бейдж, 0 — серый нуль (rework, bugs)."""
+    def _cell(row):
+        return rx.cond(
+            row[field].to(int) > 0,
+            rx.badge(row[field].to(int).to_string(),
+                     color_scheme="tomato", variant="soft", size="1"),
+            rx.text("0", size="1", color=rx.color("gray", 7)),
+        )
+    return _cell
+
+
+def _c_int(field: str):
+    """Простая числовая ячейка."""
+    return lambda row: rx.text(row[field].to(int).to_string(), size="1")
+
+
+def _c_blocked(row):
+    return rx.cond(
+        row["blocked"] != "",
+        rx.icon("circle_x", size=13, color=rx.color("tomato", 9)),
+        rx.box(),
+    )
+
+
+def _c_tracking(row):
+    return rx.tooltip(
+        rx.cond(
+            row["tracking_added"] == "yes",
+            rx.icon("chart-line", size=13, color=rx.color("grass", 9)),
+            rx.cond(
+                row["tracking_added"] == "no",
+                rx.icon("chart-line", size=13, color=rx.color("tomato", 9)),
+                rx.text("—", size="1", color=rx.color("gray", 6)),
             ),
         ),
-        # Status
-        rx.table.cell(_status_badge_small(row["status"])),
-        # Priority
-        rx.table.cell(
+        content=rx.cond(
+            row["tracking_added"] == "yes",
+            "DoD: инструментация добавлена",
             rx.cond(
-                row["priority"] != "",
-                rx.badge(row["priority"],
-                         color_scheme=rx.match(
-                             row["priority"],
-                             ("Highest", "tomato"), ("High", "amber"),
-                             "gray"),
-                         variant="outline", size="1"),
-                rx.text("—", size="1", color=rx.color("gray", 7)),
-            )
+                row["tracking_added"] == "no",
+                "DoD: инструментация НЕ добавлена (rework)",
+                "DoD: не применимо",
+            ),
         ),
-        # Severity
-        rx.table.cell(
-            rx.cond(
-                row["severity"] != "",
-                rx.badge(row["severity"],
-                         color_scheme=rx.match(
-                             row["severity"],
-                             ("Blocker", "tomato"), ("Critical", "tomato"),
-                             ("Major", "amber"), ("Minor", "amber"),
-                             "gray"),
-                         variant="soft", size="1"),
-                rx.text("—", size="1", color=rx.color("gray", 7)),
-            )
-        ),
-        rx.table.cell(rx.text(row["story_points"].to(int).to_string(), size="1")),
-        rx.table.cell(rx.text(row["sprint_name"], size="1", color=rx.color("gray", 10))),
-        rx.table.cell(
-            rx.tooltip(
-                rx.text(row["okr_tag"], size="1", color=rx.color("violet", 11),
-                        style={"cursor": "default", "text_decoration": "underline dotted"}),
-                content=row["okr_title"],
-            )
-        ),
-        rx.table.cell(rx.text(row["cycle_time"], size="1", color=rx.color("gray", 10))),
-        rx.table.cell(
-            rx.cond(
-                row["rework_count"].to(int) > 0,
-                rx.badge(row["rework_count"].to(int).to_string(),
-                         color_scheme="tomato", variant="soft", size="1"),
-                rx.text("0", size="1", color=rx.color("gray", 7)),
-            )
-        ),
-        rx.table.cell(
-            rx.cond(
-                row["blocked"] != "",
-                rx.icon("circle_x", size=13, color=rx.color("tomato", 9)),
-                rx.box(),
-            )
-        ),
-        rx.table.cell(
-            rx.tooltip(
-                rx.cond(
-                    row["tracking_added"] == "yes",
-                    rx.icon("chart-line", size=13, color=rx.color("grass", 9)),
-                    rx.cond(
-                        row["tracking_added"] == "no",
-                        rx.icon("chart-line", size=13, color=rx.color("tomato", 9)),
-                        rx.text("—", size="1", color=rx.color("gray", 6)),
-                    ),
-                ),
-                content=rx.cond(
-                    row["tracking_added"] == "yes",
-                    "DoD: инструментация добавлена",
-                    rx.cond(
-                        row["tracking_added"] == "no",
-                        "DoD: инструментация НЕ добавлена (rework)",
-                        "DoD: не применимо",
-                    ),
-                ),
-            )
-        ),
-        style={"_hover": {"background": rx.color("gray", 2)}},
     )
+
+
+_ISSUE_COLUMNS: list[Column] = [
+    Column("epic_key", "Epic Key", _c_epic_key, width=90),
+    Column("epic_name", "Epic", _c_epic_name, width=150),
+    Column("squad", "Squad", _c_squad, width=80),
+    Column("key", "Key", _c_key, width=90),
+    Column("type", "Type", lambda r: _type_badge(r["issue_type"]), width=100),
+    Column("summary", "Summary", _c_summary, width=320),
+    Column("status", "Status", lambda r: _status_badge_small(r["status"]), width=100),
+    Column("priority", "Priority", _c_priority, width=98),
+    Column("severity", "Severity", _c_severity, width=100),
+    Column("sp", "SP", _c_int("story_points"), width=56),
+    Column("sprint", "Sprint", lambda r: rx.text(r["sprint_name"], size="1", color=rx.color("gray", 10)), width=110),
+    Column("okr", "OKR", _c_okr, width=92),
+    Column("cycle", "Cycle time", lambda r: rx.text(r["cycle_time"], size="1", color=rx.color("gray", 10)), width=112),
+    Column("rework", "Rework", _c_count("rework_count"), width=88),
+    Column("blocked", "🔒", _c_blocked, width=48),
+    Column("tracking", "📊", _c_tracking, width=48),
+]
 
 
 def _issues_table() -> rx.Component:
-    return rx.box(
-        rx.table.root(
-            rx.table.header(
-                rx.table.row(
-                    *[rx.table.column_header_cell(col, style={"font_size": "11px",
-                                                              "color": rx.color("gray", 10),
-                                                              "text_transform": "uppercase",
-                                                              "white_space": "nowrap"})
-                      for col in ["Epic Key", "Epic", "Squad", "Key", "Type", "Summary",
-                                  "Status", "Priority", "Severity", "SP", "Sprint", "OKR",
-                                  "Cycle time", "Rework", "🔒", "📊"]]
-                )
-            ),
-            rx.table.body(
-                rx.foreach(BacklogState.filtered, _issue_row)
-            ),
-            variant="surface",
-            width="100%",
-            size="1",
-        ),
-        width="100%",
-        overflow_x="auto",
-    )
+    return reorderable_table("backlog_issues", _ISSUE_COLUMNS, BacklogState.filtered)
 
 
 # ---------------------------------------------------------------------------
@@ -739,98 +738,71 @@ def _epic_type_chip(epic_type, unlocks) -> rx.Component:
     )
 
 
-def _epic_row(row: dict) -> rx.Component:
+# Колонки таблицы Epics (DASH-114). Ячейки-ссылки на эпик собираются одной
+# фабрикой — раньше _ec_key/_ec_name были копиями _c_epic_key/_c_epic_name и уже
+# разошлись по size/hover (находка код-ревью 25.07).
+def _epic_link(field: str, size: str, *, mono: bool = False, color=None):
+    """Ячейка-ссылка «открыть эпик»: mono-ключ или название с переносом."""
+    def _cell(row):
+        style = {"cursor": "pointer",
+                 "_hover": {"color": rx.color("purple", 11),
+                            "text_decoration": "underline"}}
+        if mono:
+            style |= {"font_family": FONTS["mono"], "font_size": "12px",
+                      "white_space": "nowrap"}
+        else:
+            style |= {"white_space": "normal", "word_break": "break-word"}
+        return rx.text(row[field], size=size,
+                       color=color if color is not None else rx.color("gray", 12),
+                       style=style,
+                       on_click=BacklogState.open_epic(row["epic"]))
+    return _cell
+
+
+def _ec_done_pct(row):
+    """Прогресс эпика.
+
+    Общий progress_bar (components/shared.py) здесь НЕ применим: он делает
+    Python-`max(pct, min_pct)`, то есть работает только с конкретным числом, а тут
+    реактивный Var. Поэтому полоска локальная, но с теми же гарантиями, что у
+    общей: минимум видимой заливки (иначе эпик на 0-1% выглядит пустым) и
+    радиус из той же шкалы (находки код-ревью 25.07).
+    """
     done_pct = row["done_pct"].to(int)
     color = rx.cond(done_pct >= 90, "grass", rx.cond(done_pct >= 50, "teal", "amber"))
-    return rx.table.row(
-        # Key (monospace, clickable)
-        rx.table.cell(
-            rx.text(
-                row["epic"],
-                style={"font_family": "monospace", "font_size": "12px",
-                       "cursor": "pointer", "white_space": "nowrap",
-                       "_hover": {"text_decoration": "underline"}},
-                color=rx.color("purple", 11),
-                on_click=BacklogState.open_epic(row["epic"]),
-            ),
+    fill = rx.cond(done_pct < _BAR_MIN_PCT, _BAR_MIN_PCT, done_pct)
+    return rx.flex(
+        rx.box(
+            rx.box(height="6px", background=rx.color(color, 7),
+                   border_radius="var(--radius-1)",
+                   width=fill.to_string() + "%"),
+            width="60px", height="6px",
+            background=rx.color("gray", 3), border_radius="var(--radius-1)",
+            overflow="hidden",
         ),
-        # Name (human-readable, clickable)
-        rx.table.cell(
-            rx.text(
-                row["epic_name"],
-                size="2",
-                color=rx.color("gray", 12),
-                style={"cursor": "pointer", "max_width": "220px",
-                       "overflow": "hidden", "text_overflow": "ellipsis",
-                       "white_space": "nowrap",
-                       "_hover": {"color": rx.color("purple", 11),
-                                  "text_decoration": "underline"}},
-                on_click=BacklogState.open_epic(row["epic"]),
-            ),
-        ),
-        # Type (business/enabler/component; enabler показывает «→ Ex»)
-        rx.table.cell(_epic_type_chip(row["epic_type"], row["unlocks"])),
-        rx.table.cell(
-            rx.tooltip(
-                rx.text(row["okr_tag"], size="1", color=rx.color("violet", 11),
-                        style={"cursor": "default", "text_decoration": "underline dotted"}),
-                content=row["okr_title"],
-            )
-        ),
-        rx.table.cell(rx.text(row["squads"], size="1", color=rx.color("gray", 10))),
-        rx.table.cell(rx.text(row["total"].to(int).to_string(), size="1")),
-        rx.table.cell(rx.text(row["done"].to(int).to_string(), size="1")),
-        rx.table.cell(
-            rx.flex(
-                rx.box(
-                    rx.box(height="6px", background=rx.color(color, 7),
-                           border_radius="var(--radius-full)",
-                           width=done_pct.to_string() + "%"),
-                    width="60px", height="6px",
-                    background=rx.color("gray", 4), border_radius="var(--radius-full)",
-                    overflow="hidden",
-                ),
-                rx.text(done_pct.to_string() + "%", size="1", color=rx.color(color, 11)),
-                align="center", gap="6px",
-            )
-        ),
-        rx.table.cell(rx.text(row["sp_total"].to(int).to_string(), size="1")),
-        rx.table.cell(rx.text(row["sp_done"].to(int).to_string(), size="1")),
-        rx.table.cell(rx.text(row["in_progress"].to(int).to_string(), size="1")),
-        rx.table.cell(
-            rx.cond(
-                row["bugs"].to(int) > 0,
-                rx.badge(row["bugs"].to(int).to_string(), color_scheme="tomato", variant="soft", size="1"),
-                rx.text("0", size="1", color=rx.color("gray", 7)),
-            )
-        ),
-        style={"_hover": {"background": rx.color("gray", 2)}},
+        rx.text(done_pct.to_string() + "%", size="1", color=rx.color(color, 11)),
+        align="center", gap=SPACING["xs"],
     )
+
+
+_EPIC_COLUMNS: list[Column] = [
+    Column("key", "Key", _epic_link("epic", "1", mono=True, color=rx.color("purple", 11)), width=90),
+    Column("name", "Name", _epic_link("epic_name", "2"), width=220),
+    Column("type", "Type", lambda r: _epic_type_chip(r["epic_type"], r["unlocks"]), width=140),
+    Column("okr", "OKR", _c_okr, width=92),
+    Column("squads", "Squads", lambda r: rx.text(r["squads"], size="1", color=rx.color("gray", 10)), width=120),
+    Column("total", "Total", _c_int("total"), width=70),
+    Column("done", "Done", _c_int("done"), width=70),
+    Column("done_pct", "Done %", _ec_done_pct, width=112),
+    Column("sp_total", "SP Total", _c_int("sp_total"), width=90),
+    Column("sp_done", "SP Done", _c_int("sp_done"), width=90),
+    Column("in_progress", "In Progress", _c_int("in_progress"), width=116),
+    Column("bugs", "Bugs", _c_count("bugs"), width=70),
+]
 
 
 def _epics_table() -> rx.Component:
-    return rx.box(
-        rx.table.root(
-            rx.table.header(
-                rx.table.row(
-                    *[rx.table.column_header_cell(col, style={"font_size": "11px",
-                                                              "color": rx.color("gray", 10),
-                                                              "text_transform": "uppercase",
-                                                              "white_space": "nowrap"})
-                      for col in ["Key", "Name", "Type", "OKR", "Squads", "Total", "Done",
-                                  "Done %", "SP Total", "SP Done", "In Progress", "Bugs"]]
-                )
-            ),
-            rx.table.body(
-                rx.foreach(BacklogState.epic_rows, _epic_row)
-            ),
-            variant="surface",
-            width="100%",
-            size="1",
-        ),
-        width="100%",
-        overflow_x="auto",
-    )
+    return reorderable_table("backlog_epics", _EPIC_COLUMNS, BacklogState.epic_rows)
 
 
 # ---------------------------------------------------------------------------
