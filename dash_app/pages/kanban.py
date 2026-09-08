@@ -99,7 +99,7 @@ def _card(issue: Issue) -> rx.Component:
     type_color = _TYPE_COLORS.get(issue.issue_type, "gray")
     pri_color = _PRI_COLORS.get(issue.priority or "", "gray")
     pri_dot = _PRI_DOT.get(issue.priority or "", "○")
-    is_blocked = bool(issue.blocked_by)
+    is_blocked = bool(issue.blocked_active)  # DASH-147
     border_left = f"3px solid {rx.color('tomato', 7)}" if is_blocked else f"3px solid {rx.color(type_color, 6)}"
 
     return rx.box(
@@ -449,7 +449,7 @@ def _kanban_for(issues) -> rx.Component:
 
     total = len(issues)
     wip = sum(1 for i in issues if i.status in ("In Progress", "In Review"))
-    blocked = sum(1 for i in issues if i.blocked_by)
+    blocked = sum(1 for i in issues if i.blocked_active)  # DASH-147
 
     return rx.box(
         section_header(

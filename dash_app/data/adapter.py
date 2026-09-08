@@ -87,6 +87,13 @@ class Issue:
 
     blocked_by: list[str] = field(default_factory=list)
 
+    # DASH-147: blocked_by — статический список из issuelinks, он не знает,
+    # закрыт ли блокер. Поле ниже — то, что действительно означает «сейчас
+    # заблокирована»: есть блокер, который ещё не Done, и сама задача не Done.
+    # Так это работает в настоящей Jira. Заполняется в load_issues(), когда
+    # известны статусы всех задач: у одной задачи этой информации нет.
+    blocked_active: list[str] = field(default_factory=list)
+
     rice_reach: int = 0
     rice_impact: float = 0
     rice_confidence: float = 0
@@ -380,8 +387,33 @@ def load_issues(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[Issue]:
     else:
         raw_issues = generate_raw_issues(config)
     result = [adapt_issue(raw) for raw in raw_issues]
+    _fill_blocked_active(result)
     _ISSUE_CACHE[config.project_key] = result
     return result
+
+
+def _fill_blocked_active(issues: list[Issue]) -> None:
+    """DASH-147: вычислить, какие задачи заблокированы СЕЙЧАС.
+
+    `blocked_by` приходит из issuelinks и статичен: он остаётся заполненным
+    и после того, как блокер закрыт, и после того, как закрыта сама задача.
+    Из-за этого замок горел у 18 закрытых задач из 30 — «закрыта, но
+    заблокирована».
+
+    Правило: задача заблокирована, если она сама не Done и среди её
+    блокеров есть хотя бы один не Done. Блокер с неизвестным ключом
+    считается активным — консервативно, чтобы не спрятать настоящую
+    блокировку из-за опечатки в ключе.
+    """
+    status_by_key = {i.key: i.status for i in issues}
+    for issue in issues:
+        if issue.status == "Done" or not issue.blocked_by:
+            issue.blocked_active = []
+            continue
+        issue.blocked_active = [
+            key for key in issue.blocked_by
+            if status_by_key.get(key) != "Done"
+        ]
 
 
 def list_releases(config: ProjectConfig = MOTIF_DEMO_CONFIG):

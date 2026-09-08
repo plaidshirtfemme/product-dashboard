@@ -10,7 +10,7 @@ import math
 import random as _random
 import re as _re
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .adapter import Issue
 
@@ -288,7 +288,7 @@ def squad_summary(issues: list[Issue], squad_key: str) -> SquadSummary:
         done=len(done),
         sp_done=sum(i.story_points for i in done),
         rework=sum(i.rework_count for i in sq),
-        blocked=sum(1 for i in sq if i.blocked_by),
+        blocked=sum(1 for i in sq if i.blocked_active),  # DASH-147
         bugs=sum(1 for i in sq if i.issue_type == "bug"),
     )
 
@@ -337,6 +337,8 @@ class SimpleIssueRow:
     cycle_time_days: float | None
     rework_count: int
     blocked_by: str | None
+    # DASH-147: активная блокировка — блокер ещё не Done и задача не Done
+    blocked_active: list[str] = field(default_factory=list)
 
 
 def squad_non_bugs(issues: list[Issue], squad_key: str) -> list[SimpleIssueRow]:
@@ -353,6 +355,7 @@ def squad_non_bugs(issues: list[Issue], squad_key: str) -> list[SimpleIssueRow]:
             cycle_time_days=i.cycle_time_days,
             rework_count=i.rework_count,
             blocked_by=i.blocked_by,
+            blocked_active=i.blocked_active,
         )
         for i in sq
     ]
@@ -398,6 +401,7 @@ def slipped_issues(issues: list[Issue]) -> list[SimpleIssueRow]:
             cycle_time_days=i.cycle_time_days,
             rework_count=i.rework_count,
             blocked_by=i.blocked_by,
+            blocked_active=i.blocked_active,
         )
         for i in slipped
     ]
@@ -767,12 +771,13 @@ def squad_health(issues: list[Issue]) -> list[SquadHealth]:
     # grooming, OKR) have structurally different blocked/rework patterns
     # and would skew the threshold for everyone else.
     baseline_issues = [i for i in issues if i.squad_key not in _SQUAD_HEALTH_EXCLUDE]
-    overall_blocked_rate = sum(1 for i in baseline_issues if i.blocked_by) / len(baseline_issues) if baseline_issues else 0
+    # DASH-147: доля считается по активным блокировкам
+    overall_blocked_rate = sum(1 for i in baseline_issues if i.blocked_active) / len(baseline_issues) if baseline_issues else 0
     overall_rework_rate = sum(i.rework_count for i in baseline_issues) / len(baseline_issues) if baseline_issues else 0
 
     results = []
     for squad_key, group in by_squad.items():
-        blocked = sum(1 for i in group if i.blocked_by)
+        blocked = sum(1 for i in group if i.blocked_active)  # DASH-147
         rework = sum(i.rework_count for i in group)
         blocked_rate = blocked / len(group)
         rework_rate = rework / len(group)
@@ -903,7 +908,7 @@ def go_no_go_criteria(issues: list[Issue]) -> list[GoNoGoCriterion]:
     critical_open = [b for b in bugs if b.severity == "Critical" and b.status != "Done"]
     major_open = [b for b in bugs if b.severity == "Major" and b.status != "Done"]
     release_slipped = [i for i in issues if i.release_slipped]
-    critical_blocked = [i for i in issues if i.blocked_by and i.priority in ("Highest", "High")]
+    critical_blocked = [i for i in issues if i.blocked_active and i.priority in ("Highest", "High")]  # DASH-147
 
     return [
         GoNoGoCriterion(

@@ -52,8 +52,9 @@ def _tasks_table(tasks) -> rx.Component:
             rx.badge(t.issue_type, color_scheme="gray", variant="outline", size="1"),
             _pri_badge(t.priority), rx.text(str(t.story_points), size="2"),
             rx.text(f"{t.cycle_time_days} дн." if t.cycle_time_days else "—", size="2", color=rx.color("gray", 11)),
-            rx.icon("circle_x" if t.blocked_by else "circle", size=14,
-                    color=rx.color("tomato", 9) if t.blocked_by else rx.color("gray", 5)),
+            # DASH-147: активная блокировка, не статический blocked_by
+            rx.icon("circle_x" if t.blocked_active else "circle", size=14,
+                    color=rx.color("tomato", 9) if t.blocked_active else rx.color("gray", 5)),
         ], _TPL, idx))
 
     return table_container(header, *rows)

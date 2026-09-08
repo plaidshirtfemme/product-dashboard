@@ -49,7 +49,8 @@ def _to_dict(i, okr_titles: dict) -> dict:
             else "no" if i.status == "Done" and i.issue_type in ("story", "experiment")
             else "na"
         ),
-        "blocked": "Да" if i.blocked_by else "",
+        # DASH-147: замок по активной блокировке, а не по статическому списку
+        "blocked": "Да" if i.blocked_active else "",
         "assignee": i.assignee or "",
         "fix_version": i.fix_version or "",
         "release_slipped": "Да" if i.release_slipped else "",
