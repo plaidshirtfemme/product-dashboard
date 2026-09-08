@@ -48,6 +48,12 @@ def main() -> None:
 
     cmd = [sys.executable, "-m", "reflex", "deploy",
            "--app-name", APP_NAME, "--vmtype", VMTYPE, "--region", REGION]
+    # 08.09.2026: для запуска из автоматики (там некому ответить «proceed?»)
+    # передать скрипту --no-interactive. По умолчанию поведение прежнее,
+    # интерактивное: 08.09 с этим флагом reflex вышел с кодом 1 без единой
+    # строки вывода, причина не установлена.
+    if "--no-interactive" in sys.argv:
+        cmd.append("--no-interactive")
     for e in excludes:
         cmd += ["--exclude-from-backend", e]
 
