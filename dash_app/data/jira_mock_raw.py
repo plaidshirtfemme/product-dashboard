@@ -1627,19 +1627,28 @@ def get_dash_issues() -> list[dict]:
                 "Зафиксировать в wiki/ и вкладке Design Process."
             )),
 
-        _di("DASH-143", "Персоны + JTBD: явный артефакт (рекрутер + 2-3 архетипа команды)",
-            "To Do", "Story", "DESIGN", _DASH_EPICS["E9"], 3, 3, "Guzel K.",
+        _di("DASH-143", "Персоны + JTBD: явный артефакт (2 читателя + 9 ролей команды)",
+            "In Progress", "Story", "DESIGN", _DASH_EPICS["E9"], 3, 3, "Guzel K.",
             created="2026-07-24T09:00:00.000+0000",
+            started="2026-07-25T15:00:00.000+0000",
             labels=["ux", "discovery"], priority="High",
             description=(
                 "Оформить персоны и Jobs To Be Done как ЯВНЫЙ артефакт дизайн-процесса. Сейчас они "
                 "свёрнуты в proto-personas внутри USER_STORIES.md (17 ролей активностей) — явной карточки "
                 "персоны и JTBD-формулировок нет (пробел из таблицы Double Diamond в CLAUDE.md: «Не хватает "
                 "цитат, Jobs To Be Done, визуальной карточки персоны»).\n\n"
-                "Состав: (1) главная персона — РЕКРУТЕР (роль, цели, боли, контекст, цитата) + 2-3 архетипа "
-                "команды (PM / SA / Designer), НЕ все 11 ролей Motif; (2) JTBD-формулировки в каноне «Когда "
-                "<ситуация>, я хочу <мотив>, чтобы <результат>» для рекрутера и ключевых ролей; (3) визуальная "
-                "карточка персоны. Опирается на USER_STORIES.md (роли/потребности) и питает journey map (57) "
+                "Состав (решение 25.07, отменяет прежнее «рекрутер + 2-3 архетипа, НЕ все 11»): "
+                "(1) 11 персон — 2 читателя портфолио (рекрутер-скринер: 30 секунд, чеклист вакансии; "
+                "дизайн-лид: глубина) + все 9 продуктовых ролей команды Motif. Вне набора намеренно: "
+                "Ли (Community Manager) и Нур (Artist-in-Residence) — не пользователи инструмента. "
+                "Два РАЗНЫХ провенанса, не смешивать: читатели = прото-персоны из текстов вакансий "
+                "(интервью не было), команда = design-device для проверки ИА; "
+                "(2) JTBD-формулировки в каноне «Когда <ситуация>, я хочу <мотив>, чтобы <результат>»; "
+                "(3) визуальная карточка персоны.\n\n"
+                "Статус состава на 08.09: персоны и JTBD написаны (dash_personas.py, 11 блоков jtbd), "
+                "карточка рендерится (_persona_card / _persona_grid в dash_define.py). НЕ сделано: "
+                "цитаты — поля под цитату у персоны нет. Это и держит задачу в In Progress.\n\n"
+                "Опирается на USER_STORIES.md (роли/потребности) и питает journey map (57) "
                 "и user flows (59). Хранение: вкладка Design Process (Define) + Figma."
             )),
 
@@ -2309,6 +2318,82 @@ def get_dash_issues() -> list[dict]:
                 "темнее по границам и тексту). Требует визуальной сверки, не механической правки. "
                 "Плюс: после миграции консюмеров на ROLE (P3) смена канона = правка в одном месте."
             )),
+        _di("DASH-148", "Аудит: убрать реальные названия компаний по всему дашборду + Framer",
+            "To Do", "Task", "QUALITY", _DASH_EPICS["E17"], 5, 2, "Claude Code",
+            created="2026-07-25T12:00:00.000+0000",
+            labels=["content", "process"], priority="High",
+            description=(
+                "Реальные названия целевых компаний не светим публично → заменяем на Company 1/2/3 везде, "
+                "где рендерится. Сделано 25.07 в: dash_personas (чипы src + провенанс), okr_dash "
+                "(Objective/KeyResult), dash_define, kanban-заголовок календаря. ОСТАЁТСЯ прочесать: описания "
+                "задач в jira_mock_raw (много упоминаний в description/decision_note), sprint_calendar (focus-"
+                "тексты), тексты вкладок About/Roadmap/Overview, комикс/нарратив, и сам Framer-портфолио. "
+                "Критерий приёмки: grep по кодовой базе и обход Framer не находят реальных названий в РЕНДЕРЕ. "
+                "NB: маппинг названий вести ОТДЕЛЬНО (не в этой задаче), чтобы и здесь не светить."
+            )),
+        _di("DASH-149", "Календарь спринта: листание по неделям (видеть все прошлые/будущие недели)",
+            "To Do", "Task", "DEV", _DASH_EPICS["E17"], 5, 3, "Claude Code",
+            created="2026-07-25T12:05:00.000+0000",
+            labels=["ux", "process"], priority="Medium",
+            description=(
+                "Заголовок календаря (kanban.py) был захардкожен под одну неделю и уплыл (стоял «11-17 июля» "
+                "при данных 20-27 — поправлено на 20-27 вручную 25.07). Сделать заголовок ЛИСТАБЕЛЬНЫМ по "
+                "неделям: стрелки ‹ › / селектор недели, чтобы видеть все задачи, над которыми работали "
+                "(архивные окна 11-19.07 живут в changelog задач). Заголовок ВЫВОДИТЬ из дат выбранной "
+                "недели, а не строкой — чтобы не устаревал. Источник по неделям — sprint_calendar + история задач."
+            )),
+        _di("DASH-150", "Доступность по охвату: четыре замера — контраст, размер текста, зоны нажатия, устойчивость к промаху",
+            "To Do", "Task", "DESIGN", _DASH_EPICS["E17"], 5, 5, "Guzel K.",
+            created="2026-09-05T09:00:00.000+0000",
+            labels=["design-system", "a11y", "ux"], priority="Medium",
+            description=(
+                "РАМКА (решение Guzel 05.09): берём не нишевое, а массовое. Пользователей "
+                "скринридеров мало; людей, которым мешает низкий контраст, мелкий текст, мелкие "
+                "кнопки и неточное попадание пальцем — несопоставимо больше: возраст, слабое "
+                "зрение, тремор, солнце на экране, транспорт. Поэтому четыре замера ниже, а не "
+                "ARIA-разметка.\n\n"
+                "── ЗАМЕР 1 · КОНТРАСТ ──\n"
+                "Пары из COLOR_ROLE на светлой теме: text-primary / bg-card, text-secondary / "
+                "bg-card, text-muted / bg-card, border-default / bg-card, border-subtle / bg-card, "
+                "плюс статусные цвета (success/warning/danger/info/neutral) на своих фонах. "
+                "Отношение по WCAG 2.x; пороги AA: 4.5:1 для основного текста, 3:1 для крупного "
+                "текста и нетекстовых элементов. Прибор: считать на РЕАЛЬНО отрендеренных цветах "
+                "(фактический hex от rx.color(name, step)), а не на предполагаемых значениях шкалы. "
+                "Контроль: пара с известным ответом (чёрный на белом = 21:1). «Явления нет»: все "
+                "пары проходят AA. Решение, которое меняет: в design_tokens.json записано, что "
+                "конвенция СВЕТЛЕЕ канона Radix (текст 9 против 11-12, бордер 4 против 6-8) — "
+                "замер говорит, вкус это или недобор. Питает DASH-142.\n\n"
+                "── ЗАМЕР 2 · РАЗМЕР ТЕКСТА И МАСШТАБИРОВАНИЕ ──\n"
+                "В токенах типографика задана в ПИКСЕЛЯХ (size-label 12, size-body 14, "
+                "size-heading 18, size-page-title 22, size-value 24), тогда как spacing частично "
+                "в rem. Текст в px не реагирует на увеличенный размер шрифта в настройках "
+                "браузера — а это первое, что включает человек со слабым зрением. Мерить: (а) "
+                "фактические размеры на экране; (б) что происходит при зуме страницы 200% и при "
+                "увеличенном базовом шрифте — ломается ли раскладка, обрезается ли текст. "
+                "«Явления нет»: раскладка держится и текст масштабируется. Решение, которое "
+                "меняет: поднимать ли базовый размер и переводить ли типографику в rem.\n\n"
+                "── ЗАМЕР 3 · ЗОНЫ НАЖАТИЯ ──\n"
+                "Размеры интерактивных элементов и расстояния между соседними, в пикселях, на "
+                "реальном телефоне — не в эмуляции. Ориентиры (ПО ПАМЯТИ, сверить в источниках): "
+                "Apple HIG ~44×44 pt, Material ~48×48 dp, WCAG 2.2 target size AA — 24×24 CSS px. "
+                "Где мерить: виджеты портфолио и Home на телефоне (там уже известна поломка — "
+                "заголовок и контент обрезаны по горизонтали на 375 px). «Явления нет»: все цели "
+                "не меньше ориентира и не слипаются.\n\n"
+                "── ЗАМЕР 4 · УСТОЙЧИВОСТЬ К ПРОМАХУ ──\n"
+                "Не размер, а последствия. Проверить: есть ли отмена там, где действие меняет "
+                "состояние; не стоит ли разрушительное действие вплотную к частому; можно ли "
+                "восстановиться после случайного нажатия без перезагрузки. Это не измеряется "
+                "числом — проходится списком по экранам. «Явления нет»: каждое действие либо "
+                "обратимо, либо отделено от соседних.\n\n"
+                "ЗАЧЕМ ВНЕ ПРОЕКТА: закрывает пункт вакансий «понимание accessibility и contrast "
+                "requirements». ВАЖНО: до этой работы заявлять accessibility нечем. Найденные "
+                "ранее в коде prefers-reduced-motion / aria-hidden / :focus-visible написаны "
+                "ассистентом без ведома Guzel и её навыком не являются — вывод отозван 05.09, "
+                "разбор в handoff CV.\n\n"
+                "ПРИЁМКА: по замерам 1-3 — таблицы значений с отметкой pass/fail и вывод, что "
+                "править; по замеру 4 — список найденного. К каждому значимому результату "
+                "картинка (правило проекта: у значимого замера есть картинка)."
+            )),
         _di("DASH-144", "Техдолг: a11y — Radix Dialog без aria-describedby (warning в консоли)",
             "To Do", "Task", "DEV", _DASH_EPICS["E17"], 2, 1, "Claude Code",
             created="2026-07-24T21:00:00.000+0000",
@@ -2477,12 +2562,12 @@ def get_dash_issues() -> list[dict]:
             resolved="2026-07-18T20:00:00.000+0000",
             labels=["content", "release"], priority="High",
             decision_note=(
-                "ГОТОВ (18.07). Финал: CV_v3_Company 1_Guzel_Karimova.pdf (EN, 2-колоночный editorial, "
+                "ГОТОВ (18.07). Финал: итоговый PDF CV (EN, 2-колоночный editorial, "
                 "мастер — CV_v3_print.html). Evidence-based, guardrails соблюдены; каждая строка "
                 "выдерживает проверку. Позиционирование: «Product Designer с systems-thinking для сложных "
                 "data-dense/expert инструментов». Проверено с Guzel построчно: C4 (Galamart), usability "
                 "testing (Sportmaster 1C:ERP), performance-aware design, «clear/implementable» вместо "
-                "developer-ready. Дашборд — self-initiated строка, не Experience. Company 1-хук: «design for the "
+                "developer-ready. Дашборд — self-initiated строка, не Experience. Хук под Company 1: «design for the "
                 "software I use as a working musician» + Beyond Work (саксофон). Файлы в cv_product_designer/."
             )),
         _di("DASH-105", "Hero-блоки остальных кейсов портфолио (реальные показатели-достижения)",
@@ -2957,8 +3042,9 @@ def get_dash_issues() -> list[dict]:
                 "интервьюер. Прогонять перед КАЖДЫМ откликом. Инициатива Guzel 18.07."
             )),
         _di("DASH-133", "Проверка token round-trip: Figma → design_tokens.json → Reflex",
-            "To Do", "Task", "ARCH", _DASH_EPICS["E17"], 5, 2, "Claude Code",
+            "In Progress", "Task", "ARCH", _DASH_EPICS["E17"], 5, 2, "Claude Code",
             created="2026-07-18T10:00:00.000+0000",
+            started="2026-07-24T02:00:00.000+0000",
             labels=["architecture", "design-system"], priority="High",
             description=(
                 "Убедиться, что правки токенов в Figma (через Tokens Studio) удобно забираются обратно в "
@@ -2967,6 +3053,66 @@ def get_dash_issues() -> list[dict]:
                 "компонентов — Figma→code генерация про JS, не Reflex. Проверка: меняю токен в Figma → "
                 "экспорт в JSON → tokens.py отдаёт новое значение → компонент обновился. Задокументировать "
                 "процесс как SA-артефакт «single source of truth» (питает DASH-129)."
+            ),
+            decision_note=(
+                "✅ ПРОГОН 1 (round-trip) СДЕЛАН 24.07 — ДВУСТОРОННИЙ, на radius/md ↔ radius.md: "
+                "Figma 8→12 → get_variable_defs → JSON/tokens.py=12px; обратно код 8px → setValueForMode → "
+                "Figma. Механика доказана end-to-end (в бою автосинк = плагин Tokens Studio; тут делал через MCP руками).\n\n"
+                "⏸ ПРОГОН 2 = БОЛЬШОЙ ЧЕСТНЫЙ БИЛД (весь экран Backlog как полотно в Figma, faithful к коду). "
+                "СТАРТ: ПН 27.07 утром (сброс недельного лимита Claude). Прошлая попытка была урезанным срезом "
+                "(7 колонок/6 строк, без сайдбара/верхнего заголовка/фильтров) — ПЕРЕДЕЛЫВАЕМ ЦЕЛИКОМ.\n\n"
+                "=== FIGMA ===\n"
+                "Файл «Test Figma MCP for Dash», fileKey=bp14UY4ekTpMo69Ney9m8h, page 0:1. Офиц. figma MCP "
+                "поднят (OAuth Guzel karimova.gu.r@gmail.com, есть pro-tier team → Variables доступны). Перед "
+                "use_figma грузить skill resource:figma-use (+ resource:figma-generate-design для сборки экрана, "
+                "resource:figma-generate-library для компонентов). Bring-up сервера — вкладка Deliver / CLAUDE.md.\n"
+                "Уже в файле: StatCard (set trend), Status Badge (наш component set, ось Status×4 — REUSE "
+                "инстансами), орфан «Badge / Status=Done» (node 14:10) → УДАЛИТЬ.\n"
+                "Коллекция Variables «Design Tokens» = VariableCollectionId:14:7 (1 mode). ID переменных: "
+                "badge/success bg=14:8 text=14:9; warning 31:2/31:3; info 31:4/31:5; neutral 31:6/31:7; "
+                "radius/md=15:18; есть spacing/md(16), spacing/xs(4).\n\n"
+                "=== РЕШЕНИЯ (согласовано с Guzel 25.07) ===\n"
+                "1) орфан Badge/Status=Done — удалить (дубль). 2) шрифт — Inter как прокси системного стека "
+                "(реально -apple-system/Segoe UI) + пометка. 3) на Variables ставить scope + code-syntax "
+                "var(--…) (для Tokens Studio round-trip). 4) строк в таблице ~12-15, покрыть все состояния/типы. "
+                "5) лайаут desktop-first фикс — в коде НЕТ media-queries под планшет/мобайл, значит планшет/"
+                "мобайл = отдельный дизайн (НЕ сейчас). ФРЕЙМ: 1440 (ноут, таблица скроллит) ИЛИ ~1680 (виден "
+                "контент на потолке max-width 1400) — СПРОСИТЬ Guzel на старте, финально не выбрано.\n\n"
+                "=== КАРТА КОМПОНЕНТОВ ===\n"
+                "REUSE: Status Badge. CREATE variant-set'ы: Type (8: bug/story/design/experiment/research-spike/"
+                "requirement/adr/support-ticket, soft), Priority (Highest/High/Medium/Low, OUTLINE), Severity "
+                "(Blocker/Critical/Major/Minor/Trivial, soft). CREATE: Nav item (1 компонент + props: label TEXT / "
+                "icon INSTANCE_SWAP / Active BOOLEAN + инстансы ×~18), Filter select (1 компонент + инстансы). "
+                "Chrome (рамка экрана / сайдбар-контейнер / table-контейнер / заголовки колонок) — руками фреймами.\n\n"
+                "=== FIDELITY (мои прошлые ошибки — НЕ повторить) ===\n"
+                "— Бейджи = FULL-пилюля (реальный CSS border-radius: max(var(--radius-1), var(--radius-full))), "
+                "НЕ radius/md! Завести radius/full (9999) и привязать углы к нему. Урок: figma-токен зеркалит "
+                "computed DOM, не «удобный» токен из коллекции.\n"
+                "— Заголовки колонок таблицы: UPPERCASE + letter-spacing + серый (text-transform uppercase в коде).\n"
+                "— Цвета/шаги статусов сверять с tokens.py/computed, НЕ с прошлым тестом.\n\n"
+                "=== STAGING / КАРАНТИН ===\n"
+                "Ввести страницы-разделы: Foundations (Variables+свотчи) / Components (канон. variant-set'ы) / "
+                "🚧 Staging-Screens (собранный экран Backlog — отдельно, не засоряет библиотеку). Существующее "
+                "(StatCard/бейджи) перенести по страницам, не удаляя.\n\n"
+                "=== СТРУКТУРА BACKLOG (source of truth = pages/backlog.py + layout.py) ===\n"
+                "Сайдбар: переключатель Motif + нав (About project, Practices & Rules, Kanban, Backlog[active], "
+                "Roadmap, Overview/PM, Research, Analytics·PA, Architecture, Requirements·BA/SA, Design[аккордеон: "
+                "Design System/Discover/Define/Develop/Deliver], Dev & Pipeline, Quality, Instructions & Release, "
+                "Monitoring & Support, Growth). Верхний заголовок «Product Dashboard» + подзаголовок. Backlog: "
+                "«Backlog» + подзаголовок; фильтр-бар [Issues|Epics] + 8 селектов (Squad/Type/Status/Priority/"
+                "Severity/Sprint/Epic/OKR, «Все ▾») + reset + счётчик «N задач». Таблица 16 колонок "
+                "(_ISSUE_COLUMNS): epic_key, epic_name, squad, key, type, summary, status, priority, severity, sp, "
+                "sprint, okr, cycle, rework(count), blocked(🔒), tracking(📊). _TYPE_COLORS: bug=tomato story=teal "
+                "design=violet experiment=iris research-spike=cyan requirement=amber adr=plum support-ticket=orange. "
+                "Статусы: Done=grass In Progress=amber In Review=teal Not started=gray (bg шаг3/текст шаг11). "
+                "Severity=SEV_COLORS. Priority: Highest=tomato High=amber иначе gray (outline).\n\n"
+                "=== ПЛАН ФАЗ (по figma-generate-library) ===\n"
+                "Ф1 Foundations: Variables (radius/full + недостающие type/severity/priority цвета) + scope + "
+                "var() syntax. Ф2 Pages (3 раздела). Ф3 Components ПО ОДНОМУ со скриншот-валидацией (Type, "
+                "Priority, Severity, Nav item, Select). Ф4 Screen на Staging: сайдбар + заголовок + фильтр-бар(8) + "
+                "таблица(16 кол, uppercase-заголовки) + ~12-15 строк. Ф5 QA: скриншоты/консистентность/нейминг.\n\n"
+                "Источники прочитаны: wwds.md, figma-generate-design, figma-generate-library, figma-use. "
+                "ПЕРВЫЙ ШАГ 27.07: спросить ширину фрейма (1440/1680) → Ф1."
             )),
         _di("DASH-134", "Подготовка к живому Figma-тесту (Company 2): auto-layout, variants, tokens",
             "To Do", "Task", "DESIGN", _DASH_EPICS["E16"], 5, 5, "Guzel K.",
@@ -2988,7 +3134,7 @@ def get_dash_issues() -> list[dict]:
             labels=["release", "process", "interview"], priority="Highest",
             description=(
                 "Второй target (Habr Career): Product UX/UI Designer, part-time, SaaS AI-среда для авторов, "
-                "remote, $1500-3000/мес, 10-20 ч/нед. Подача — Telegram @silentroom_hr_bot + ССЫЛКА НА "
+                "remote, $1500-3000/мес, 10-20 ч/нед. Подача — Telegram-бот компании + ССЫЛКА НА "
                 "ПОРТФОЛИО (Behance/Dprofile/Notion/Framer). CV и cover НЕ нужны → порог входа низкий. Фит "
                 "сильный: «сложные многопанельные интерфейсы (редакторы, IDE, productivity)» = позиционирование "
                 "Guzel; сам продукт — редактор ≈ домен Mirum. ПЕРЕСВЕРКА (вакансию переписали): AI-инструменты "
@@ -2997,7 +3143,7 @@ def get_dash_issues() -> list[dict]:
                 "(обновлено 19.07, отменяет прежнее «откликаться на 80%»): портфолио-ссылка = сама заявка, "
                 "смотрят сеньора и оценивают аккуратность → сначала КАЧЕСТВО (гейт DASH-136), только потом "
                 "отклик. Блокируется DASH-106 (портфолио живым) + DASH-136 (планка). Бонус: закрывает пробел "
-                "«self-owned shipped SaaS UI». Разбор — cv_product_designer/SILENTROOM_vacancy_19072026.md."
+                "«self-owned shipped SaaS UI». Разбор вакансии — в проекте cv_product_designer."
             )),
         _di("DASH-136", "Чек-лист аккуратности перед откликом (гейт качества портфолио и дашборда)",
             "To Do", "Task", "QUALITY", _DASH_EPICS["E19"], 5, 3, "Guzel K.",
@@ -3024,8 +3170,8 @@ def get_dash_issues() -> list[dict]:
             created="2026-07-19T19:00:00.000+0000",
             labels=["ux", "process", "interview"], priority="Highest",
             description=(
-                "ГЕЙТ Company 2 — тест ИЗМЕНИЛСЯ (пересверка вакансии, см. cv_product_designer/"
-                "SILENTROOM_vacancy_19072026.md): живой Zoom-тест теперь — конвертировать HTML-макет в "
+                "ГЕЙТ Company 2 — тест ИЗМЕНИЛСЯ (пересверка вакансии, см. разбор в проекте "
+                "cv_product_designer): живой Zoom-тест теперь — конвертировать HTML-макет в "
                 "Figma с компонентами и токенами через Claude Cowork, оценка «speed, confidence, system "
                 "logic». Было: собрать модалку из UI-kit (DASH-134) → теперь 134 = Figma-фундамент под "
                 "этот дрилл.\n"
