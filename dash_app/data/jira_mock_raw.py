@@ -3221,61 +3221,60 @@ def get_dash_issues() -> list[dict]:
         "DASH-48": [_link("Relates", "DASH-14")],
         "DASH-49": [_link("Relates", "DASH-21")],
         "DASH-50": [_link("Relates", "DASH-13")],
-        "DASH-53": [_link("Relates", "DASH-20")],
+        "DASH-53": [_link("Relates", "DASH-20"), _block("DASH-55")],   # DASH-147: было 55←53
         "DASH-54": [_block("DASH-47")],
-        "DASH-55": [_block("DASH-48"), _block("DASH-53"), _block("DASH-54")],
+        "DASH-55": [_block("DASH-48"), _block("DASH-54")],
         "DASH-57": [_link("Relates", "DASH-53")],
         "DASH-58": [_link("Relates", "DASH-57")],
         "DASH-59": [_link("Relates", "DASH-57"), _link("Relates", "DASH-58")],
         "DASH-60": [_link("Relates", "DASH-57"), _link("Relates", "DASH-58"), _link("Relates", "DASH-59")],
         "DASH-143": [_link("Relates", "DASH-57"), _link("Relates", "DASH-59")],
         "DASH-62": [_block("DASH-61")],
-        "DASH-63": [_block("DASH-62")],
-        "DASH-64": [_block("DASH-65")],
-        "DASH-65": [_block("DASH-66"), _block("DASH-67")],
+        "DASH-63": [_block("DASH-62"), _block("DASH-92")],             # DASH-147: токены (92) до hi-fi (63)
+        "DASH-65": [_block("DASH-66"), _block("DASH-67"), _block("DASH-64"),
+                    _link("Relates", "DASH-97")],                      # DASH-147: слит дубль ключа + Блок 1 блокирует
         "DASH-66": [_block("DASH-67")],
-        "DASH-67": [_block("DASH-68")],
         "DASH-69": [_block("DASH-64")],
         "DASH-72": [_block("DASH-61")],
         "DASH-74": [_link("Relates", "DASH-75"), _link("Relates", "DASH-76"),
                     _link("Relates", "DASH-77"), _link("Relates", "DASH-78"), _link("Relates", "DASH-79")],
         "DASH-82": [_block("DASH-70"), _block("DASH-71"), _block("DASH-55")],
         # Спринт 11-17.07 (перенарезка DASH-95)
-        "DASH-92": [_block("DASH-63")],                              # токены до hi-fi
+        "DASH-92": [_block("DASH-70")],                              # DASH-147: рефактор (70) до ревизии DS (92)
         # История команды — перекомпоновка в 6 блоков (12.07). Блок 1 (DASH-64) — корень.
-        "DASH-64": [_block("DASH-65"), _block("DASH-98"), _block("DASH-99"),
-                    _block("DASH-100"), _block("DASH-97")],          # Блок 1 блокирует всё
-        "DASH-100": [_block("DASH-101")],                            # Блок 3 сценарий → Блок 4 отрисовка
-        "DASH-101": [_block("DASH-102"), _block("DASH-122")],        # отрисовка → встройка + музыка
-        "DASH-65": [_link("Relates", "DASH-97")],                    # дневники питают данные
+        # DASH-147: «Блок 1 блокирует всё» — запись развёрнута, теперь блокировка
+        # стоит у тех, кого 64 блокирует: 65, 97, 98, 99, 100.
+        "DASH-98": [_block("DASH-64")],
+        "DASH-99": [_block("DASH-64")],
+        "DASH-100": [_block("DASH-64")],                             # DASH-147
+        "DASH-101": [_block("DASH-100")],                            # DASH-147: сценарий (100) до отрисовки (101)
+        "DASH-102": [_block("DASH-101")],                            # DASH-147: отрисовка до встройки
+        "DASH-122": [_block("DASH-101")],                            # DASH-147: отрисовка до музыки
         # DASH-97 (наполнение MOTIF-данных) опирается на user stories и user flows участников:
         # Консолидация компонентов ОБЯЗАНА идти до переноса DS в Figma (решение Guzel 20.07):
         # иначе в Figma уедет дублированный набор (32 инлайн-молекулы, _tasks_table ×4) и Figma разойдётся с кодом.
-        "DASH-70": [_block("DASH-92")],                              # рефактор → ревизия DS → hi-fi (63)
-        "DASH-97": [_link("Relates", "DASH-44"),                     # user stories (17 ролей → каст)
+        "DASH-97": [_block("DASH-64"),                               # DASH-147: Блок 1 блокирует
+                    _link("Relates", "DASH-44"),                     # user stories (17 ролей → каст)
                     _link("Relates", "DASH-98"),                     # персоны + JTBD участников
                     _link("Relates", "DASH-99")],                    # user flows: карта обмена артефактами ролей
-        "DASH-103": [_block("DASH-106")],                            # деплой блокирует Framer-сборку
-        "DASH-104": [_block("DASH-106")],
-        "DASH-105": [_block("DASH-106")],
-        "DASH-106": [_block("DASH-107")],                            # сборка до публикации
+        # DASH-147: семья развёрнута. Деплой (103), CV (104), hero (105),
+        # mobile-tile (130) и фотогалерея (131) идут ДО Framer-сборки (106);
+        # сборка, аудит кодовой базы (124) и таблица CV↔портфолио (132) — до публикации (107).
+        "DASH-106": [_block("DASH-103"), _block("DASH-104"), _block("DASH-105"),
+                     _block("DASH-130"), _block("DASH-131")],
+        "DASH-107": [_block("DASH-106"), _block("DASH-124"), _block("DASH-132")],
         "DASH-93": [_link("Relates", "DASH-90"), _link("Relates", "DASH-81")],
         "DASH-110": [_link("Relates", "DASH-90")],
-        "DASH-112": [_block("DASH-113")],   # сначала UI истории, потом бэкфилл данных
-        "DASH-113": [_link("Relates", "DASH-87")],
+        "DASH-113": [_link("Relates", "DASH-87"), _block("DASH-112")],  # DASH-147: сначала UI истории (112)
         "DASH-114": [_link("Relates", "DASH-115")],
         "DASH-145": [_link("Relates", "DASH-114")],   # aria/Fragment-аудит — ответвление от 114
         # 146 — продолжение линии 70/92 (закрыты), питает hi-fi 63 и раскатку из 114/80
         "DASH-146": [_link("Relates", "DASH-70"), _link("Relates", "DASH-92"),
                      _link("Relates", "DASH-114"), _block("DASH-63")],
         # Перенарезка 18.07 — связи новых задач и гейтов этапов:
-        "DASH-124": [_block("DASH-107")],                            # аудит кодовой базы ДО публикации
         "DASH-129": [_link("Relates", "DASH-106"), _link("Relates", "DASH-127")],  # architecture showcase → сборка; relates ds
-        "DASH-130": [_block("DASH-106")],                            # mobile-tile → Framer-сборка
-        "DASH-131": [_block("DASH-106")],                            # фотогалерея → Framer-сборка
-        "DASH-132": [_block("DASH-107")],                            # таблица CV↔портфолио = гейт перед откликом
         "DASH-133": [_link("Relates", "DASH-129")],                  # token round-trip питает architecture showcase
-        "DASH-68":  [_link("Relates", "DASH-107")],                  # usability-валидация перед откликом
+        "DASH-68":  [_link("Relates", "DASH-107"), _block("DASH-67")],  # DASH-147: было 67←68
         # Company 2 (2-й target, 19.07): портфолио-ссылка → отклик; Figma-тест — гейт интервью
         "DASH-135": [_block("DASH-106"), _block("DASH-136")],        # отклик: живое портфолио + пройден чек-лист
         "DASH-136": [_block("DASH-106"), _link("Relates", "DASH-117")],  # чек-лист после сборки; провенанс — пункт 5
