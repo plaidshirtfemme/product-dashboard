@@ -4,6 +4,8 @@ from .tokens import (
     EPIC_TYPE_COLORS,
     COLOR_ROLE,
     ROLE,
+    COLOR_STATE,
+    STATE,
     SPACING,
     BORDER,
     BORDER_WIDTH,
@@ -18,6 +20,8 @@ from .tokens import (
 
 __all__ = [
     "THEME_CONFIG",
+    "COLOR_STATE",
+    "STATE",
     "STATUS_COLORS",
     "EPIC_TYPE_COLORS",
     "COLOR_ROLE",

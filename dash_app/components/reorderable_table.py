@@ -45,7 +45,7 @@ from typing import Any, Callable
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, STATE
 from ..states.table_layout_state import TableLayoutState, register_table
 
 # Ширина зоны захвата ресайза (грип) — она же зазор справа у ярлыка заголовка.
@@ -173,7 +173,7 @@ def reorderable_table(
                 _switch(lambda c: rx.table.cell(c.cell(row), class_name="rt-cell"),
                         rx.table.cell()),
             ),
-            style={"_hover": {"background": rx.color("gray", 2)}},
+            style={"_hover": {"background": STATE["hover-bg-subtle"]}},
         )
 
     reset = rx.cond(

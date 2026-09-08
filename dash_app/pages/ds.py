@@ -6,7 +6,7 @@
 
 import reflex as rx
 from ..tokens import (
-    SPACING, STATUS_COLORS, COLOR_ROLE, TYPE_SCALE, FONTS,
+    SPACING, STATUS_COLORS, COLOR_ROLE, COLOR_STATE, TYPE_SCALE, FONTS,
     BORDER, BORDER_WIDTH, RADIUS,
     PAGE_MAX_WIDTH, PAGE_MAX_WIDTH_WIDE, SIDEBAR_WIDTH,
 )
@@ -117,6 +117,43 @@ def _role_row(name: str, scale: str, step: int) -> rx.Component:
             direction="column", gap="0", min_width="150px",
         ),
         rx.text(_ROLE_USAGE.get(name, ""), size="2", color=rx.color("gray", 9), flex="1"),
+        gap=SPACING["md"],
+        align="center",
+        padding=f"{SPACING['xs']} 0",
+        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Interaction states section (DASH-147 → слой заведён 08.09.2026)
+# ---------------------------------------------------------------------------
+
+_STATE_USAGE = {
+    "hover-bg":        "Наведение: пункт навигации, кликабельный блок",
+    "hover-bg-subtle": "Наведение на строку таблицы — сильная заливка спорит с данными",
+    "hover-text":      "Ссылка при наведении",
+    "selected-bg":     "Фон выбранного элемента",
+    "selected-text":   "Текст выбранного элемента",
+}
+
+
+def _state_row(name: str, scale: str, step: int) -> rx.Component:
+    return rx.flex(
+        rx.box(
+            width="32px", height="32px",
+            border_radius="var(--radius-2)",
+            background=rx.color(scale, step),
+            border=f"{BORDER} {rx.color('gray', 4)}",
+            flex_shrink="0",
+        ),
+        rx.flex(
+            rx.text(name, size="2", weight="medium", color=rx.color("gray", 12),
+                    font_family="monospace"),
+            rx.text(f"{scale}-{step}", size="1", color=rx.color("gray", 9),
+                    font_family="monospace"),
+            direction="column", gap="0", min_width="150px",
+        ),
+        rx.text(_STATE_USAGE.get(name, ""), size="2", color=rx.color("gray", 9), flex="1"),
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
@@ -274,6 +311,34 @@ def _tokens_view() -> rx.Component:
                     text_transform="uppercase", letter_spacing="0.06em",
                     margin_bottom=SPACING["sm"]),
             *[_role_row(name, scale, step) for name, (scale, step) in COLOR_ROLE.items()],
+            padding=f"{SPACING['sm']} {SPACING['md']}",
+            border=f"{BORDER} {rx.color('gray', 4)}",
+            border_radius="var(--radius-3)",
+            background=rx.color("gray", 1),
+            margin_top=SPACING["sm"],
+        ),
+
+        rx.box(height=SPACING["xl"]),
+
+        # ── 1c. Состояния взаимодействия ──────────────────────────────────
+        section_header("Состояния · interaction states", "mouse-pointer-click"),
+        rx.box(
+            rx.text("COLOR_STATE — цвета наведения и выбора",
+                    size="1", weight="medium", color=rx.color("gray", 9),
+                    text_transform="uppercase", letter_spacing="0.06em",
+                    margin_bottom=SPACING["sm"]),
+            *[_state_row(name, scale, step) for name, (scale, step) in COLOR_STATE.items()],
+            rx.text(
+                "Заведено 08.09.2026. До этого цвета состояний писались прямо "
+                "в компонентах, мимо токенов — единственная категория из шести "
+                "(color · typography · spacing · radii · states · semantic), "
+                "которой не было. Значения сняты с фактического употребления, "
+                "не назначены заново. Focus и disabled намеренно отсутствуют: "
+                "цветов под них в коде пока нет, а придумать значение ради "
+                "полноты категории — хуже, чем назвать пробел вслух.",
+                size="1", color=rx.color("gray", 9),
+                margin_top=SPACING["sm"], line_height="1.5",
+            ),
             padding=f"{SPACING['sm']} {SPACING['md']}",
             border=f"{BORDER} {rx.color('gray', 4)}",
             border_radius="var(--radius-3)",

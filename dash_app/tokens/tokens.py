@@ -88,6 +88,33 @@ COLOR_ROLE: dict[str, tuple[str, int]] = {n: _role_pair(n) for n in _ROLE_NAMES}
 ROLE: dict = {n: rx.color(s, st) for n, (s, st) in COLOR_ROLE.items()}
 
 # ---------------------------------------------------------------------------
+# Interaction states (hover / selected) → Radix (scale, step).
+# Заведено 08.09.2026. До этого цвета состояний писались прямо в компонентах
+# (rx.color("gray", 3) в navigation.py, rx.color("gray", 2) в таблицах) — то есть
+# состояния в продукте были, а в системе токенов их не было. Это нарушало
+# собственное правило проекта «никогда не хардкодить, только через токены».
+# Значения сняты с фактического употребления, не назначены заново.
+# Focus и disabled сознательно отсутствуют: цветов под них в коде нет.
+# ---------------------------------------------------------------------------
+
+_STATE_NAMES = (
+    "hover-bg", "hover-bg-subtle", "hover-text",
+    "selected-bg", "selected-text",
+)
+
+
+def _state_pair(name: str) -> tuple[str, int]:
+    scale, step = _val(f"color.state.{name}").split(".")
+    return scale, int(step)
+
+
+# name -> (radix_scale, step) — for showcase / introspection
+COLOR_STATE: dict[str, tuple[str, int]] = {n: _state_pair(n) for n in _STATE_NAMES}
+
+# name -> rx.color(...) Var — ready to drop straight into _hover / _active props
+STATE: dict = {n: rx.color(s, st) for n, (s, st) in COLOR_STATE.items()}
+
+# ---------------------------------------------------------------------------
 # Spacing scale — use for gap, padding, margin.
 # ---------------------------------------------------------------------------
 

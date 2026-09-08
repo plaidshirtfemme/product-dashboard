@@ -39,6 +39,15 @@
       "border-subtle":  { "$value": "gray.3",  "$type": "color", "$description": "Subtle inner divider (row separators)" },
       "bg-card":        { "$value": "gray.1",  "$type": "color", "$description": "Card / panel background" },
       "bg-subtle":      { "$value": "gray.2",  "$type": "color", "$description": "Subtle component preview / inset background" }
+    },
+
+    "state": {
+      "$description": "Interaction states → Radix (scale.step). Значения СНЯТЫ С КОДА 08.09.2026, а не придуманы: до этого цвета наведения писались прямо в компонентах (rx.color('gray', 3) и т.п.), мимо системы токенов — единственная категория из списка color/typography/spacing/radii/states/semantic, которой не было. Consume via tokens.py COLOR_STATE / STATE. Focus и disabled намеренно не заведены: в коде для них цветов пока нет, а придумывать значение под категорию — хуже, чем оставить её неполной и назвать это вслух.",
+      "hover-bg":        { "$value": "gray.3",  "$type": "color", "$description": "Фон при наведении: пункты навигации, кликабельные блоки" },
+      "hover-bg-subtle": { "$value": "gray.2",  "$type": "color", "$description": "Приглушённый ховер для строк таблиц — сильная заливка спорит с плотными данными" },
+      "hover-text":      { "$value": "teal.11", "$type": "color", "$description": "Цвет ссылки при наведении, в акцентной шкале" },
+      "selected-bg":     { "$value": "teal.3",  "$type": "color", "$description": "Фон выбранного элемента (активный раздел)" },
+      "selected-text":   { "$value": "teal.11", "$type": "color", "$description": "Текст выбранного элемента" }
     }
   },
 

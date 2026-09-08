@@ -14,7 +14,7 @@ in the tabs bar) and switches ProjectState.project_mode between
 
 import reflex as rx
 from ..states import NavState, ProjectState, NAV_TABS, BUILT_TABS
-from ..tokens import SPACING, SIDEBAR_WIDTH, BORDER
+from ..tokens import SPACING, SIDEBAR_WIDTH, BORDER, STATE
 
 _SIDEBAR_W = SIDEBAR_WIDTH
 _TAB_H = "48px"
@@ -67,7 +67,7 @@ def _project_dropdown() -> rx.Component:
                 padding=SPACING["md"],
                 cursor="pointer",
                 border_bottom=f"{BORDER} {rx.color('gray', 4)}",
-                _hover={"background": rx.color("gray", 2)},
+                _hover={"background": STATE["hover-bg-subtle"]},
             ),
             as_child=True,
         ),
@@ -151,7 +151,7 @@ def _sidebar_item(key: str, label: str, icon: str) -> rx.Component:
             rx.color("gray", 10 if is_built else 7),
         ),
         width="100%",
-        _hover={"background": rx.color("gray", 3)} if is_built else {},
+        _hover={"background": STATE["hover-bg"]} if is_built else {},
         on_click=NavState.set_tab(key) if is_built else None,
     )
 
@@ -181,7 +181,7 @@ def _design_accordion() -> rx.Component:
             background=rx.cond(is_active, rx.color("teal", 3), "transparent"),
             color=rx.cond(is_active, rx.color("teal", 11), rx.color("gray", 10)),
             width="100%",
-            _hover={"background": rx.color("gray", 3)},
+            _hover={"background": STATE["hover-bg"]},
             on_click=NavState.toggle_design,
         ),
         rx.cond(
