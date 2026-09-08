@@ -96,31 +96,8 @@ def _project_dropdown() -> rx.Component:
                 ),
                 on_click=ProjectState.set_demo,
             ),
-            rx.dropdown_menu.separator(),
-            rx.dropdown_menu.item(
-                rx.flex(
-                    rx.flex(
-                        rx.icon("check", size=14,
-                                color=rx.cond(
-                                    ProjectState.project_mode == "real",
-                                    rx.color("teal", 9),
-                                    "transparent",
-                                )),
-                        width="20px",
-                        justify="center",
-                    ),
-                    rx.flex(
-                        rx.text("Knowledge Pipeline", size="2", weight="medium"),
-                        rx.text("Real · соло-пайплайн YouTube→Obsidian", size="1",
-                                color=rx.color("gray", 9)),
-                        direction="column",
-                        gap="0",
-                    ),
-                    align="center",
-                    gap="6px",
-                ),
-                on_click=ProjectState.set_real,
-            ),
+            # Knowledge Pipeline (real) скрыт из переключателя — решение Guzel 25.07
+            # (проект пока не показываем). Логика режима "real" в коде оставлена.
             rx.dropdown_menu.separator(),
             rx.dropdown_menu.item(
                 rx.flex(
