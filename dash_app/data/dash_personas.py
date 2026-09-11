@@ -139,7 +139,7 @@ REQUIREMENT_MAP: list[dict] = [
         "src": "Company 1",
         "where": "Design System (токены, роли цвета, компоненты) + wiki/design_system_canon.md",
         "status": "done",
-        "note": "design_tokens.json в стандарте W3C DTCG, 3 уровня токенов, канон DS зафиксирован.",
+        "note": "design_tokens.json в формате DTCG (Design Tokens Community Group), 3 уровня токенов, канон DS зафиксирован.",
     },
     {
         "req": "Basic understanding of front-end implementation constraints",
