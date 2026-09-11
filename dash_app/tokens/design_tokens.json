@@ -95,10 +95,8 @@
       "$type": "fontFamily",
       "$description": "IDs, timestamps, code — visually separates artifact data from UI copy"
     },
-    "size-label":      { "$value": "12px", "$type": "dimension", "$description": "StatCard labels, table headers" },
-    "size-body":       { "$value": "14px", "$type": "dimension", "$description": "Default UI text" },
-    "size-value":      { "$value": "24px", "$type": "dimension", "$description": "StatCard big numbers" },
-    "size-heading":    { "$value": "18px", "$type": "dimension", "$description": "SectionHeader" },
-    "size-page-title": { "$value": "22px", "$type": "dimension", "$description": "Page title" }
+    "size-label":      { "$value": "12px", "$type": "dimension", "$description": "StatCard labels, table headers. Совпадает с шагом 1 Radix" },
+    "size-value":      { "$value": "24px", "$type": "dimension", "$description": "StatCard big numbers. Совпадает с шагом 6 Radix" },
+    "size-heading":    { "$value": "18px", "$type": "dimension", "$description": "SectionHeader. Совпадает с шагом 4 Radix" }
   }
 }
