@@ -303,7 +303,7 @@ def _component_view() -> rx.Component:
 
 # ---------------------------------------------------------------------------
 # Дизайн-токены · мост код ↔ Figma (DASH-129 ч.2)
-# Единый источник правды design_tokens.json (W3C DTCG) → две стороны:
+# Единый источник правды design_tokens.json (DTCG) → две стороны:
 # КОД (tokens.py → Reflex, one-way чтение) и ДИЗАЙН (Tokens Studio ↔ Figma
 # Variables, two-way синк). Round-trip честный: едут только токены (DASH-119).
 # Значения ниже — реальные из tokens/design_tokens.json.
@@ -387,7 +387,7 @@ def _token_chain_view() -> rx.Component:
         # single source of truth
         _band(
             _c4_node("system", "design_tokens.json", "braces",
-                     "[W3C DTCG · single source of truth]",
+                     "[DTCG · single source of truth]",
                      "7 категорий токенов · $schema = design-tokens.github.io. "
                      "Правишь здесь — меняется И код, И Figma.",
                      width="460px"),
@@ -804,7 +804,7 @@ def dash_architecture_tab() -> rx.Component:
         # ── Design tokens · code ↔ Figma bridge (DASH-129 ч.2) ──────────────
         section_header(
             "Дизайн-токены · мост код ↔ Figma",
-            subtitle="Единый источник правды design_tokens.json (W3C DTCG) питает и код, и Figma · "
+            subtitle="Единый источник правды design_tokens.json (DTCG) питает и код, и Figma · "
                      "round-trip честный: едут только токены, компоненты — руками",
         ),
         _token_chain_view(),

@@ -467,7 +467,7 @@ def _tokens_view() -> rx.Component:
         # ── 6. Источник ───────────────────────────────────────────────────
         section_header("Источник · design_tokens.json", "file-json"),
         rx.callout(
-            "Все токены хранятся в tokens/design_tokens.json (W3C Design Tokens format). "
+            "Все токены хранятся в tokens/design_tokens.json (формат DTCG — Design Tokens Community Group). "
             "tokens/tokens.py читает JSON при импорте — меняешь JSON, изменение применяется везде. "
             "Для синка с Figma: плагин Tokens Studio → укажи путь к design_tokens.json.",
             icon="info",
@@ -761,7 +761,7 @@ def _rules_view() -> rx.Component:
         ),
         rx.box(height=SPACING["md"]),
         rx.callout(
-            "Мост миров: токены = единый источник (design_tokens.json W3C ✅) · дизайн-доки = «когда / "
+            "Мост миров: токены = единый источник (design_tokens.json DTCG ✅) · дизайн-доки = «когда / "
             "зачем», код-доки = «как» (API, props), связывать не дублировать · наш Reflex (Python) → "
             "Storybook / Code Connect неприменимы, аналог wiki = design_system_canon.md + эта вкладка.",
             icon="info", color_scheme="teal", variant="soft", size="1",

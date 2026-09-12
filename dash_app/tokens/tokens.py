@@ -1,7 +1,7 @@
 """
 Design tokens for the Knowledge Pipeline dashboard.
 
-Single source of truth: design_tokens.json (W3C Design Tokens format).
+Single source of truth: design_tokens.json (DTCG — Design Tokens Community Group format).
 This module reads the JSON at import time and exposes typed Python dicts
 for use in Reflex components.
 
