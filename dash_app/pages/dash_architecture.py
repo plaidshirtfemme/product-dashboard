@@ -17,7 +17,7 @@ rx-боксами на токенах, связи показаны колоно�
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER, PAGE_MAX_WIDTH
+from ..tokens import SPACING, BORDER, PAGE_MAX_WIDTH, ROLE
 from ..components import section_header
 from ..states.dash_arch_state import DashArchState
 from ..data.adapter import load_issues
@@ -317,8 +317,8 @@ def _token_cat_chip(name: str, example: str) -> rx.Component:
         direction="column",
         gap="1px",
         padding=f"{SPACING['sm']} {SPACING['md']}",
-        background=rx.color("gray", 2),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-subtle"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-2)",
         min_width="170px",
         flex="1",
@@ -342,8 +342,8 @@ def _branch_col(header: str, icon: str, tag: str, *nodes) -> rx.Component:
         flex="1",
         min_width="340px",
         padding=SPACING["md"],
-        background=rx.color("gray", 1),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-card"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
     )
 
@@ -508,7 +508,7 @@ def _entity_card(name: str, icon: str, count_label: str, count_color,
             align="center",
             width="100%",
         ),
-        rx.divider(margin_y=SPACING["sm"], border_color=rx.color("gray", 4)),
+        rx.divider(margin_y=SPACING["sm"], border_color=ROLE["border-default"]),
         rx.flex(*attrs, direction="column", gap="6px", width="100%"),
         rx.text(footnote, size="1", color=rx.color("gray", 9), line_height="1.4",
                 margin_top=SPACING["sm"],
@@ -582,8 +582,8 @@ def _goal_epic_issue_view() -> rx.Component:
             _legend_chip(rx.color("iris", 9), "⟳ — само-связь (Epic/Issue на себя)"),
             direction="row", wrap="wrap", gap=SPACING["lg"],
             margin_top=SPACING["lg"], padding=SPACING["md"],
-            background=rx.color("gray", 1),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            background=ROLE["bg-card"],
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
         ),
         direction="column",
@@ -665,7 +665,7 @@ def _adr_card(row) -> rx.Component:
         padding=SPACING["lg"],
         width="100%",
         background="white",
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_left=f"4px solid {accent}",
         border_radius="var(--radius-3)",
         box_shadow="0 1px 2px rgba(0,0,0,0.04)",
@@ -710,7 +710,7 @@ def _level_button(level: str, label: str, sub: str) -> rx.Component:
         border=rx.cond(
             is_active,
             f"{BORDER} {rx.color('teal', 7)}",
-            f"{BORDER} {rx.color('gray', 4)}",
+            f"{BORDER} {ROLE['border-default']}",
         ),
         _hover={"background": rx.cond(is_active, rx.color("teal", 3), rx.color("gray", 3))},
         on_click=DashArchState.set_level(level),
@@ -748,8 +748,8 @@ def _legend() -> rx.Component:
         wrap="wrap",
         gap=SPACING["lg"],
         padding=SPACING["md"],
-        background=rx.color("gray", 1),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-card"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
         width="100%",
     )

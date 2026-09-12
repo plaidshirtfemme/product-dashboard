@@ -10,7 +10,7 @@ Sections:
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import (
     table_container,
     table_header,
@@ -164,7 +164,7 @@ def _release_delivery(releases) -> rx.Component:
                     color=rx.color("gray", 9),
                 ),
                 background="white",
-                border=f"{BORDER} {rx.color('gray', 4)}",
+                border=f"{BORDER} {ROLE['border-default']}",
                 border_radius="var(--radius-3)",
                 padding=SPACING["md"],
                 flex="1",
@@ -235,7 +235,7 @@ def _activation_funnel() -> rx.Component:
         ),
         rx.flex(*steps, direction="column", gap="10px"),
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-3)",
         width="100%",
     )

@@ -3,7 +3,7 @@
 import reflex as rx
 from ..components import section_header, stat_card, stat_card_row, real_page_header, real_page_wrapper
 from ..data.real_project_extract import TESTS, QUALITY_ITEMS
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 
 _STATUS_COLOR = {"done": "teal", "open": "amber", "planned": "blue"}
 _PRIORITY_COLOR = {"high": "red", "medium": "amber", "low": "gray"}
@@ -69,9 +69,9 @@ def real_quality_tab() -> rx.Component:
         rx.box(
             *[_test_row(t) for t in TESTS],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 
@@ -85,7 +85,7 @@ def real_quality_tab() -> rx.Component:
                 rx.text("выполнено", size="1", color=rx.color("gray", 9)),
                 direction="column", align="center",
                 padding=f"10px {SPACING['lg']}",
-                border=f"{BORDER} {rx.color('gray', 4)}",
+                border=f"{BORDER} {ROLE['border-default']}",
                 border_radius="var(--radius-2)",
             ),
             rx.flex(
@@ -93,7 +93,7 @@ def real_quality_tab() -> rx.Component:
                 rx.text("открыто", size="1", color=rx.color("gray", 9)),
                 direction="column", align="center",
                 padding=f"10px {SPACING['lg']}",
-                border=f"{BORDER} {rx.color('gray', 4)}",
+                border=f"{BORDER} {ROLE['border-default']}",
                 border_radius="var(--radius-2)",
             ),
             rx.flex(
@@ -101,7 +101,7 @@ def real_quality_tab() -> rx.Component:
                 rx.text("запланировано", size="1", color=rx.color("gray", 9)),
                 direction="column", align="center",
                 padding=f"10px {SPACING['lg']}",
-                border=f"{BORDER} {rx.color('gray', 4)}",
+                border=f"{BORDER} {ROLE['border-default']}",
                 border_radius="var(--radius-2)",
             ),
             gap=SPACING["md"],
@@ -110,9 +110,9 @@ def real_quality_tab() -> rx.Component:
         rx.box(
             *[_quality_row(q) for q in QUALITY_ITEMS],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
         ),
 
     )

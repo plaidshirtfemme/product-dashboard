@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import section_header
 from ..data.motif_world import (
     ABOUT, CAST, BANKS, ARTIFACTS,
@@ -492,8 +492,8 @@ def _bank_dnd_row(bank_id: str, idx: int, cat: str | None, text: str,
         on_drag_start=on_start,
         style={
             "cursor": "grab", "padding": "4px 8px",
-            "background": rx.color("gray", 1),
-            "border": f"1px solid {rx.color('gray', 4)}",
+            "background": ROLE["bg-card"],
+            "border": f"1px solid {ROLE['border-default']}",
             "borderRadius": "var(--radius-2)",
             "_hover": {"background": rx.color("gray", 3)},
         },
@@ -533,8 +533,8 @@ def _trait_chip(text: str) -> rx.Component:
         on_drag_start=MotifAboutState.start_drag_bank(f"traits:{idx}"),
         title=text,
         style={"cursor": "grab", "padding": "2px 7px", "flex": "1", "minWidth": "0",
-               "background": rx.color("gray", 1),
-               "border": f"1px solid {rx.color('gray', 4)}",
+               "background": ROLE["bg-card"],
+               "border": f"1px solid {ROLE['border-default']}",
                "borderRadius": "var(--radius-2)",
                "_hover": {"background": rx.color("gray", 3)}},
     )
@@ -628,8 +628,8 @@ def _cast_card(m: dict, compact: bool = False) -> rx.Component:
         ),
         on_drag_over=rx.prevent_default,
         on_drop=MotifAboutState.drop_on_card(m["name"]),
-        style={"padding": SPACING["md"], "background": rx.color("gray", 1),
-               "border": f"{BORDER} {rx.color('gray', 4)}",
+        style={"padding": SPACING["md"], "background": ROLE["bg-card"],
+               "border": f"{BORDER} {ROLE['border-default']}",
                "borderRadius": "var(--radius-3)"},
     )
 
@@ -798,7 +798,7 @@ def _artifact_hub(m: dict, compact: bool = False) -> rx.Component:
         header,
         rx.flex(*[_spoke(sp, compact) for sp in m["spokes"]], direction="column", gap="6px"),
         padding=SPACING["md"],
-        background=rx.color("gray", 1),
+        background=ROLE["bg-card"],
         border=f"{BORDER} {rx.color(m['accent'], 4)}",
         border_radius="var(--radius-3)",
     )
@@ -850,7 +850,7 @@ def _sched_day(day: dict) -> rx.Component:
         ),
         padding=SPACING["sm"],
         background=rx.color("gray", 2 if not is_protected else 3),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-2)",
         flex="1", min_width="120px",
     )
@@ -1115,8 +1115,8 @@ def _layout_export() -> rx.Component:
                     style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
                            "fontSize": "12px", "userSelect": "text"}),
             padding=SPACING["md"],
-            background=rx.color("gray", 2),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            background=ROLE["bg-subtle"],
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
         ),
         accent="gray",
@@ -1174,8 +1174,8 @@ def _quote_card(q: dict) -> rx.Component:
         rx.text("« " + q["quote"] + " »", size="2", color=rx.color("gray", 11),
                 font_style="italic", line_height="1.5"),
         padding=SPACING["md"],
-        background=rx.color("gray", 1),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-card"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
     )
 

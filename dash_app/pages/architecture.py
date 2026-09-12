@@ -9,7 +9,7 @@ Sections:
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import (
     table_container,
     stat_card,
@@ -130,7 +130,7 @@ def _adr_card(row) -> rx.Component:
         ),
 
         background="white",
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_left=f"4px solid {rx.color('teal', 7) if row.adr_status == 'Accepted' else rx.color('amber', 7)}",
         border_radius="var(--radius-3)",
         padding=SPACING["md"],
@@ -156,7 +156,7 @@ def _tasks_table(rows) -> rx.Component:
         columns="90px 110px 100px 50px 100px 80px",
         gap=SPACING["md"],
         padding=f"8px {SPACING['md']}",
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-2) var(--radius-2) 0 0",
     )
 

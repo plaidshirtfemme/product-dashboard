@@ -1,7 +1,7 @@
 """Shared low-level components reused across multiple page files."""
 
 import reflex as rx
-from ..tokens import SPACING, BORDER, STATUS_COLORS, PAGE_MAX_WIDTH
+from ..tokens import SPACING, BORDER, STATUS_COLORS, PAGE_MAX_WIDTH, ROLE
 
 _GAP_THRESHOLD = 5
 
@@ -102,7 +102,7 @@ def vault_coverage_chart(
         ),
         rx.flex(*bars, direction="column", gap="8px"),
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-3)",
         width="100%",
     )
@@ -115,7 +115,7 @@ def table_header(labels: list[str], columns: str) -> rx.Component:
         columns=columns,
         gap=SPACING["md"],
         padding=f"8px {SPACING['md']}",
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-2) var(--radius-2) 0 0",
     )
 
@@ -152,7 +152,7 @@ def table_container(*children, **kwargs) -> rx.Component:
     """Wraps header + rows with standard border, radius, overflow."""
     return rx.box(
         *children,
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-2)",
         overflow="hidden",
         width="100%",

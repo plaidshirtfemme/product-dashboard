@@ -12,7 +12,7 @@ Overview tab (PM). Metrics per handoff:
 from datetime import date
 
 import reflex as rx
-from ..tokens import SPACING, TYPE_SCALE, BORDER
+from ..tokens import SPACING, TYPE_SCALE, BORDER, ROLE
 from ..components import (
     stat_card,
     stat_card_row,
@@ -231,7 +231,7 @@ def _mvp_timeline() -> rx.Component:
         flex_direction="column",
         gap="6px",
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-3)",
         overflow="hidden",
     )

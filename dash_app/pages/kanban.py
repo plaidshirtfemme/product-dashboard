@@ -3,7 +3,7 @@
 from datetime import date
 
 import reflex as rx
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import section_header, color_legend
 from ..data.adapter import load_issues, Issue
 from ..data.jira_mock_raw import DASH_CONFIG
@@ -137,7 +137,7 @@ def _card(issue: Issue) -> rx.Component:
         ),
         padding="8px",
         background="white",
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_left=border_left,
         border_radius="var(--radius-2)",
         width="100%",
@@ -267,8 +267,8 @@ def _build_board(issues: list[Issue]) -> rx.Component:
                 width="130px",
                 flex_shrink="0",
                 padding=f"8px {SPACING['sm']}",
-                background=rx.color("gray", 2),
-                border_right=f"{BORDER} {rx.color('gray', 4)}",
+                background=ROLE["bg-subtle"],
+                border_right=f"{BORDER} {ROLE['border-default']}",
                 min_height="60px",
             ),
         ]
@@ -290,7 +290,7 @@ def _build_board(issues: list[Issue]) -> rx.Component:
                     width="160px",
                     flex_shrink="0",
                     padding="8px",
-                    background=rx.color("gray", 1),
+                    background=ROLE["bg-card"],
                     border_right=f"{BORDER} {rx.color('gray', 3)}",
                     min_height="60px",
                     align_items="stretch",
@@ -301,7 +301,7 @@ def _build_board(issues: list[Issue]) -> rx.Component:
             rx.flex(
                 *cells,
                 width="100%",
-                border_top=f"{BORDER} {rx.color('gray', 4)}",
+                border_top=f"{BORDER} {ROLE['border-default']}",
                 align="stretch",
             )
         )
@@ -314,7 +314,7 @@ def _build_board(issues: list[Issue]) -> rx.Component:
                 align="stretch",
             ),
             *swimlane_rows,
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
             overflow="hidden",
             width="fit-content",

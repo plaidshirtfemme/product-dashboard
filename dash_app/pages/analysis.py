@@ -10,7 +10,7 @@ Sections:
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import (
     table_container,
     table_header,
@@ -140,7 +140,7 @@ def _source_bars(source_counts: list[tuple[str, int]]) -> rx.Component:
     return rx.box(
         rx.flex(*bars, direction="column", gap="10px"),
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-3)",
         width="100%",
     )

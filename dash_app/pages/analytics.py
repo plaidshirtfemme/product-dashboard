@@ -12,7 +12,7 @@ import math
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import section_header, stat_card, stat_card_row, table_container, progress_bar
 from ..data.adapter import load_issues
 from ..data.metrics import growth_experiments
@@ -416,7 +416,7 @@ def _ab_section(exp_rows) -> rx.Component:
           for c in ["Ключ", "Гипотеза", "n(A)", "n(B)", "Conv A (95% CI)",
                     "Conv B (95% CI)", "Lift", "p-value"]],
         columns=COL, gap=SPACING["sm"],
-        padding=f"8px {SPACING['md']}", background=rx.color("gray", 2),
+        padding=f"8px {SPACING['md']}", background=ROLE["bg-subtle"],
         border_radius="var(--radius-2) var(--radius-2) 0 0",
     )
 
@@ -475,7 +475,7 @@ def _sql_block(title: str, description: str, sql: str,
           for c in columns],
         columns=col_template, gap=SPACING["sm"],
         padding=f"6px {SPACING['sm']}",
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
     )
     tbl_rows = [
         rx.grid(
@@ -514,8 +514,8 @@ def _sql_block(title: str, description: str, sql: str,
             table_container(tbl_header, *tbl_rows),
         ),
         padding=SPACING["md"],
-        background=rx.color("gray", 1),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-card"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
         width="100%",
     )

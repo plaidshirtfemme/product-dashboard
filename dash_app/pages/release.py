@@ -1,7 +1,7 @@
 """Instructions & Release tab — Release Manager view (этап 6 MVP)."""
 
 import reflex as rx
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_non_bugs, release_plan, slipped_issues
@@ -26,7 +26,7 @@ def _release_cards(releases) -> rx.Component:
                 height="10px", background=rx.color("gray", 4),
                 border_radius="var(--radius-full)", overflow="hidden", margin_bottom="6px"),
             rx.text(f"{r.done}/{r.total} задач ({r.done_pct}%)", size="1", color=rx.color("gray", 9)),
-            background="white", border=f"{BORDER} {rx.color('gray', 4)}",
+            background="white", border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)", padding=SPACING["md"], flex="1"))
     return rx.flex(*cards, gap=SPACING["md"], wrap="wrap", width="100%")
 

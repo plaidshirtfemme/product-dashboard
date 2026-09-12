@@ -14,7 +14,7 @@ Motif. Это другой продукт, блоки намеренно раз�
 
 import reflex as rx
 
-from ..tokens import SPACING, PAGE_MAX_WIDTH, BORDER
+from ..tokens import SPACING, PAGE_MAX_WIDTH, BORDER, ROLE
 from ..components import section_header, data_table
 from ..data.dash_personas import (
     READER_PERSONAS, TEAM_PERSONAS, REQUIREMENT_MAP, STATUS_META,
@@ -146,10 +146,10 @@ def _persona_card(p: dict) -> rx.Component:
             rx.text(p["source"], size="1", color=rx.color("gray", 9), line_height="1.5"),
             gap="6px", align="start",
             padding_top=SPACING["sm"],
-            border_top=f"1px solid {rx.color('gray', 4)}",
+            border_top=f"1px solid {ROLE['border-default']}",
         ),
         padding=SPACING["lg"],
-        background=rx.color("gray", 1),
+        background=ROLE["bg-card"],
         border=f"{BORDER} {rx.color(accent, 5)}",
         border_top=f"3px solid {rx.color(accent, 8)}",
         border_radius="var(--radius-3)",

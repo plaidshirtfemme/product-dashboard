@@ -1,7 +1,7 @@
 """Dev & Pipeline tab — Developer view (этап 5 MVP)."""
 
 import reflex as rx
-from ..tokens import SPACING, BORDER, STATUS_COLORS
+from ..tokens import SPACING, BORDER, STATUS_COLORS, ROLE
 from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs, sprint_trends, dev_person_wip
@@ -105,7 +105,7 @@ def _trend_bars(trends, field: str, label: str, color: str, unit: str = "") -> r
                 margin_bottom=SPACING["sm"]),
         rx.flex(*bars, direction="column", gap="6px"),
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-3)",
         flex="1",
         min_width="220px",
@@ -120,7 +120,7 @@ def _person_wip_table(people) -> rx.Component:
         *[rx.text(c, size="1", weight="medium", color=rx.color("gray", 9))
           for c in ["Разработчик", "Всего задач", "В работе (WIP)", "Готово", "Context-switching", "Статус"]],
         columns="160px 110px 130px 80px 160px 120px", gap=SPACING["md"],
-        padding=f"8px {SPACING['md']}", background=rx.color("gray", 2),
+        padding=f"8px {SPACING['md']}", background=ROLE["bg-subtle"],
         border_radius="var(--radius-2) var(--radius-2) 0 0",
     )
     rows = []

@@ -3,7 +3,7 @@
 import reflex as rx
 from ..components import section_header, real_page_header, real_page_wrapper
 from ..data.real_project_extract import ADR_LIST
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 
 _STATUS_COLOR = {
     "accepted":   "teal",
@@ -37,9 +37,9 @@ def _adr_card(adr) -> rx.Component:
             gap=SPACING["sm"],
         ),
         padding=SPACING["lg"],
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
-        background=rx.color("gray", 1),
+        background=ROLE["bg-card"],
         margin_bottom=SPACING["md"],
     )
 

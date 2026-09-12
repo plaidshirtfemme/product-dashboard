@@ -2,7 +2,7 @@
 
 from collections import Counter
 import reflex as rx
-from ..tokens import SPACING, BORDER, STATUS_COLORS
+from ..tokens import SPACING, BORDER, STATUS_COLORS, ROLE
 from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container, progress_bar, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs, go_no_go_criteria
@@ -29,7 +29,7 @@ def _severity_distribution(all_bugs) -> rx.Component:
             align="center", gap=SPACING["sm"], width="100%"))
 
     return rx.box(rx.flex(*bars, direction="column", gap="10px"),
-                  padding=SPACING["md"], background=rx.color("gray", 2),
+                  padding=SPACING["md"], background=ROLE["bg-subtle"],
                   border_radius="var(--radius-3)", width="100%")
 
 
@@ -107,7 +107,7 @@ def _go_no_go_checklist(criteria) -> rx.Component:
           for col in ["", "Критерий", "Важность"]],
         columns="28px 1fr 120px", gap=SPACING["md"],
         padding=f"8px {SPACING['md']}",
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-2) var(--radius-2) 0 0",
     )
 

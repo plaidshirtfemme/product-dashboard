@@ -12,7 +12,7 @@ Note: 2nd positional arg is `icon` (Lucide name). Pass subtitle/action by keywor
 """
 
 import reflex as rx
-from ..tokens.tokens import SPACING, TYPE_SCALE, BORDER
+from ..tokens.tokens import SPACING, TYPE_SCALE, BORDER, ROLE
 
 
 def section_header(
@@ -40,6 +40,6 @@ def section_header(
         align="center",
         width="100%",
         padding_y=SPACING["md"],
-        border_bottom=f"{BORDER} {rx.color('gray', 4)}",
+        border_bottom=f"{BORDER} {ROLE['border-default']}",
         margin_bottom=SPACING["md"],
     )

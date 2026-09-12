@@ -7,7 +7,7 @@ from ..data.real_project_extract import (
     TOTAL_URLS_PROCESSED, TOTAL_NOTES_CREATED, TOTAL_IP_BLOCKS,
     TOTAL_TOO_LONG, TOTAL_NO_TEXT, TOTAL_ERRORS,
 )
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 
 
 def _pct(part: int, total: int) -> str:
@@ -104,9 +104,9 @@ def real_monitoring_tab() -> rx.Component:
             _table_header(),
             *[_session_row(s) for s in BATCH_SESSIONS],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
             overflow_x="auto",
         ),

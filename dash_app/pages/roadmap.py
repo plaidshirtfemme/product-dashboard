@@ -4,7 +4,7 @@ from datetime import date
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER, PAGE_MAX_WIDTH, STATUS_COLORS, EPIC_TYPE_COLORS
+from ..tokens import SPACING, BORDER, PAGE_MAX_WIDTH, STATUS_COLORS, EPIC_TYPE_COLORS, ROLE
 from ..components import (
     section_header,
     stat_card,
@@ -115,8 +115,8 @@ def _okr_card(obj) -> rx.Component:
                     kr.progress_pct, kr.status)
             for kr in obj.key_results
         ],
-        background=rx.color("gray", 1),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-card"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_top=f"3px solid {rx.color(color, 7)}",
         border_radius="var(--radius-2)",
         padding=SPACING["md"],
@@ -259,7 +259,7 @@ def _timeline_section() -> rx.Component:
                     min_width="110px", text_align="right"),
             gap=SPACING["md"],
             padding=f"0 0 {SPACING['sm']}",
-            border_bottom=f"1.5px solid {rx.color('gray', 4)}",
+            border_bottom=f"1.5px solid {ROLE['border-default']}",
         ),
         *[_epic_row(epic, issues)
           for epic, issues in sorted(by_epic.items(), key=lambda kv: epic_sort_key(kv[0]))],
@@ -324,7 +324,7 @@ def _sprint_review_section() -> rx.Component:
                     min_width="60px", text_align="center"),
             gap=SPACING["md"],
             padding=f"0 0 {SPACING['sm']}",
-            border_bottom=f"1.5px solid {rx.color('gray', 4)}",
+            border_bottom=f"1.5px solid {ROLE['border-default']}",
         ),
         *[_sprint_review_row(name, issues) for name, issues in sorted_sprints],
     )

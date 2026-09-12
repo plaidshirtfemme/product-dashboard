@@ -13,7 +13,7 @@ Usage:
 """
 
 import reflex as rx
-from ..tokens.tokens import SPACING, BORDER
+from ..tokens.tokens import SPACING, BORDER, ROLE
 
 
 def chart_wrapper(
@@ -31,8 +31,8 @@ def chart_wrapper(
             margin_bottom=SPACING["sm"],
         ),
         rx.box(chart, height=f"{height}px", width="100%"),
-        background=rx.color("gray", 1),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-card"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
         padding=SPACING["md"],
         width="100%",

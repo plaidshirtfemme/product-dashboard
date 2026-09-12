@@ -11,7 +11,7 @@ Usage:
 """
 
 import reflex as rx
-from ..tokens.tokens import SPACING, BORDER
+from ..tokens.tokens import SPACING, BORDER, ROLE
 
 
 def filter_bar(controls: list[rx.Component]) -> rx.Component:
@@ -22,6 +22,6 @@ def filter_bar(controls: list[rx.Component]) -> rx.Component:
         wrap="wrap",
         padding_bottom=SPACING["md"],
         margin_bottom=SPACING["md"],
-        border_bottom=f"{BORDER} {rx.color('gray', 4)}",
+        border_bottom=f"{BORDER} {ROLE['border-default']}",
         width="100%",
     )

@@ -3,7 +3,7 @@
 import reflex as rx
 from ..components import section_header, data_table, real_page_header, real_page_wrapper
 from ..data.real_project_extract import GIT_COMMITS, EXCEPTIONS
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 
 _CAT_COLOR = {
     "feat":     "teal",
@@ -70,7 +70,7 @@ def real_dev_tab() -> rx.Component:
                 rx.text("feat", size="1", color=rx.color("gray", 9)),
                 direction="column", align="center",
                 padding=f"12px {SPACING['lg']}",
-                border=f"{BORDER} {rx.color('gray', 4)}",
+                border=f"{BORDER} {ROLE['border-default']}",
                 border_radius="var(--radius-2)",
             ),
             rx.flex(
@@ -79,7 +79,7 @@ def real_dev_tab() -> rx.Component:
                 rx.text("security", size="1", color=rx.color("gray", 9)),
                 direction="column", align="center",
                 padding=f"12px {SPACING['lg']}",
-                border=f"{BORDER} {rx.color('gray', 4)}",
+                border=f"{BORDER} {ROLE['border-default']}",
                 border_radius="var(--radius-2)",
             ),
             rx.flex(
@@ -87,7 +87,7 @@ def real_dev_tab() -> rx.Component:
                 rx.text("дня", size="1", color=rx.color("gray", 9)),
                 direction="column", align="center",
                 padding=f"12px {SPACING['lg']}",
-                border=f"{BORDER} {rx.color('gray', 4)}",
+                border=f"{BORDER} {ROLE['border-default']}",
                 border_radius="var(--radius-2)",
             ),
             gap=SPACING["md"],
@@ -96,9 +96,9 @@ def real_dev_tab() -> rx.Component:
         rx.box(
             *[_commit_row(c) for c in reversed(GIT_COMMITS)],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
         ),
 
         rx.box(height=SPACING["xl"]),
@@ -117,9 +117,9 @@ def real_dev_tab() -> rx.Component:
         rx.box(
             *[_exception_row(e) for e in EXCEPTIONS],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
         ),
 
     )

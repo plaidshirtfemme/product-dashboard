@@ -45,7 +45,7 @@ from typing import Any, Callable
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER, STATE
+from ..tokens import SPACING, BORDER, STATE, ROLE
 from ..states.table_layout_state import TableLayoutState, register_table
 
 # Ширина зоны захвата ресайза (грип) — она же зазор справа у ярлыка заголовка.
@@ -200,7 +200,7 @@ def reorderable_table(
             custom_attrs={"data-rt": table_id},
             width="100%",
             overflow_x="auto",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
         ),
         width="100%",

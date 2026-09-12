@@ -6,7 +6,7 @@ Source: the dashboard codebase itself (tokens, components, navigation choices).
 
 import reflex as rx
 from ..components import section_header, real_page_header, real_page_wrapper
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 
 
 _DECISIONS = [
@@ -125,9 +125,9 @@ def _decision_card(d: dict) -> rx.Component:
             gap=SPACING["sm"],
         ),
         padding=SPACING["lg"],
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
-        background=rx.color("gray", 1),
+        background=ROLE["bg-card"],
         margin_bottom=SPACING["md"],
     )
 
@@ -155,7 +155,7 @@ def _palette_row(color: str, shade: int, usage: str) -> rx.Component:
             width="32px", height="32px",
             border_radius="var(--radius-2)",
             background=rx.color(color, shade),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             flex_shrink="0",
         ),
         rx.flex(
@@ -192,9 +192,9 @@ def real_design_tab() -> rx.Component:
         rx.box(
             *[_palette_row(c, s, u) for c, s, u in _COLOR_PALETTE],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 
@@ -221,9 +221,9 @@ def real_design_tab() -> rx.Component:
                 ]
             ],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 

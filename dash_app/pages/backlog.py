@@ -11,7 +11,7 @@ Backlog tab — полный реестр всех задач с интерак�
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER, EPIC_TYPE_COLORS, FONTS
+from ..tokens import SPACING, BORDER, EPIC_TYPE_COLORS, FONTS, ROLE
 from ..components import section_header, reorderable_table, Column, SEV_COLORS
 
 # Минимум видимой заливки прогресс-полоски (как min_pct у общего progress_bar).
@@ -130,8 +130,8 @@ def _filter_bar() -> rx.Component:
             wrap="wrap",
         ),
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-subtle"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
         width="100%",
         margin_bottom=SPACING["md"],
@@ -228,7 +228,7 @@ def _jira_field(label: str, value_component) -> rx.Component:
         align="center",
         gap="3",
         padding_y="6px",
-        border_bottom=f"1px solid {rx.color('gray', 4)}",
+        border_bottom=f"1px solid {ROLE['border-default']}",
         width="100%",
     )
 
@@ -350,7 +350,7 @@ def _issue_content() -> rx.Component:
                         on_change=BacklogState.set_issue_priority,
                     ),
                     align="center", gap="3", padding_y="6px",
-                    border_bottom=f"1px solid {rx.color('gray', 4)}",
+                    border_bottom=f"1px solid {ROLE['border-default']}",
                     width="100%",
                 ),
                 # Epic Link — editable select
@@ -368,7 +368,7 @@ def _issue_content() -> rx.Component:
                         on_change=BacklogState.set_issue_epic,
                     ),
                     align="center", gap="3", padding_y="6px",
-                    border_bottom=f"1px solid {rx.color('gray', 4)}",
+                    border_bottom=f"1px solid {ROLE['border-default']}",
                     width="100%",
                 ),
                 _jira_field("Sprint",
@@ -382,10 +382,10 @@ def _issue_content() -> rx.Component:
                                     color=rx.color("gray", 10))),
                 direction="column",
                 width="280px", flex_shrink="0",
-                background=rx.color("gray", 2),
+                background=ROLE["bg-subtle"],
                 border_radius="var(--radius-3)",
                 padding="12px",
-                border=f"{BORDER} {rx.color('gray', 4)}",
+                border=f"{BORDER} {ROLE['border-default']}",
             ),
             gap="5", align="start",
         ),
@@ -403,7 +403,7 @@ def _issue_content() -> rx.Component:
                 ),
                 rx.foreach(BacklogState.selected_status_history, _history_row),
                 margin_top="5", padding_top="12px",
-                border_top=f"1px solid {rx.color('gray', 4)}",
+                border_top=f"1px solid {ROLE['border-default']}",
             ),
             rx.box(),
         ),
@@ -522,10 +522,10 @@ def _epic_content() -> rx.Component:
                 ),
                 direction="column",
                 width="240px", flex_shrink="0",
-                background=rx.color("gray", 2),
+                background=ROLE["bg-subtle"],
                 border_radius="var(--radius-3)",
                 padding="12px",
-                border=f"{BORDER} {rx.color('gray', 4)}",
+                border=f"{BORDER} {ROLE['border-default']}",
             ),
             gap="5", align="start",
         ),

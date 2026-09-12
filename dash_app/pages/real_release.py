@@ -3,7 +3,7 @@
 import reflex as rx
 from ..components import section_header, real_page_header, real_page_wrapper
 from ..data.real_project_extract import GIT_COMMITS
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 
 _CAT_COLOR = {
     "feat": "teal", "refactor": "blue",
@@ -88,9 +88,9 @@ def real_release_tab() -> rx.Component:
         rx.box(
             *[_commit_milestone(c) for c in GIT_COMMITS],
             padding=f"{SPACING['md']} {SPACING['lg']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 
@@ -101,9 +101,9 @@ def real_release_tab() -> rx.Component:
         rx.box(
             *[_check_row(label, done) for label, done in _SECURITY_CHECKLIST],
             padding=f"{SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
         rx.callout(

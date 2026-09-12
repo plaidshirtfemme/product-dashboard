@@ -10,7 +10,7 @@
 
 import reflex as rx
 
-from ..tokens import SPACING, PAGE_MAX_WIDTH, BORDER
+from ..tokens import SPACING, PAGE_MAX_WIDTH, BORDER, ROLE
 from ..components import section_header
 from .motif_about import _artifacts_block, _placeholder
 from ..data.discover_problems import AXIS_A_BLOCKS, GOAL_TYPE_COLOR
@@ -196,7 +196,7 @@ def _stage_card(s: dict) -> rx.Component:
         ),
         gap=SPACING["md"], align="start",
         padding=SPACING["md"],
-        background=rx.color("gray", 1),
+        background=ROLE["bg-card"],
         border=f"{BORDER} {rx.color(s['accent'], 4)}",
         border_left=f"3px solid {rx.color(s['accent'], 8)}",
         border_radius="var(--radius-3)",
@@ -250,8 +250,8 @@ def _process_flow_block() -> rx.Component:
             for r in _SPANNING_ROLES
         ],
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-subtle"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
     )
 

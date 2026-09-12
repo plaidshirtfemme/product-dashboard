@@ -1,7 +1,7 @@
 """Info tab — wiki о процессах команды и логике дашборда."""
 
 import reflex as rx
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import section_header
 
 
@@ -36,8 +36,8 @@ def _wiki_card(title: str, accent: str, *children) -> rx.Component:
         ),
         rx.flex(*children, direction="column", gap=SPACING["md"]),
         padding=SPACING["lg"],
-        background=rx.color("gray", 1),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-card"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
         flex="1",
         min_width="260px",
@@ -111,8 +111,8 @@ def _team_and_process() -> rx.Component:
                 direction="column", gap="6px",
             ),
             padding=SPACING["lg"],
-            background=rx.color("gray", 2),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            background=ROLE["bg-subtle"],
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
             margin_top=SPACING["lg"],
         ),
@@ -304,8 +304,8 @@ def _detail_panel() -> rx.Component:
                     size="2", color=rx.color("gray", 7)),
         ),
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        background=ROLE["bg-subtle"],
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
         min_height="72px",
         margin_top=SPACING["md"],

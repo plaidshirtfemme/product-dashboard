@@ -1,7 +1,7 @@
 """Reusable empty state component for tabs without real data."""
 
 import reflex as rx
-from ..tokens import SPACING
+from ..tokens import SPACING, ROLE
 
 
 def empty_state(
@@ -64,7 +64,7 @@ def empty_state(
             padding=f"{SPACING['xl']} {SPACING['md']}",
             min_height="280px",
         ),
-        background=rx.color("gray", 1),
+        background=ROLE["bg-card"],
         border=f"1px dashed {rx.color('gray', 5)}",
         border_radius="var(--radius-3)",
         width="100%",

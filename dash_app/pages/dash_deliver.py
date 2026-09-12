@@ -8,7 +8,7 @@ Working prototype = сам дашборд (self-hosting). Здесь же — о
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER, PAGE_MAX_WIDTH
+from ..tokens import SPACING, BORDER, PAGE_MAX_WIDTH, ROLE
 from ..components import section_header
 from .motif_about import _placeholder
 
@@ -42,9 +42,9 @@ def _runbook_card(title: str, tag: str, tag_color: str, steps: list) -> rx.Compo
         ),
         rx.flex(*steps, direction="column", gap="2px"),
         padding=SPACING["lg"],
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
-        background=rx.color("gray", 1),
+        background=ROLE["bg-card"],
         flex="1", min_width="320px",
     )
 

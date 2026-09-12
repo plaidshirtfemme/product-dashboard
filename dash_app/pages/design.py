@@ -10,7 +10,7 @@ Sections:
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import (
     table_container,
     progress_bar,
@@ -118,7 +118,7 @@ def _a11y_audit(rows, a11y_checked: int, a11y_total: int) -> rx.Component:
             overflow="hidden",
         ),
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-3)",
         margin_bottom=SPACING["md"],
     )
@@ -168,7 +168,7 @@ def _design_table(rows) -> rx.Component:
         columns="90px 110px 110px 120px 50px 1fr 40px 90px",
         gap=SPACING["md"],
         padding=f"8px {SPACING['md']}",
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-2) var(--radius-2) 0 0",
     )
 
@@ -263,7 +263,7 @@ def _iteration_depth(rows) -> rx.Component:
         legend,
         rx.flex(*bars, direction="column", gap="8px"),
         padding=SPACING["md"],
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-3)",
     )
 

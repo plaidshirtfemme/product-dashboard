@@ -6,7 +6,7 @@
 
 import reflex as rx
 from ..tokens import (
-    SPACING, STATUS_COLORS, COLOR_ROLE, COLOR_STATE, TYPE_SCALE, FONTS,
+    SPACING, STATUS_COLORS, COLOR_ROLE, COLOR_STATE, TYPE_SCALE, FONTS, ROLE,
     BORDER, BORDER_WIDTH, RADIUS,
     PAGE_MAX_WIDTH, PAGE_MAX_WIDTH_WIDE, SIDEBAR_WIDTH,
 )
@@ -48,7 +48,7 @@ def _color_row(color: str, shade: int, usage: str) -> rx.Component:
             width="32px", height="32px",
             border_radius="var(--radius-2)",
             background=rx.color(color, shade),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             flex_shrink="0",
         ),
         rx.text(token_name, size="2", weight="medium",
@@ -106,7 +106,7 @@ def _role_row(name: str, scale: str, step: int) -> rx.Component:
             width="32px", height="32px",
             border_radius="var(--radius-2)",
             background=rx.color(scale, step),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             flex_shrink="0",
         ),
         rx.flex(
@@ -143,7 +143,7 @@ def _state_row(name: str, scale: str, step: int) -> rx.Component:
             width="32px", height="32px",
             border_radius="var(--radius-2)",
             background=rx.color(scale, step),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             flex_shrink="0",
         ),
         rx.flex(
@@ -257,14 +257,14 @@ def _component_card(name: str, description: str, preview: rx.Component) -> rx.Co
         rx.box(
             preview,
             padding=SPACING["md"],
-            background=rx.color("gray", 2),
+            background=ROLE["bg-subtle"],
             border_radius="var(--radius-2)",
             border=f"{BORDER} {rx.color('gray', 3)}",
         ),
         padding=SPACING["lg"],
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
-        background=rx.color("gray", 1),
+        background=ROLE["bg-card"],
     )
 
 
@@ -293,9 +293,9 @@ def _tokens_view() -> rx.Component:
                     margin_bottom=SPACING["sm"]),
             *[_color_row(c, s, u) for c, s, u in _COLOR_PALETTE],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 
@@ -310,9 +310,9 @@ def _tokens_view() -> rx.Component:
                     margin_bottom=SPACING["sm"]),
             *[_role_row(name, scale, step) for name, (scale, step) in COLOR_ROLE.items()],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 
@@ -347,9 +347,9 @@ def _tokens_view() -> rx.Component:
                 margin_top=SPACING["sm"], line_height="1.5",
             ),
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 
@@ -360,9 +360,9 @@ def _tokens_view() -> rx.Component:
         rx.box(
             *[_spacing_row(k, SPACING[k]) for k in SPACING],
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 
@@ -390,9 +390,9 @@ def _tokens_view() -> rx.Component:
                 padding=f"{SPACING['xs']} 0",
             ),
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 
@@ -407,9 +407,9 @@ def _tokens_view() -> rx.Component:
             _const_row("BORDER",              BORDER,               "Стандартная рамка — добавь + rx.color(...)"),
             _const_row("BORDER_WIDTH",        BORDER_WIDTH,         "Только толщина"),
             padding=f"{SPACING['sm']} {SPACING['md']}",
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
-            background=rx.color("gray", 1),
+            background=ROLE["bg-card"],
             margin_top=SPACING["sm"],
         ),
 
@@ -512,9 +512,9 @@ def _rule_card(title: str, icon: str, color: str, items: list[str]) -> rx.Compon
             gap=SPACING["xs"],
         ),
         padding=SPACING["lg"],
-        border=f"{BORDER} {rx.color('gray', 4)}",
+        border=f"{BORDER} {ROLE['border-default']}",
         border_radius="var(--radius-3)",
-        background=rx.color("gray", 1),
+        background=ROLE["bg-card"],
         flex="1",
         min_width="280px",
     )
@@ -631,8 +631,8 @@ def _rules_view() -> rx.Component:
             direction="column",
             gap=SPACING["md"],
             padding=SPACING["md"],
-            background=rx.color("gray", 1),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            background=ROLE["bg-card"],
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
         ),
         rx.box(height=SPACING["md"]),
@@ -717,8 +717,8 @@ def _rules_view() -> rx.Component:
             direction="column",
             gap=SPACING["md"],
             padding=SPACING["md"],
-            background=rx.color("gray", 1),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            background=ROLE["bg-card"],
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
         ),
 
@@ -755,8 +755,8 @@ def _rules_view() -> rx.Component:
             direction="column",
             gap=SPACING["md"],
             padding=SPACING["md"],
-            background=rx.color("gray", 1),
-            border=f"{BORDER} {rx.color('gray', 4)}",
+            background=ROLE["bg-card"],
+            border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
         ),
         rx.box(height=SPACING["md"]),
@@ -817,7 +817,7 @@ def _section_button(section: str, label: str, sub: str) -> rx.Component:
         border=rx.cond(
             is_active,
             f"{BORDER} {rx.color('teal', 7)}",
-            f"{BORDER} {rx.color('gray', 4)}",
+            f"{BORDER} {ROLE['border-default']}",
         ),
         _hover={"background": rx.cond(is_active, rx.color("teal", 3), rx.color("gray", 3))},
         on_click=DsState.set_section(section),

@@ -14,7 +14,7 @@ in the tabs bar) and switches ProjectState.project_mode between
 
 import reflex as rx
 from ..states import NavState, ProjectState, NAV_TABS, BUILT_TABS
-from ..tokens import SPACING, SIDEBAR_WIDTH, BORDER, STATE
+from ..tokens import SPACING, SIDEBAR_WIDTH, BORDER, STATE, ROLE
 
 _SIDEBAR_W = SIDEBAR_WIDTH
 _TAB_H = "48px"
@@ -66,7 +66,7 @@ def _project_dropdown() -> rx.Component:
                 width="100%",
                 padding=SPACING["md"],
                 cursor="pointer",
-                border_bottom=f"{BORDER} {rx.color('gray', 4)}",
+                border_bottom=f"{BORDER} {ROLE['border-default']}",
                 _hover={"background": STATE["hover-bg-subtle"]},
             ),
             as_child=True,
@@ -142,7 +142,7 @@ def _sidebar_item(key: str, label: str, icon: str) -> rx.Component:
         padding=f"{SPACING['sm']} {SPACING['md']}",
         margin_left="20px" if is_sub else "0",
         border_radius="var(--radius-2)",
-        border_left=f"2px solid {rx.color('gray', 4)}" if is_sub else "none",
+        border_left=f"2px solid {ROLE['border-default']}" if is_sub else "none",
         cursor="pointer" if is_built else "default",
         background=rx.cond(is_active, rx.color("teal", 3), "transparent"),
         color=rx.cond(
@@ -225,8 +225,8 @@ def sidebar_nav() -> rx.Component:
         width=_SIDEBAR_W,
         min_width=_SIDEBAR_W,
         height="100vh",
-        border_right=f"{BORDER} {rx.color('gray', 4)}",
-        background=rx.color("gray", 1),
+        border_right=f"{BORDER} {ROLE['border-default']}",
+        background=ROLE["bg-card"],
         flex_shrink="0",
     )
 

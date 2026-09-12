@@ -14,7 +14,7 @@ trend_direction:
 """
 
 import reflex as rx
-from ..tokens.tokens import SPACING, TYPE_SCALE, STATUS_COLORS
+from ..tokens.tokens import SPACING, TYPE_SCALE, STATUS_COLORS, ROLE
 
 
 def stat_card(
@@ -79,7 +79,7 @@ def stat_card(
             color=rx.color(trend_color, 9),
             margin_top=SPACING["xs"],
         ) if trend is not None else rx.fragment(),
-        background=rx.color("gray", 2),
+        background=ROLE["bg-subtle"],
         border_radius="var(--radius-3)",
         border_left="3px solid var(--tomato-9)" if trend_direction == "bad" else "3px solid transparent",
         padding=SPACING["md"],
