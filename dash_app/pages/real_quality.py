@@ -21,7 +21,7 @@ def _test_row(t) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding="6px 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 
@@ -40,7 +40,7 @@ def _quality_row(q) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding="8px 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 

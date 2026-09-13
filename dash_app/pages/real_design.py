@@ -169,7 +169,7 @@ def _palette_row(color: str, shade: int, usage: str) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding="8px 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 
@@ -210,7 +210,7 @@ def real_design_tab() -> rx.Component:
                     rx.text(note, size="2", color=rx.color("gray", 9)),
                     gap=SPACING["md"],
                     padding="8px 0",
-                    border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+                    border_bottom=f"{BORDER} {ROLE['border-subtle']}",
                 )
                 for tech, note in [
                     ("Reflex 0.9.6",         "Python → React компиляция"),

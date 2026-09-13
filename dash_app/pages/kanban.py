@@ -291,7 +291,7 @@ def _build_board(issues: list[Issue]) -> rx.Component:
                     flex_shrink="0",
                     padding="8px",
                     background=ROLE["bg-card"],
-                    border_right=f"{BORDER} {rx.color('gray', 3)}",
+                    border_right=f"{BORDER} {ROLE['border-subtle']}",
                     min_height="60px",
                     align_items="stretch",
                 )

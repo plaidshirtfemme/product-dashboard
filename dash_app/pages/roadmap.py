@@ -86,7 +86,7 @@ def _kr_row(title: str, current: str, target: str, pct: int, status: str) -> rx.
         align="center",
         gap=SPACING["md"],
         padding=f"6px 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
         width="100%",
     )
 
@@ -227,7 +227,7 @@ def _epic_row(epic_key: str, issues: list) -> rx.Component:
         align="center",
         gap=SPACING["md"],
         padding=f"5px 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
         width="100%",
     )
 
@@ -295,7 +295,7 @@ def _sprint_review_row(sprint_name: str, issues: list) -> rx.Component:
         align="center",
         gap=SPACING["md"],
         padding=f"8px 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
         width="100%",
     )
 

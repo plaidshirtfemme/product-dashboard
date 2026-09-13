@@ -8,7 +8,7 @@ from ..data.real_project_extract import (
     BATCH_SESSIONS,
 )
 from ..data.vault_snapshot import TOTAL_NOTES, SNAPSHOT_DATE
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 
 
 def real_overview_tab() -> rx.Component:
@@ -23,7 +23,7 @@ def real_overview_tab() -> rx.Component:
             gap=SPACING["md"],
             align="start",
             padding=f"6px 0",
-            border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+            border_bottom=f"{BORDER} {ROLE['border-subtle']}",
         )
         for tech, role in STACK
     ]

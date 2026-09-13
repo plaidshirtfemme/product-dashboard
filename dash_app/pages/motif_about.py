@@ -1199,7 +1199,7 @@ def _backstory_block() -> rx.Component:
             rx.text(b["text"], size="2", color=rx.color("gray", 11), line_height="1.6", flex="1"),
             gap="10px", align="start",
             padding_y="6px",
-            border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+            border_bottom=f"{BORDER} {ROLE['border-subtle']}",
         )
         for b in BACKSTORY_BRIEF
     ]
@@ -1220,7 +1220,7 @@ def _script_block() -> rx.Component:
             rx.text(text, size="2", color=rx.color("gray", 11), line_height="1.6", flex="1"),
             gap="10px", align="start",
             padding_y="6px",
-            border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+            border_bottom=f"{BORDER} {ROLE['border-subtle']}",
         )
         for day, text in A1_SCRIPT_FINAL
     ]

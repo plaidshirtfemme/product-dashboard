@@ -58,7 +58,7 @@ def _color_row(color: str, shade: int, usage: str) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 
@@ -81,7 +81,7 @@ def _status_color_row(key: str, radix_name: str, usage: str) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 
@@ -120,7 +120,7 @@ def _role_row(name: str, scale: str, step: int) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 
@@ -157,7 +157,7 @@ def _state_row(name: str, scale: str, step: int) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 
@@ -218,7 +218,7 @@ def _type_row(key: str, sample: str, weight: str, color: str, shade: int) -> rx.
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 
@@ -237,7 +237,7 @@ def _const_row(name: str, value: str, note: str) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 
@@ -259,7 +259,7 @@ def _component_card(name: str, description: str, preview: rx.Component) -> rx.Co
             padding=SPACING["md"],
             background=ROLE["bg-subtle"],
             border_radius="var(--radius-2)",
-            border=f"{BORDER} {rx.color('gray', 3)}",
+            border=f"{BORDER} {ROLE['border-subtle']}",
         ),
         padding=SPACING["lg"],
         border=f"{BORDER} {ROLE['border-default']}",

@@ -253,7 +253,7 @@ def _history_row(h: dict) -> rx.Component:
             align="center", gap="2", margin_top="1",
         ),
         padding_y="8px",
-        border_bottom=f"1px solid {rx.color('gray', 3)}",
+        border_bottom=f"1px solid {ROLE['border-subtle']}",
         width="100%",
     )
 
@@ -422,7 +422,7 @@ def _epic_child_row(child: dict) -> rx.Component:
                        "white_space": "nowrap"}),
         align="center", gap="2",
         padding_y="5px",
-        border_bottom=f"1px solid {rx.color('gray', 3)}",
+        border_bottom=f"1px solid {ROLE['border-subtle']}",
         width="100%",
     )
 

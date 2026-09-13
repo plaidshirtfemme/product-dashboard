@@ -193,7 +193,7 @@ def _design_table(rows) -> rx.Component:
                 align="center",
                 padding=f"10px {SPACING['md']}",
                 background="white" if idx % 2 == 0 else rx.color("gray", 1),
-                border_top=f"{BORDER} {rx.color('gray', 3)}",
+                border_top=f"{BORDER} {ROLE['border-subtle']}",
             )
         )
 

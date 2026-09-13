@@ -98,7 +98,7 @@ def _go_no_go_checklist(criteria) -> rx.Component:
             gap=SPACING["sm"],
             padding=f"10px {SPACING['md']}",
             background=rx.color(STATUS_COLORS["danger"], 2) if (not c.ok and c.critical) else "white",
-            border_top=f"{BORDER} {rx.color('gray', 3)}",
+            border_top=f"{BORDER} {ROLE['border-subtle']}",
             width="100%",
         ))
 

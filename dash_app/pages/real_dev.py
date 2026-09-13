@@ -36,7 +36,7 @@ def _commit_row(c) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding=f"8px 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 
@@ -50,7 +50,7 @@ def _exception_row(e) -> rx.Component:
         gap=SPACING["md"],
         align="center",
         padding=f"8px 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
     )
 
 

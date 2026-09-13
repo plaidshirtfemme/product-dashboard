@@ -439,7 +439,7 @@ def _ab_section(exp_rows) -> rx.Component:
             padding=f"10px {SPACING['md']}",
             background=rx.color("grass", 1) if sig else (
                 "white" if idx % 2 == 0 else rx.color("gray", 1)),
-            border_top=f"{BORDER} {rx.color('gray', 3)}",
+            border_top=f"{BORDER} {ROLE['border-subtle']}",
             border_left=f"3px solid {rx.color('grass', 6)}" if sig
                         else "3px solid transparent",
         ))
@@ -486,7 +486,7 @@ def _sql_block(title: str, description: str, sql: str,
             columns=col_template, gap=SPACING["sm"],
             padding=f"6px {SPACING['sm']}",
             background="white" if i % 2 == 0 else rx.color("gray", 1),
-            border_top=f"{BORDER} {rx.color('gray', 3)}",
+            border_top=f"{BORDER} {ROLE['border-subtle']}",
         )
         for i, row in enumerate(rows)
     ]

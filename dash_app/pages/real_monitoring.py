@@ -47,7 +47,7 @@ def _session_row(s) -> rx.Component:
         gap=SPACING["lg"],
         align="center",
         padding="8px 0",
-        border_bottom=f"{BORDER} {rx.color('gray', 3)}",
+        border_bottom=f"{BORDER} {ROLE['border-subtle']}",
         _hover={"background": rx.color("gray", 2)},
     )
 

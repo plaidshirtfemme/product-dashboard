@@ -147,7 +147,7 @@ def _person_wip_table(people) -> rx.Component:
             columns="160px 110px 130px 80px 160px 120px", gap=SPACING["md"], align="center",
             padding=f"10px {SPACING['md']}",
             background="white" if idx % 2 == 0 else rx.color("gray", 1),
-            border_top=f"{BORDER} {rx.color('gray', 3)}",
+            border_top=f"{BORDER} {ROLE['border-subtle']}",
             border_left=f"3px solid {rx.color(color, 6)}" if p.wip_status != "ok" else "3px solid transparent",
         ))
     return table_container(header, *rows)

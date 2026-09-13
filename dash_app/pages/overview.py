@@ -286,7 +286,7 @@ def _kr_row(kr) -> rx.Component:
             margin_top="6px",
         ),
         padding=f"10px 0",
-        border_top=f"{BORDER} {rx.color('gray', 3)}",
+        border_top=f"{BORDER} {ROLE['border-subtle']}",
         width="100%",
     )
 
