@@ -1,7 +1,6 @@
 from .stat_card import stat_card, stat_card_row
 from .badge import status_badge, badge_group, data_source_badge, sev_badge, SEV_COLORS
 from .data_table import data_table, mono_text
-from .chart_wrapper import chart_wrapper
 from .section_header import section_header
 from .filter_bar import filter_bar
 from .navigation import sidebar_nav
@@ -19,7 +18,6 @@ __all__ = [
     "SEV_COLORS",
     "data_table",
     "mono_text",
-    "chart_wrapper",
     "section_header",
     "filter_bar",
     "sidebar_nav",

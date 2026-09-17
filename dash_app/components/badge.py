@@ -47,7 +47,7 @@ def badge_group(*statuses: str) -> rx.Component:
 # Data-source badge — separate from status_badge above. This is not about
 # task status, it's about honesty: does this metric come from the real
 # Knowledge Pipeline project, or from the simulated Jira integration?
-# Every stat_card / chart_wrapper on every tab should carry one of these.
+# Every stat_card on every tab should carry one of these.
 # See HANDOFF doc, "Смешение реальных и смоделированных данных" for why
 # this exists — mixing real and mocked metrics on one dashboard is fine
 # as long as it's visibly labeled, not fine if it's silently blended.

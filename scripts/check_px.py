@@ -18,7 +18,7 @@ import argparse, collections, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent / "dash_app"
 EXCLUDE = {"jira_mock_raw.py", "sprint_calendar.py"}   # файлы данных, не UI
-BASELINE = 718                                          # замер 14.09.2026
+BASELINE = 717                                          # замер 14.09.2026
 
 # литерал с числом+px; кавычки не пересекают перевод строки
 PX = re.compile(r'["\'][^"\'\n]*?\d+(?:\.\d+)?px[^"\'\n]*?["\']')
