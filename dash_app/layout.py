@@ -4,7 +4,7 @@ import reflex as rx
 from .states import ProjectState
 from .components import sidebar_nav
 from .router import page_content
-from .tokens import SPACING
+from .tokens import SPACING, ROLE
 
 _SPACING_XL = SPACING["xl"]
 
@@ -21,18 +21,18 @@ def index() -> rx.Component:
             "Knowledge Pipeline",
             style={"font_size": "11px", "font_weight": "600",
                    "text_transform": "uppercase", "letter_spacing": "0.08em"},
-            color=rx.color("gray", 9),
+            color=ROLE["text-secondary"],
         ),
         rx.heading(
             "Product Dashboard",
             size="6",
-            color=rx.color("gray", 12),
+            color=ROLE["text-primary"],
             margin_top="2px",
         ),
         rx.text(
             subtitle,
             size="1",
-            color=rx.color("gray", 9),
+            color=ROLE["text-secondary"],
             margin_top="2px",
         ),
         padding=f"1.5rem {_SPACING_XL} 0",

@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..components import section_header, real_page_header, real_page_wrapper
-from ..data.real_project_extract import GIT_COMMITS
+from ..data.kp.real_project_extract import GIT_COMMITS
 from ..tokens import SPACING, BORDER, ROLE
 
 _CAT_COLOR = {
@@ -44,7 +44,7 @@ def _commit_milestone(c) -> rx.Component:
         # Content
         rx.flex(
             rx.flex(
-                rx.text(c.date, size="1", color=rx.color("gray", 8),
+                rx.text(c.date, size="1", color=ROLE["text-muted"],
                         font_family="monospace"),
                 rx.badge(c.category, color_scheme=color, variant="soft", size="1"),
                 gap=SPACING["sm"],

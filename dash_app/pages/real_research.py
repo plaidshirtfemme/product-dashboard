@@ -10,7 +10,7 @@ Sections that are demo-only in this project:
 
 import reflex as rx
 from ..components import section_header, real_page_header, real_page_wrapper, vault_coverage_chart
-from ..data.vault_snapshot import FOLDER_COUNTS, SNAPSHOT_DATE, TOTAL_NOTES
+from ..data.kp.vault_snapshot import FOLDER_COUNTS, SNAPSHOT_DATE, TOTAL_NOTES
 from ..components.empty_state import empty_state
 from ..tokens import SPACING, BORDER
 

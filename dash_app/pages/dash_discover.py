@@ -43,7 +43,7 @@ def _rec_cell(obs: str, self_: str) -> rx.Component:
         rx.flex(
             rx.text("👤 ", size="1"),
             rx.text(self_, size="1",
-                    color=rx.color("gray", 9) if self_ == "N/A" else rx.color("gray", 11),
+                    color=ROLE["text-secondary"] if self_ == "N/A" else rx.color("gray", 11),
                     line_height="1.5"),
             gap="2px", margin_top="2px",
         ),
@@ -55,11 +55,11 @@ def _problem_block(block: dict) -> rx.Component:
     header = rx.table.row(
         rx.table.column_header_cell(
             rx.text("Проблема ", size="1", weight="bold"),
-            rx.text("Discover", size="1", color=rx.color("gray", 8)),
+            rx.text("Discover", size="1", color=ROLE["text-muted"]),
             width="26%"),
         rx.table.column_header_cell(
             rx.text("Цель ", size="1", weight="bold"),
-            rx.text("Define", size="1", color=rx.color("gray", 8)),
+            rx.text("Define", size="1", color=ROLE["text-muted"]),
             width="26%"),
         rx.table.column_header_cell(
             rx.text("Как учтено (команда) ", size="1", weight="bold"),
@@ -67,12 +67,12 @@ def _problem_block(block: dict) -> rx.Component:
             width="26%"),
         rx.table.column_header_cell(
             rx.text("Рекрутер ", size="1", weight="bold"),
-            rx.text("наблюдатель / сам", size="1", color=rx.color("gray", 8)),
+            rx.text("наблюдатель / сам", size="1", color=ROLE["text-muted"]),
             width="22%"),
     )
     rows = [
         rx.table.row(
-            rx.table.cell(rx.text(r["label"], size="1", color=rx.color("gray", 12),
+            rx.table.cell(rx.text(r["label"], size="1", color=ROLE["text-primary"],
                                   line_height="1.5"), vertical_align="top"),
             _goal_cell(r["goal"], r["goal_type"]),
             rx.table.cell(rx.text(r["team"], size="1", color=rx.color("gray", 11),
@@ -83,14 +83,14 @@ def _problem_block(block: dict) -> rx.Component:
     ]
     return rx.box(
         rx.flex(
-            rx.text(block["source"], size="2", weight="bold", color=rx.color("gray", 12)),
+            rx.text(block["source"], size="2", weight="bold", color=ROLE["text-primary"]),
             rx.link("источник ↗", href=block["url"], is_external=True,
                     size="1", color=rx.color("teal", 10)),
             gap="8px", align="baseline", margin_bottom="4px",
         ),
         rx.text(block["problem"], size="1", color=rx.color("gray", 10),
                 line_height="1.6", margin_bottom="4px", font_style="italic"),
-        rx.text(block["note"], size="1", color=rx.color("gray", 9), margin_bottom="8px")
+        rx.text(block["note"], size="1", color=ROLE["text-secondary"], margin_bottom="8px")
         if block["note"] else rx.fragment(),
         rx.table.root(
             rx.table.header(header),
@@ -104,11 +104,11 @@ def _problem_block(block: dict) -> rx.Component:
 def _problems_section() -> rx.Component:
     return rx.box(
         rx.text("Проблемы взаимодействия (Q3)", size="4", weight="bold",
-                color=rx.color("gray", 12), margin_bottom="4px"),
+                color=ROLE["text-primary"], margin_bottom="4px"),
         rx.text("Расслоено по этапам DD: Проблема (Discover) · Цель+тип (Define) · "
                 "Как учтено (Develop) · Рекрутер (meta). ⚠️ колонки «команда»/«рекрутер» — на чекап "
                 "(писались по догадке); проблема-цитаты и цели выверены. Источники — verbatim, verified.",
-                size="1", color=rx.color("gray", 9), margin_bottom=SPACING["md"], line_height="1.6"),
+                size="1", color=ROLE["text-secondary"], margin_bottom=SPACING["md"], line_height="1.6"),
         rx.text("Ось A · дашборд как продукт", size="2", weight="bold",
                 color=rx.color("teal", 11), margin_bottom="8px"),
         *[_problem_block(b) for b in AXIS_A_BLOCKS],
@@ -182,7 +182,7 @@ def _stage_card(s: dict) -> rx.Component:
         rx.box(
             rx.flex(
                 rx.icon(s["icon"], size=16, color=rx.color(s["accent"], 11)),
-                rx.text(s["stage"], size="3", weight="bold", color=rx.color("gray", 12)),
+                rx.text(s["stage"], size="3", weight="bold", color=ROLE["text-primary"]),
                 gap="6px", align="center", margin_bottom="6px",
             ),
             rx.flex(*[_role_badge(r, s["accent"]) for r in s["roles"]],
@@ -222,7 +222,7 @@ def _process_flow_block() -> rx.Component:
         rx.icon(_GROWTH_STAGE["icon"], size=16, color=rx.color(_GROWTH_STAGE["accent"], 11)),
         rx.box(
             rx.flex(
-                rx.text(_GROWTH_STAGE["stage"], size="2", weight="bold", color=rx.color("gray", 12)),
+                rx.text(_GROWTH_STAGE["stage"], size="2", weight="bold", color=ROLE["text-primary"]),
                 _role_badge(_GROWTH_STAGE["roles"][0], _GROWTH_STAGE["accent"]),
                 gap="6px", align="center", wrap="wrap", margin_bottom="4px",
             ),
@@ -260,7 +260,7 @@ def _process_flow_block() -> rx.Component:
             "Последовательность этапов, исполнители и что передаётся дальше. "
             "Модель типового продуктового процесса (синтез desk research: SDLC-практики "
             "Atlassian/Scrum + карта ролей) — не наблюдение за конкретной командой.",
-            size="1", color=rx.color("gray", 9), margin_bottom=SPACING["md"], line_height="1.6",
+            size="1", color=ROLE["text-secondary"], margin_bottom=SPACING["md"], line_height="1.6",
         ),
         rx.flex(*steps, direction="column", gap="0", width="100%"),
         rx.box(height=SPACING["md"]),
@@ -279,7 +279,7 @@ def dash_discover_tab() -> rx.Component:
 
         # Q2 — последовательность этапов
         rx.text("Процесс: этапы и передачи", size="4", weight="bold",
-                color=rx.color("gray", 12), margin_bottom="8px"),
+                color=ROLE["text-primary"], margin_bottom="8px"),
         _process_flow_block(),
         rx.box(height=SPACING["xl"]),
 

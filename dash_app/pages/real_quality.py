@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..components import section_header, stat_card, stat_card_row, real_page_header, real_page_wrapper
-from ..data.real_project_extract import TESTS, QUALITY_ITEMS
+from ..data.kp.real_project_extract import TESTS, QUALITY_ITEMS
 from ..tokens import SPACING, BORDER, ROLE
 
 _STATUS_COLOR = {"done": "teal", "open": "amber", "planned": "blue"}
@@ -17,7 +17,7 @@ def _test_row(t) -> rx.Component:
                 color=rx.color("gray", 11), flex="1"),
         rx.badge(t.module, color_scheme=color, variant="soft", size="1",
                  min_width="140px"),
-        rx.text(t.what, size="1", color=rx.color("gray", 9), flex="1"),
+        rx.text(t.what, size="1", color=ROLE["text-secondary"], flex="1"),
         gap=SPACING["md"],
         align="center",
         padding="6px 0",
@@ -30,13 +30,13 @@ def _quality_row(q) -> rx.Component:
     pc = _PRIORITY_COLOR.get(q.priority, "gray")
     return rx.flex(
         rx.text(q.id, size="1", font_family="monospace",
-                color=rx.color("gray", 8), min_width="60px"),
+                color=ROLE["text-muted"], min_width="60px"),
         rx.badge(q.priority, color_scheme=pc, variant="soft", size="1",
                  min_width="60px"),
-        rx.text(q.title, size="2", color=rx.color("gray", 12), flex="1"),
+        rx.text(q.title, size="2", color=ROLE["text-primary"], flex="1"),
         rx.badge(q.status, color_scheme=sc, variant="soft", size="1",
                  min_width="60px"),
-        rx.text(q.detail, size="1", color=rx.color("gray", 9), flex="1"),
+        rx.text(q.detail, size="1", color=ROLE["text-secondary"], flex="1"),
         gap=SPACING["md"],
         align="center",
         padding="8px 0",
@@ -82,7 +82,7 @@ def real_quality_tab() -> rx.Component:
         rx.flex(
             rx.flex(
                 rx.text(str(done_count),    size="4", weight="bold", color=rx.color("teal", 9)),
-                rx.text("выполнено", size="1", color=rx.color("gray", 9)),
+                rx.text("выполнено", size="1", color=ROLE["text-secondary"]),
                 direction="column", align="center",
                 padding=f"10px {SPACING['lg']}",
                 border=f"{BORDER} {ROLE['border-default']}",
@@ -90,7 +90,7 @@ def real_quality_tab() -> rx.Component:
             ),
             rx.flex(
                 rx.text(str(open_count),    size="4", weight="bold", color=rx.color("amber", 9)),
-                rx.text("открыто", size="1", color=rx.color("gray", 9)),
+                rx.text("открыто", size="1", color=ROLE["text-secondary"]),
                 direction="column", align="center",
                 padding=f"10px {SPACING['lg']}",
                 border=f"{BORDER} {ROLE['border-default']}",
@@ -98,7 +98,7 @@ def real_quality_tab() -> rx.Component:
             ),
             rx.flex(
                 rx.text(str(planned_count), size="4", weight="bold", color=rx.color("blue", 9)),
-                rx.text("запланировано", size="1", color=rx.color("gray", 9)),
+                rx.text("запланировано", size="1", color=ROLE["text-secondary"]),
                 direction="column", align="center",
                 padding=f"10px {SPACING['lg']}",
                 border=f"{BORDER} {ROLE['border-default']}",

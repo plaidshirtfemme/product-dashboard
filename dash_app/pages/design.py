@@ -33,7 +33,7 @@ from .utils import jira_status_key as _design_status_key
 
 def _iter_bar(count: int | None) -> rx.Component:
     if count is None:
-        return rx.text("—", size="2", color=rx.color("gray", 8))
+        return rx.text("—", size="2", color=ROLE["text-muted"])
     color = "grass" if count <= 2 else "amber" if count == 3 else "tomato"
     label_color = "grass" if count <= 2 else "amber" if count == 3 else "tomato"
     dots = []
@@ -62,7 +62,7 @@ def _a11y_icon(checked: bool | None) -> rx.Component:
             rx.icon("circle_x", size=16, color=rx.color("tomato", 9)),
             content="Accessibility не проверена — риск выпустить недоступный UI",
         )
-    return rx.text("—", size="2", color=rx.color("gray", 8))
+    return rx.text("—", size="2", color=ROLE["text-muted"])
 
 
 # ---------------------------------------------------------------------------
@@ -157,14 +157,14 @@ def _a11y_audit(rows, a11y_checked: int, a11y_total: int) -> rx.Component:
 
 def _design_table(rows) -> rx.Component:
     header = rx.grid(
-        rx.text("Ключ", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Статус", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Эпик", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Итерации", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("A11y", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("OKR", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("SP", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Cycle time", size="1", weight="medium", color=rx.color("gray", 9)),
+        rx.text("Ключ", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("Статус", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("Эпик", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("Итерации", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("A11y", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("OKR", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("SP", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("Cycle time", size="1", weight="medium", color=ROLE["text-secondary"]),
         columns="90px 110px 110px 120px 50px 1fr 40px 90px",
         gap=SPACING["md"],
         padding=f"8px {SPACING['md']}",
@@ -210,7 +210,7 @@ def _design_table(rows) -> rx.Component:
 def _iteration_depth(rows) -> rx.Component:
     """Horizontal bars: one per design issue, length = iteration count."""
     if not rows:
-        return rx.text("Нет данных", size="2", color=rx.color("gray", 9))
+        return rx.text("Нет данных", size="2", color=ROLE["text-secondary"])
 
     max_iter = max((r.iteration_count or 0) for r in rows) or 1
     bars = []
@@ -240,19 +240,19 @@ def _iteration_depth(rows) -> rx.Component:
         rx.flex(
             rx.box(width="12px", height="12px", background=rx.color("grass", 6),
                    border_radius="var(--radius-1)"),
-            rx.text("1–2 (норма)", size="1", color=rx.color("gray", 9)),
+            rx.text("1–2 (норма)", size="1", color=ROLE["text-secondary"]),
             gap="4px", align="center",
         ),
         rx.flex(
             rx.box(width="12px", height="12px", background=rx.color("amber", 6),
                    border_radius="var(--radius-1)"),
-            rx.text("3 (много)", size="1", color=rx.color("gray", 9)),
+            rx.text("3 (много)", size="1", color=ROLE["text-secondary"]),
             gap="4px", align="center",
         ),
         rx.flex(
             rx.box(width="12px", height="12px", background=rx.color("tomato", 6),
                    border_radius="var(--radius-1)"),
-            rx.text("4+ (сигнал)", size="1", color=rx.color("gray", 9)),
+            rx.text("4+ (сигнал)", size="1", color=ROLE["text-secondary"]),
             gap="4px", align="center",
         ),
         gap=SPACING["lg"],

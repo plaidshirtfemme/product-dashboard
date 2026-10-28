@@ -172,7 +172,7 @@ def _col_header(col_key: str, col_label: str, color: str, wip_limit, wip_current
                     rx.text(
                         f"/ {wip_limit}",
                         size="1",
-                        color=rx.color("gray", 9),
+                        color=ROLE["text-secondary"],
                     ),
                     rx.box(),
                 ),
@@ -258,7 +258,7 @@ def _build_board(issues: list[Issue]) -> rx.Component:
                 rx.text(
                     str(total_in_squad),
                     size="1",
-                    color=rx.color("gray", 9),
+                    color=ROLE["text-secondary"],
                 ),
                 direction="column",
                 gap="4px",
@@ -381,7 +381,7 @@ def _sprint_calendar(issues: list[Issue]) -> rx.Component:
             rx.box(
                 rx.text(d["label"], size="1", weight="bold",
                         color=rx.color("teal", 11) if is_today else rx.color("gray", 11)),
-                rx.text(d["stage"], size="1", color=rx.color("gray", 9),
+                rx.text(d["stage"], size="1", color=ROLE["text-secondary"],
                         style={"font_size": "10px"}),
                 rx.text(d["focus"], size="1", color=rx.color("gray", 10),
                         style={"font_size": "10px", "max_width": "130px"}),
@@ -459,20 +459,20 @@ def _kanban_for(issues) -> rx.Component:
         # summary strip
         rx.flex(
             rx.flex(
-                rx.text("Всего задач:", size="2", color=rx.color("gray", 9)),
-                rx.text(str(total), size="2", weight="bold", color=rx.color("gray", 12)),
+                rx.text("Всего задач:", size="2", color=ROLE["text-secondary"]),
+                rx.text(str(total), size="2", weight="bold", color=ROLE["text-primary"]),
                 gap="6px", align="center",
             ),
             rx.flex(
-                rx.text("WIP сейчас:", size="2", color=rx.color("gray", 9)),
+                rx.text("WIP сейчас:", size="2", color=ROLE["text-secondary"]),
                 rx.text(str(wip), size="2", weight="bold",
-                        color=rx.color("amber", 11) if wip > 15 else rx.color("gray", 12)),
+                        color=rx.color("amber", 11) if wip > 15 else ROLE["text-primary"]),
                 gap="6px", align="center",
             ),
             rx.flex(
-                rx.text("Заблокировано:", size="2", color=rx.color("gray", 9)),
+                rx.text("Заблокировано:", size="2", color=ROLE["text-secondary"]),
                 rx.text(str(blocked), size="2", weight="bold",
-                        color=rx.color("tomato", 11) if blocked > 0 else rx.color("gray", 12)),
+                        color=rx.color("tomato", 11) if blocked > 0 else ROLE["text-primary"]),
                 gap="6px", align="center",
             ),
             gap=SPACING["xl"],

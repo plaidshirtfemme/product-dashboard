@@ -37,7 +37,7 @@ from ..data.metrics import (
 
 def _spec_bar(pct: int | None) -> rx.Component:
     if pct is None:
-        return rx.text("—", size="2", color=rx.color("gray", 8))
+        return rx.text("—", size="2", color=ROLE["text-muted"])
     color = "teal" if pct >= 90 else "amber" if pct >= 70 else "tomato"
     return rx.flex(
         rx.box(
@@ -80,7 +80,7 @@ def _requirements_table(rows) -> rx.Component:
                 color_scheme="amber" if (r.ambiguity_questions or 0) > 0 else "gray",
                 variant="soft",
                 size="1",
-            ) if r.ambiguity_questions is not None else rx.text("—", size="2", color=rx.color("gray", 8)),
+            ) if r.ambiguity_questions is not None else rx.text("—", size="2", color=ROLE["text-muted"]),
             rx.badge(
                 str(r.change_count),
                 color_scheme="tomato" if r.change_count > 2 else "amber" if r.change_count > 0 else "gray",
@@ -108,7 +108,7 @@ def _requirements_table(rows) -> rx.Component:
 
 def _source_bars(source_counts: list[tuple[str, int]]) -> rx.Component:
     if not source_counts:
-        return rx.text("Нет данных", size="2", color=rx.color("gray", 9))
+        return rx.text("Нет данных", size="2", color=ROLE["text-secondary"])
 
     total = sum(c for _, c in source_counts)
     max_count = max(c for _, c in source_counts)
@@ -121,12 +121,12 @@ def _source_bars(source_counts: list[tuple[str, int]]) -> rx.Component:
         color = colors[i % len(colors)]
         bars.append(
             rx.flex(
-                rx.text(src, size="2", color=rx.color("gray", 12), width="160px", flex_shrink="0"),
+                rx.text(src, size="2", color=ROLE["text-primary"], width="160px", flex_shrink="0"),
                 progress_bar(bar_w, color, 6, height="20px"),
                 rx.text(
                     f"{count} ({pct_total}%)",
                     size="1",
-                    color=rx.color("gray", 9),
+                    color=ROLE["text-secondary"],
                     width="70px",
                     text_align="right",
                     flex_shrink="0",
@@ -152,7 +152,7 @@ def _source_bars(source_counts: list[tuple[str, int]]) -> rx.Component:
 
 def _dependencies_table(dep_rows) -> rx.Component:
     if not dep_rows:
-        return rx.text("Нет зависимостей в данных", size="2", color=rx.color("gray", 9))
+        return rx.text("Нет зависимостей в данных", size="2", color=ROLE["text-secondary"])
 
     _COL = "100px 1fr 170px 170px 150px"
     header = table_header(

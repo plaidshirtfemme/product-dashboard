@@ -31,14 +31,19 @@
     },
 
     "role": {
-      "$description": "Component-level color roles → Radix (scale.step). Encodes WHICH Radix step plays WHICH role, so code stops hardcoding steps and the role-map lives in tokens, not comments. NB: current convention is lighter than Radix canon (text step 9 vs canon 11-12, border step 4 vs canon 6-8) — aligning to canon is a separate task (see DASH backlog), decided with visual review. Consume via tokens.py COLOR_ROLE / ROLE.",
+      "$description": "Component-level color roles → Radix (scale.step). Encodes WHICH Radix step plays WHICH role, so code stops hardcoding steps and the role-map lives in tokens, not comments. Текстовые роли приведены к канону Radix 16.09.2026 (DASH-142): 11-12 для текста. Бордеры (шаг 4) всё ещё светлее канона 6-8 — отдельная задача, нужна сверка глазом. Consume via tokens.py COLOR_ROLE / ROLE.",
       "text-primary":   { "$value": "gray.12", "$type": "color", "$description": "High-contrast text — titles, values, key labels" },
-      "text-secondary": { "$value": "gray.9",  "$type": "color", "$description": "Secondary text, captions, table labels" },
+      "text-secondary": { "$value": "gray.9",  "$type": "color", "$description": "Secondary text, captions, table labels. ОТКРЫТО (DASH-142/DASH-150): шаг 9 лежит вне канона Radix для текста (11-12) и вне гарантии Lc 60. Возврат к 9 — решение Guzel 16.09.2026, после показа варианта 11. Метрика и порог не выбраны, см. DASH-150." },
       "text-muted":     { "$value": "gray.8",  "$type": "color", "$description": "Muted — monospace IDs, timestamps" },
       "border-default": { "$value": "gray.4",  "$type": "color", "$description": "Default border / card outline / divider" },
       "border-subtle":  { "$value": "gray.3",  "$type": "color", "$description": "Subtle inner divider (row separators)" },
       "bg-card":        { "$value": "gray.1",  "$type": "color", "$description": "Card / panel background" },
       "bg-subtle":      { "$value": "gray.2",  "$type": "color", "$description": "Subtle component preview / inset background" }
+    },
+
+    "entity": {
+      "$description": "Цвет СУЩНОСТИ — не статуса и не роли в интерфейсе, а вида объекта Jira. Заведён 16.09.2026 (DASH-151). ОСОЗНАННОЕ ИСКЛЮЧЕНИЕ из темы: тема задана accent=teal, gray=slate, purple в неё не входит. Обоснование: teal уже занят под «ссылка/интерактив» (state.hover-text, state.selected-text), и красить им сущность — значит смешать «на это можно нажать» с «это эпик». Проверено замером: purple встречался 6 раз, все до одного означали эпик, то есть решение было последовательным, но жило хардкодом в backlog.py мимо токенов. НЕ ПУТАТЬ с EPIC_TYPE_COLORS (business/enabler/component) — то тип эпика, а это сама сущность. Consume via tokens.py ENTITY.",
+      "epic": { "$value": "purple.11", "$type": "color", "$description": "Эпик: ключ, бейдж, ховер ссылок на эпик" }
     },
 
     "state": {

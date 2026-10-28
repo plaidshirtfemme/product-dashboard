@@ -57,7 +57,7 @@ def _kind_style(kind: str) -> dict:
         return dict(
             background=rx.color("teal", 3),
             border=f"{BORDER} {rx.color('teal', 6)}",
-            title_color=rx.color("gray", 12), desc_color=rx.color("gray", 11),
+            title_color=ROLE["text-primary"], desc_color=rx.color("gray", 11),
             tech_color=rx.color("teal", 10), icon_color=rx.color("teal", 9),
         )
     if kind == "component":
@@ -65,15 +65,15 @@ def _kind_style(kind: str) -> dict:
             background="white",
             border=f"{BORDER} {rx.color('gray', 5)}",
             border_left=f"3px solid {rx.color('teal', 7)}",
-            title_color=rx.color("gray", 12), desc_color=rx.color("gray", 11),
-            tech_color=rx.color("gray", 9), icon_color=rx.color("teal", 9),
+            title_color=ROLE["text-primary"], desc_color=rx.color("gray", 11),
+            tech_color=ROLE["text-secondary"], icon_color=rx.color("teal", 9),
         )
     # external
     return dict(
         background=rx.color("gray", 3),
         border=f"{BORDER} {rx.color('gray', 6)}",
-        title_color=rx.color("gray", 12), desc_color=rx.color("gray", 11),
-        tech_color=rx.color("gray", 9), icon_color=rx.color("gray", 10),
+        title_color=ROLE["text-primary"], desc_color=rx.color("gray", 11),
+        tech_color=rx.color("gray", 10), icon_color=ROLE["text-secondary"],
     )
 
 
@@ -329,8 +329,8 @@ def _branch_col(header: str, icon: str, tag: str, *nodes) -> rx.Component:
     return rx.flex(
         rx.flex(
             rx.icon(icon, size=16, color=rx.color("teal", 9), flex_shrink="0"),
-            rx.text(header, size="2", weight="bold", color=rx.color("gray", 12)),
-            rx.text(tag, size="1", color=rx.color("gray", 9)),
+            rx.text(header, size="2", weight="bold", color=ROLE["text-primary"]),
+            rx.text(tag, size="1", color=ROLE["text-secondary"]),
             align="center",
             gap=SPACING["sm"],
             margin_bottom=SPACING["sm"],
@@ -361,7 +361,7 @@ def _callout_line(mark: str, text: str) -> rx.Component:
 def _roundtrip_callout() -> rx.Component:
     return rx.flex(
         rx.text("Round-trip — честно", size="1", weight="bold",
-                color=rx.color("gray", 12),
+                color=ROLE["text-primary"],
                 style={"text_transform": "uppercase", "letter_spacing": "0.05em"},
                 margin_bottom="2px"),
         _callout_line("✅", "Токены синкаются в обе стороны: "
@@ -479,7 +479,7 @@ def _erd_attr(field: str, note: str, kind: str = "attr") -> rx.Component:
 
     return rx.flex(
         badge,
-        rx.text(field, size="1", weight="medium", color=rx.color("gray", 12),
+        rx.text(field, size="1", weight="medium", color=ROLE["text-primary"],
                 style={"font_family": "var(--font-mono, monospace)"}, flex_shrink="0"),
         rx.text(note, size="1", color=rx.color("gray", 10), line_height="1.4"),
         align="center",
@@ -494,7 +494,7 @@ def _entity_card(name: str, icon: str, count_label: str, count_color,
         rx.flex(
             rx.flex(
                 rx.icon(icon, size=16, color=rx.color("teal", 9), flex_shrink="0"),
-                rx.text(name, size="3", weight="bold", color=rx.color("gray", 12)),
+                rx.text(name, size="3", weight="bold", color=ROLE["text-primary"]),
                 align="center",
                 gap=SPACING["sm"],
             ),
@@ -510,7 +510,7 @@ def _entity_card(name: str, icon: str, count_label: str, count_color,
         ),
         rx.divider(margin_y=SPACING["sm"], border_color=ROLE["border-default"]),
         rx.flex(*attrs, direction="column", gap="6px", width="100%"),
-        rx.text(footnote, size="1", color=rx.color("gray", 9), line_height="1.4",
+        rx.text(footnote, size="1", color=ROLE["text-secondary"], line_height="1.4",
                 margin_top=SPACING["sm"],
                 style={"border_top": f"{BORDER} {ROLE['border-subtle']}", "padding_top": "8px"}),
         direction="column",
@@ -548,7 +548,7 @@ def _goal_epic_issue_view() -> rx.Component:
         "jira_mock_raw.py · _DASH_EPICS / EPIC_NAMES / EPIC_TYPES / EPIC_OKR / EPIC_UNLOCKS.",
     )
     issue_card = _entity_card(
-        "Issue", "square-check-big", "≈140 задач", rx.color("gray", 9),
+        "Issue", "square-check-big", "≈140 задач", ROLE["text-secondary"],
         [
             _erd_attr("key", "PK · DASH-1 … DASH-140", "pk"),
             _erd_attr("summary / status / type / priority", "ядро задачи"),
@@ -648,7 +648,7 @@ def _adr_card(row) -> rx.Component:
             ),
             width="100%",
         ),
-        rx.text(row.summary, size="2", weight="medium", color=rx.color("gray", 12),
+        rx.text(row.summary, size="2", weight="medium", color=ROLE["text-primary"],
                 line_height="1.4", margin_top="6px"),
         rx.flex(
             rx.text("Решение", size="1", weight="medium", color=rx.color("teal", 10),
@@ -698,7 +698,7 @@ def _level_button(level: str, label: str, sub: str) -> rx.Component:
         rx.text(label, size="2", weight="medium",
                 color=rx.cond(is_active, rx.color("teal", 11), rx.color("gray", 11))),
         rx.text(sub, size="1",
-                color=rx.cond(is_active, rx.color("teal", 10), rx.color("gray", 9))),
+                color=rx.cond(is_active, rx.color("teal", 10), ROLE["text-secondary"])),
         direction="column",
         gap="0",
         padding=f"{SPACING['sm']} {SPACING['md']}",

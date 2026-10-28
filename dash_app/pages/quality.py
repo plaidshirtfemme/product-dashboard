@@ -81,8 +81,8 @@ def _go_no_go_checklist(criteria) -> rx.Component:
             rx.icon(icon_name, size=16, color=icon_color, flex_shrink="0"),
             rx.flex(
                 rx.text(c.label, size="2", weight="medium" if not c.ok else "regular",
-                        color=rx.color(STATUS_COLORS["danger"], 11) if (not c.ok and c.critical) else rx.color("gray", 12)),
-                rx.text(c.detail, size="1", color=rx.color("gray", 9)),
+                        color=rx.color(STATUS_COLORS["danger"], 11) if (not c.ok and c.critical) else ROLE["text-primary"]),
+                rx.text(c.detail, size="1", color=ROLE["text-secondary"]),
                 direction="column",
                 gap="2px",
                 flex="1",
@@ -103,7 +103,7 @@ def _go_no_go_checklist(criteria) -> rx.Component:
         ))
 
     header = rx.grid(
-        *[rx.text(col, size="1", weight="medium", color=rx.color("gray", 9))
+        *[rx.text(col, size="1", weight="medium", color=ROLE["text-secondary"])
           for col in ["", "Критерий", "Важность"]],
         columns="28px 1fr 120px", gap=SPACING["md"],
         padding=f"8px {SPACING['md']}",

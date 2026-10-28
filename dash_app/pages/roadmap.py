@@ -65,7 +65,7 @@ def _kr_row(title: str, current: str, target: str, pct: int, status: str) -> rx.
             flex="1",
             min_width="0",
         ),
-        rx.text(f"{current} / {target}", size="1", color=rx.color("gray", 9),
+        rx.text(f"{current} / {target}", size="1", color=ROLE["text-secondary"],
                 white_space="nowrap", min_width="100px", text_align="right"),
         rx.box(
             rx.box(
@@ -103,13 +103,13 @@ def _okr_card(obj) -> rx.Component:
                 align="center",
             ),
             rx.text(f"{obj.overall_progress_pct}%", size="5", weight="bold",
-                    color=rx.color("gray", 12)),
+                    color=ROLE["text-primary"]),
             justify="between",
             align="start",
             margin_bottom=SPACING["sm"],
         ),
         rx.text(obj.title, size="2", weight="medium",
-                color=rx.color("gray", 12), margin_bottom=SPACING["sm"]),
+                color=ROLE["text-primary"], margin_bottom=SPACING["sm"]),
         *[
             _kr_row(kr.title, kr.formatted_current, kr.formatted_target,
                     kr.progress_pct, kr.status)
@@ -143,7 +143,7 @@ def _north_star_banner() -> rx.Component:
                                "text_transform": "uppercase", "letter_spacing": "0.08em"},
                         color=rx.color("teal", 11)),
                 rx.text(_NORTH_STAR.title,
-                        size="4", weight="bold", color=rx.color("gray", 12)),
+                        size="4", weight="bold", color=ROLE["text-primary"]),
                 rx.text(_NORTH_STAR.description,
                         size="1", color=rx.color("gray", 10)),
             ),
@@ -198,7 +198,7 @@ def _epic_row(epic_key: str, issues: list) -> rx.Component:
         type_label = f"{epic_type} → {unlocks_key.replace('DASH-EPIC-', 'E')}"
 
     return rx.flex(
-        rx.text(short, size="1", color=rx.color("gray", 9),
+        rx.text(short, size="1", color=ROLE["text-secondary"],
                 min_width="40px", font_family="var(--font-mono)"),
         rx.tooltip(
             rx.badge(type_label, color_scheme=type_color, variant="soft", size="1",
@@ -223,7 +223,7 @@ def _epic_row(epic_key: str, issues: list) -> rx.Component:
         rx.badge(label, color_scheme=color, variant="soft", size="1",
                  min_width="90px", justify="center"),
         rx.text(f"{done}/{total} · {sp_done}/{sp_total} SP",
-                size="1", color=rx.color("gray", 9), min_width="110px", text_align="right"),
+                size="1", color=ROLE["text-secondary"], min_width="110px", text_align="right"),
         align="center",
         gap=SPACING["md"],
         padding=f"5px 0",
@@ -251,11 +251,11 @@ def _timeline_section() -> rx.Component:
         ),
         rx.box(height=SPACING["md"]),
         rx.flex(
-            rx.text("Epic", size="1", color=rx.color("gray", 8), min_width="40px"),
-            rx.text("Type", size="1", color=rx.color("gray", 8), min_width="86px"),
-            rx.text("Progress", size="1", color=rx.color("gray", 8), flex="1"),
-            rx.text("Status", size="1", color=rx.color("gray", 8), min_width="90px"),
-            rx.text("Issues · SP", size="1", color=rx.color("gray", 8),
+            rx.text("Epic", size="1", color=ROLE["text-muted"], min_width="40px"),
+            rx.text("Type", size="1", color=ROLE["text-muted"], min_width="86px"),
+            rx.text("Progress", size="1", color=ROLE["text-muted"], flex="1"),
+            rx.text("Status", size="1", color=ROLE["text-muted"], min_width="90px"),
+            rx.text("Issues · SP", size="1", color=ROLE["text-muted"],
                     min_width="110px", text_align="right"),
             gap=SPACING["md"],
             padding=f"0 0 {SPACING['sm']}",
@@ -281,7 +281,7 @@ def _sprint_review_row(sprint_name: str, issues: list) -> rx.Component:
 
     return rx.flex(
         rx.text(sprint_name, size="2", weight="medium",
-                color=rx.color("gray", 12), min_width="160px"),
+                color=ROLE["text-primary"], min_width="160px"),
         rx.badge(
             "Closed" if is_done else "Active",
             color_scheme=color, variant="soft", size="1", min_width="64px",
@@ -291,7 +291,7 @@ def _sprint_review_row(sprint_name: str, issues: list) -> rx.Component:
         rx.text(f"{velocity} SP", size="2", color=rx.color("teal", 9),
                 min_width="60px", text_align="center", weight="medium"),
         rx.text(f"{bugs} bug{'s' if bugs != 1 else ''}",
-                size="2", color=rx.color("gray", 9), min_width="60px", text_align="center"),
+                size="2", color=ROLE["text-secondary"], min_width="60px", text_align="center"),
         align="center",
         gap=SPACING["md"],
         padding=f"8px 0",
@@ -314,13 +314,13 @@ def _sprint_review_section() -> rx.Component:
     return rx.box(
         section_header("Sprint Review", "clipboard-check"),
         rx.flex(
-            rx.text("Sprint", size="1", color=rx.color("gray", 8), min_width="160px"),
-            rx.text("Status", size="1", color=rx.color("gray", 8), min_width="64px"),
-            rx.text("Issues", size="1", color=rx.color("gray", 8),
+            rx.text("Sprint", size="1", color=ROLE["text-muted"], min_width="160px"),
+            rx.text("Status", size="1", color=ROLE["text-muted"], min_width="64px"),
+            rx.text("Issues", size="1", color=ROLE["text-muted"],
                     min_width="60px", text_align="center"),
-            rx.text("Velocity", size="1", color=rx.color("gray", 8),
+            rx.text("Velocity", size="1", color=ROLE["text-muted"],
                     min_width="60px", text_align="center"),
-            rx.text("Bugs", size="1", color=rx.color("gray", 8),
+            rx.text("Bugs", size="1", color=ROLE["text-muted"],
                     min_width="60px", text_align="center"),
             gap=SPACING["md"],
             padding=f"0 0 {SPACING['sm']}",

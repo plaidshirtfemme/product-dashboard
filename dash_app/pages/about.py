@@ -1,7 +1,7 @@
 """About project tab — onboarding for new dashboard readers."""
 
 import reflex as rx
-from ..tokens import SPACING
+from ..tokens import SPACING, ROLE
 
 
 def about_tab() -> rx.Component:
@@ -15,7 +15,7 @@ def about_tab() -> rx.Component:
         rx.text(
             "Описание проекта появится здесь.",
             size="2",
-            color=rx.color("gray", 9),
+            color=ROLE["text-secondary"],
             margin_top=SPACING["sm"],
         ),
         padding=f"0 2rem 2rem",

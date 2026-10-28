@@ -105,7 +105,7 @@ def _decision_card(d: dict) -> rx.Component:
     return rx.box(
         rx.flex(
             rx.flex(
-                rx.text(d["id"], size="1", color=rx.color("gray", 8),
+                rx.text(d["id"], size="1", color=ROLE["text-muted"],
                         font_family="monospace"),
                 rx.badge(d["category"], color_scheme="blue", variant="soft", size="1"),
                 rx.badge("accepted", color_scheme="teal", variant="soft", size="1"),
@@ -113,7 +113,7 @@ def _decision_card(d: dict) -> rx.Component:
                 align="center",
             ),
             rx.text(d["title"], size="3", weight="medium",
-                    color=rx.color("gray", 12), margin_top="4px"),
+                    color=ROLE["text-primary"], margin_top="4px"),
             direction="column",
             gap="2px",
             margin_bottom=SPACING["md"],
@@ -137,7 +137,7 @@ def _dd_section(label: str, text: str, icon: str, color: str) -> rx.Component:
         rx.icon(icon, size=14, color=rx.color(color, 9), flex_shrink="0",
                 margin_top="2px"),
         rx.flex(
-            rx.text(label, size="1", weight="medium", color=rx.color("gray", 9),
+            rx.text(label, size="1", weight="medium", color=ROLE["text-secondary"],
                     text_transform="uppercase", letter_spacing="0.05em"),
             rx.text(text, size="2", color=rx.color("gray", 11), line_height="1.6"),
             direction="column",
@@ -159,13 +159,13 @@ def _palette_row(color: str, shade: int, usage: str) -> rx.Component:
             flex_shrink="0",
         ),
         rx.flex(
-            rx.text(token, size="2", weight="medium", color=rx.color("gray", 12),
+            rx.text(token, size="2", weight="medium", color=ROLE["text-primary"],
                     font_family="monospace"),
             direction="column",
             gap="0",
             min_width="120px",
         ),
-        rx.text(usage, size="2", color=rx.color("gray", 9), flex="1"),
+        rx.text(usage, size="2", color=ROLE["text-secondary"], flex="1"),
         gap=SPACING["md"],
         align="center",
         padding="8px 0",
@@ -206,8 +206,8 @@ def real_design_tab() -> rx.Component:
             *[
                 rx.flex(
                     rx.text(tech, size="2", weight="medium",
-                            color=rx.color("gray", 12), min_width="180px"),
-                    rx.text(note, size="2", color=rx.color("gray", 9)),
+                            color=ROLE["text-primary"], min_width="180px"),
+                    rx.text(note, size="2", color=ROLE["text-secondary"]),
                     gap=SPACING["md"],
                     padding="8px 0",
                     border_bottom=f"{BORDER} {ROLE['border-subtle']}",

@@ -78,7 +78,7 @@ def _experiment_table(rows) -> rx.Component:
                 size="1",
             ),
             rx.text(r.variant_a, size="2", color=rx.color("gray", 10)),
-            rx.text(r.variant_b, size="2", color=rx.color("gray", 12), weight="medium"),
+            rx.text(r.variant_b, size="2", color=ROLE["text-primary"], weight="medium"),
             _result_badge(r.result),
             decision,
         ], COL, idx))
@@ -126,7 +126,7 @@ def _experiment_table(rows) -> rx.Component:
 
 def _release_delivery(releases) -> rx.Component:
     if not releases:
-        return rx.text("Нет данных о релизах", size="2", color=rx.color("gray", 9))
+        return rx.text("Нет данных о релизах", size="2", color=ROLE["text-secondary"])
 
     cards = []
     for r in releases:
@@ -134,7 +134,7 @@ def _release_delivery(releases) -> rx.Component:
         cards.append(
             rx.box(
                 rx.flex(
-                    rx.text(r.version, size="2", weight="medium", color=rx.color("gray", 12)),
+                    rx.text(r.version, size="2", weight="medium", color=ROLE["text-primary"]),
                     rx.badge(
                         f"{r.slipped} просрочено" if r.slipped else "В срок",
                         color_scheme="tomato" if r.slipped else "grass",
@@ -161,7 +161,7 @@ def _release_delivery(releases) -> rx.Component:
                 rx.text(
                     f"{r.done} из {r.total} задач завершено ({r.done_pct}%)",
                     size="1",
-                    color=rx.color("gray", 9),
+                    color=ROLE["text-secondary"],
                 ),
                 background="white",
                 border=f"{BORDER} {ROLE['border-default']}",
@@ -189,7 +189,7 @@ def _activation_funnel() -> rx.Component:
                 rx.text(
                     label,
                     size="2",
-                    color=rx.color("gray", 12),
+                    color=ROLE["text-primary"],
                     style={"width": "220px", "flex_shrink": "0"},
                 ),
                 progress_bar(round(100 * pct / max_val), color, 6, height="28px"),
@@ -223,12 +223,12 @@ def _activation_funnel() -> rx.Component:
             margin_bottom=SPACING["md"],
         ),
         rx.flex(
-            rx.text("Шаг", size="1", weight="medium", color=rx.color("gray", 9),
+            rx.text("Шаг", size="1", weight="medium", color=ROLE["text-secondary"],
                     style={"width": "220px", "flex_shrink": "0"}),
             rx.box(flex="1"),
-            rx.text("% от установок", size="1", weight="medium", color=rx.color("gray", 9),
+            rx.text("% от установок", size="1", weight="medium", color=ROLE["text-secondary"],
                     style={"width": "44px"}),
-            rx.text("Отток", size="1", weight="medium", color=rx.color("gray", 9),
+            rx.text("Отток", size="1", weight="medium", color=ROLE["text-secondary"],
                     style={"width": "44px"}),
             gap=SPACING["sm"],
             margin_bottom="8px",

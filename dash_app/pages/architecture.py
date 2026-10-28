@@ -67,7 +67,7 @@ def _adr_card(row) -> rx.Component:
                 gap=SPACING["sm"],
                 align="center",
             ),
-            rx.text(f"{row.story_points} SP", size="1", color=rx.color("gray", 9)),
+            rx.text(f"{row.story_points} SP", size="1", color=ROLE["text-secondary"]),
             justify="between",
             align="center",
             width="100%",
@@ -81,7 +81,7 @@ def _adr_card(row) -> rx.Component:
                     "Контекст",
                     size="1",
                     weight="medium",
-                    color=rx.color("gray", 9),
+                    color=ROLE["text-secondary"],
                     style={"text_transform": "uppercase", "letter_spacing": "0.05em"},
                     margin_bottom="4px",
                 ),
@@ -104,7 +104,7 @@ def _adr_card(row) -> rx.Component:
                 rx.text(
                     row.decision or "—",
                     size="2",
-                    color=rx.color("gray", 12),
+                    color=ROLE["text-primary"],
                     weight="medium",
                 ),
             ),
@@ -114,7 +114,7 @@ def _adr_card(row) -> rx.Component:
                     "Последствия",
                     size="1",
                     weight="medium",
-                    color=rx.color("gray", 9),
+                    color=ROLE["text-secondary"],
                     style={"text_transform": "uppercase", "letter_spacing": "0.05em"},
                     margin_bottom="4px",
                 ),
@@ -144,15 +144,15 @@ def _adr_card(row) -> rx.Component:
 
 def _tasks_table(rows) -> rx.Component:
     if not rows:
-        return rx.text("Нет задач", size="2", color=rx.color("gray", 9))
+        return rx.text("Нет задач", size="2", color=ROLE["text-secondary"])
 
     header = rx.grid(
-        rx.text("Ключ", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Статус", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Тип", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("SP", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Cycle time", size="1", weight="medium", color=rx.color("gray", 9)),
-        rx.text("Rework", size="1", weight="medium", color=rx.color("gray", 9)),
+        rx.text("Ключ", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("Статус", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("Тип", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("SP", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("Cycle time", size="1", weight="medium", color=ROLE["text-secondary"]),
+        rx.text("Rework", size="1", weight="medium", color=ROLE["text-secondary"]),
         columns="90px 110px 100px 50px 100px 80px",
         gap=SPACING["md"],
         padding=f"8px {SPACING['md']}",

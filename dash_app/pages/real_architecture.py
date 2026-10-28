@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..components import section_header, real_page_header, real_page_wrapper
-from ..data.real_project_extract import ADR_LIST
+from ..data.kp.real_project_extract import ADR_LIST
 from ..tokens import SPACING, BORDER, ROLE
 
 _STATUS_COLOR = {
@@ -18,13 +18,13 @@ def _adr_card(adr) -> rx.Component:
         rx.flex(
             rx.flex(
                 rx.text(adr.id, size="1", weight="medium",
-                        color=rx.color("gray", 9)),
+                        color=ROLE["text-secondary"]),
                 rx.badge(adr.status, color_scheme=color, variant="soft", size="1"),
                 gap=SPACING["sm"],
                 align="center",
             ),
             rx.text(adr.title, size="3", weight="medium",
-                    color=rx.color("gray", 12), margin_top="4px"),
+                    color=ROLE["text-primary"], margin_top="4px"),
             direction="column",
             gap="2px",
         ),
@@ -50,7 +50,7 @@ def _adr_section(label: str, text: str, icon: str, color: str) -> rx.Component:
                 margin_top="2px"),
         rx.flex(
             rx.text(label, size="1", weight="medium",
-                    color=rx.color("gray", 9), text_transform="uppercase",
+                    color=ROLE["text-secondary"], text_transform="uppercase",
                     letter_spacing="0.05em"),
             rx.text(text, size="2", color=rx.color("gray", 11),
                     line_height="1.6"),

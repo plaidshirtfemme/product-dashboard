@@ -20,7 +20,7 @@ def real_page_header(subtitle: str) -> rx.Component:
     """'Real project' badge + source subtitle shown at the top of every real_* tab."""
     return rx.flex(
         rx.badge("Real project", color_scheme="teal", variant="soft", size="1"),
-        rx.text(subtitle, size="1", color=rx.color("gray", 9)),
+        rx.text(subtitle, size="1", color=ROLE["text-secondary"]),
         gap=SPACING["sm"],
         align="center",
         padding=f"0 0 {SPACING['md']}",
@@ -77,7 +77,7 @@ def vault_coverage_chart(
             rx.text(
                 str(count),
                 size="1",
-                color=rx.color(STATUS_COLORS["danger"], 11) if count < gap_threshold else rx.color("gray", 9),
+                color=rx.color(STATUS_COLORS["danger"], 11) if count < gap_threshold else ROLE["text-secondary"],
                 width="36px",
                 text_align="right",
                 flex_shrink="0",
@@ -95,7 +95,7 @@ def vault_coverage_chart(
                 f"⚠ {gap_count} папок < {gap_threshold} заметок",
                 color_scheme="tomato", variant="soft", size="1",
             ) if gap_count else rx.box(),
-            rx.text(f"Всего папок: {len(folders)}", size="1", color=rx.color("gray", 9)),
+            rx.text(f"Всего папок: {len(folders)}", size="1", color=ROLE["text-secondary"]),
             justify="between",
             align="center",
             margin_bottom=SPACING["md"],
@@ -111,7 +111,7 @@ def vault_coverage_chart(
 def table_header(labels: list[str], columns: str) -> rx.Component:
     """Standard table header row: gray-2 background, rounded top corners."""
     return rx.grid(
-        *[rx.text(label, size="1", weight="medium", color=rx.color("gray", 9)) for label in labels],
+        *[rx.text(label, size="1", weight="medium", color=ROLE["text-secondary"]) for label in labels],
         columns=columns,
         gap=SPACING["md"],
         padding=f"8px {SPACING['md']}",

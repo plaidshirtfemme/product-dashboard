@@ -76,7 +76,7 @@ def _trend_bars(trends, field: str, label: str, color: str, unit: str = "") -> r
             display = f"{v}{unit}"
         bars.append(
             rx.flex(
-                rx.text(t.label, size="1", color=rx.color("gray", 9),
+                rx.text(t.label, size="1", color=ROLE["text-secondary"],
                         width="60px", flex_shrink="0"),
                 rx.box(
                     rx.box(
@@ -117,7 +117,7 @@ def _person_wip_table(people) -> rx.Component:
     _wip_labels = {"overloaded": "Перегружен", "at_risk": "Риск", "ok": "OK"}
 
     header = rx.grid(
-        *[rx.text(c, size="1", weight="medium", color=rx.color("gray", 9))
+        *[rx.text(c, size="1", weight="medium", color=ROLE["text-secondary"])
           for c in ["Разработчик", "Всего задач", "В работе (WIP)", "Готово", "Context-switching", "Статус"]],
         columns="160px 110px 130px 80px 160px 120px", gap=SPACING["md"],
         padding=f"8px {SPACING['md']}", background=ROLE["bg-subtle"],
@@ -140,7 +140,7 @@ def _person_wip_table(people) -> rx.Component:
             rx.flex(
                 rx.text(str(p.context_switches), size="2",
                         color=rx.color("amber", 11) if p.context_switches > 3 else rx.color("gray", 10)),
-                rx.text("переключений", size="1", color=rx.color("gray", 9)),
+                rx.text("переключений", size="1", color=ROLE["text-secondary"]),
                 align="center", gap="6px",
             ),
             rx.badge(_wip_labels[p.wip_status], color_scheme=color, variant="soft", size="1"),
@@ -176,7 +176,7 @@ def dev_tab() -> rx.Component:
         ),
         rx.box(height=SPACING["xl"]),
         section_header("Bug Register", subtitle=f"Баги в DEV squad · {len(bugs)} записей"),
-        _bug_table(bugs) if bugs else rx.text("Нет багов", size="2", color=rx.color("gray", 9)),
+        _bug_table(bugs) if bugs else rx.text("Нет багов", size="2", color=ROLE["text-secondary"]),
         rx.box(height=SPACING["xl"]),
         section_header("Tasks & Stories", subtitle=f"Задачи DEV squad (без багов) · {len(tasks)} записей"),
         _tasks_table(tasks),

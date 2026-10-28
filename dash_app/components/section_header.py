@@ -23,7 +23,7 @@ def section_header(
 ) -> rx.Component:
     title_block = rx.flex(
         rx.text(title, style={"font_size": TYPE_SCALE["heading"], "font_weight": "500"}),
-        rx.text(subtitle, size="1", color=rx.color("gray", 9)) if subtitle is not None else rx.fragment(),
+        rx.text(subtitle, size="1", color=ROLE["text-secondary"]) if subtitle is not None else rx.fragment(),
         direction="column",
         gap="2px",
     )

@@ -24,7 +24,7 @@ def _step(n: int, text: str, code: str | None = None) -> rx.Component:
             background=rx.color("teal", 3), border_radius="var(--radius-full)",
         ),
         rx.flex(
-            rx.text(text, size="2", color=rx.color("gray", 12),
+            rx.text(text, size="2", color=ROLE["text-primary"],
                     style={"line_height": "1.5"}),
             rx.code(code, size="1") if code is not None else rx.fragment(),
             direction="column", gap="4px",
@@ -36,7 +36,7 @@ def _step(n: int, text: str, code: str | None = None) -> rx.Component:
 def _runbook_card(title: str, tag: str, tag_color: str, steps: list) -> rx.Component:
     return rx.box(
         rx.flex(
-            rx.text(title, size="3", weight="bold", color=rx.color("gray", 12)),
+            rx.text(title, size="3", weight="bold", color=ROLE["text-primary"]),
             rx.badge(tag, color_scheme=tag_color, variant="soft", size="1"),
             align="center", gap=SPACING["sm"], margin_bottom=SPACING["sm"],
         ),

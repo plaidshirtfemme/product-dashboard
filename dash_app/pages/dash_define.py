@@ -33,7 +33,7 @@ def _provenance_block() -> rx.Component:
         rx.flex(
             rx.icon("info", size=14, color=rx.color("amber", 11)),
             rx.text("Прото-персоны, не результат интервью", size="2", weight="bold",
-                    color=rx.color("gray", 12)),
+                    color=ROLE["text-primary"]),
             gap=SPACING["sm"], align="center", margin_bottom=SPACING["sm"],
         ),
         rx.text(
@@ -122,7 +122,7 @@ def _persona_card(p: dict) -> rx.Component:
             ),
             rx.box(
                 rx.flex(
-                    rx.text(p["label"], size="3", weight="bold", color=rx.color("gray", 12)),
+                    rx.text(p["label"], size="3", weight="bold", color=ROLE["text-primary"]),
                     # природа персоны: приём для рассуждений vs прото-персона из вакансий
                     rx.badge(p["nature"], color_scheme=accent, variant="outline", size="1")
                     if p.get("nature") else rx.fragment(),
@@ -142,8 +142,8 @@ def _persona_card(p: dict) -> rx.Component:
         _sub("Jobs To Be Done", accent,
              rx.box(*[_jtbd_row(j, accent) for j in p["jtbd"]])),
         rx.flex(
-            rx.icon("book-open", size=12, color=rx.color("gray", 8)),
-            rx.text(p["source"], size="1", color=rx.color("gray", 9), line_height="1.5"),
+            rx.icon("book-open", size=12, color=ROLE["text-muted"]),
+            rx.text(p["source"], size="1", color=ROLE["text-secondary"], line_height="1.5"),
             gap="6px", align="start",
             padding_top=SPACING["sm"],
             border_top=f"1px solid {ROLE['border-default']}",
@@ -174,13 +174,13 @@ def _persona_grid(personas: list[dict]) -> rx.Component:
 def _readers_block() -> rx.Component:
     return rx.box(
         rx.text("Кто читает портфолио", size="4", weight="bold",
-                color=rx.color("gray", 12), margin_bottom="4px"),
+                color=ROLE["text-primary"], margin_bottom="4px"),
         rx.text(
             "Два разных читателя с разными работами. Различение не придумано задним числом: "
             "правило приоритизации проекта с самого начала спрашивает «это увидит рекрутер за "
             "30 секунд, или это глубина для дизайн-лида на ревью?» — персоны делают его явным. "
             "Отсюда двухслойность дашборда: сводки сверху, глубина внутри вкладок.",
-            size="1", color=rx.color("gray", 9), line_height="1.6",
+            size="1", color=ROLE["text-secondary"], line_height="1.6",
             margin_bottom=SPACING["md"],
         ),
         _persona_grid(READER_PERSONAS),
@@ -208,7 +208,7 @@ def _requirements_block() -> rx.Component:
     rows = [
         [
             rx.box(
-                rx.text(r["req"], size="1", color=rx.color("gray", 12),
+                rx.text(r["req"], size="1", color=ROLE["text-primary"],
                         line_height="1.5", font_style="italic"),
                 rx.badge(r["src"], color_scheme="violet", variant="soft", size="1",
                          margin_top="3px"),
@@ -221,12 +221,12 @@ def _requirements_block() -> rx.Component:
     ]
     return rx.box(
         rx.text("Требование вакансии → где ответ", size="4", weight="bold",
-                color=rx.color("gray", 12), margin_bottom="4px"),
+                color=ROLE["text-primary"], margin_bottom="4px"),
         rx.text(
             "Чеклист, по которому персона-скринер сверяет кандидата. Объект оценки — не только "
             "портфолио, но и сам дашборд: колонка «где ответ» ведёт внутрь него. Требования — "
             "формулировками из вакансий; статусы честные, включая пробелы.",
-            size="1", color=rx.color("gray", 9), line_height="1.6",
+            size="1", color=ROLE["text-secondary"], line_height="1.6",
             margin_bottom=SPACING["md"],
         ),
         data_table(
@@ -244,7 +244,7 @@ def _requirements_block() -> rx.Component:
 def _team_personas_block() -> rx.Component:
     return rx.box(
         rx.text("Команда Motif — пользователи дашборда", size="4", weight="bold",
-                color=rx.color("gray", 12), margin_bottom="4px"),
+                color=ROLE["text-primary"], margin_bottom="4px"),
         rx.text(
             "Провенанс здесь другой, чем у читателей выше: это не прото-персоны из вакансий, а "
             "design-device — роли выдуманной команды, через которые проверяется информационная "
@@ -252,7 +252,7 @@ def _team_personas_block() -> rx.Component:
             "формальным research это не является. Покрыты все девять продуктовых ролей команды; "
             "Ли (Community Manager) и Нур (Artist-in-Residence) намеренно вне набора — они не "
             "пользователи этого инструмента.",
-            size="1", color=rx.color("gray", 9), line_height="1.6",
+            size="1", color=ROLE["text-secondary"], line_height="1.6",
             margin_bottom=SPACING["md"],
         ),
         rx.box(
@@ -263,7 +263,7 @@ def _team_personas_block() -> rx.Component:
                 color=rx.color("gray", 11), margin_bottom="4px"),
         rx.text(
             "Карточки в усечённом виде — полный интерактивный вариант во вкладке Develop.",
-            size="1", color=rx.color("gray", 9), margin_bottom=SPACING["sm"],
+            size="1", color=ROLE["text-secondary"], margin_bottom=SPACING["sm"],
         ),
         _team_cards_grid(compact=True),
         margin_bottom=SPACING["xl"],
@@ -275,11 +275,11 @@ def _motif_jtbd_block() -> rx.Component:
     без неё блок читается как JTBD дашборда (та же ошибка, что «KP ≠ дашборд»)."""
     return rx.box(
         rx.flex(
-            rx.icon("triangle-alert", size=13, color=rx.color("gray", 9)),
+            rx.icon("triangle-alert", size=13, color=ROLE["text-secondary"]),
             rx.text(
                 "Ниже — JTBD художников, пользователей выдуманного продукта Motif. Это другой "
                 "продукт: не путать с JTBD читателей дашборда выше.",
-                size="1", color=rx.color("gray", 9), line_height="1.6",
+                size="1", color=ROLE["text-secondary"], line_height="1.6",
             ),
             gap="6px", align="start", margin_bottom=SPACING["sm"],
         ),

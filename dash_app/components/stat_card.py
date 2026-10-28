@@ -35,7 +35,7 @@ def stat_card(
     # Info icon with tooltip — only rendered when tooltip text is provided.
     info_icon = (
         rx.tooltip(
-            rx.icon("info", size=13, color=rx.color("gray", 8)),
+            rx.icon("info", size=13, color=ROLE["text-muted"]),
             content=tooltip,
         )
         if tooltip
@@ -59,7 +59,7 @@ def stat_card(
                 gap="4px",
                 align="center",
             ),
-            rx.icon(icon, size=16, color=rx.color("gray", 9)) if icon else rx.fragment(),
+            rx.icon(icon, size=16, color=ROLE["text-secondary"]) if icon else rx.fragment(),
             justify="between",
             align="center",
             width="100%",

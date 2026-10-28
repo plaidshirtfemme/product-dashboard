@@ -172,7 +172,7 @@ def _pvalue_badge(p: float, status: str) -> rx.Component:
 
 def _lift_badge(conv_a: float, conv_b: float, status: str) -> rx.Component:
     if status == "Running":
-        return rx.text("—", size="2", color=rx.color("gray", 9))
+        return rx.text("—", size="2", color=ROLE["text-secondary"])
     lift = round((conv_b - conv_a) / conv_a * 100, 1)
     color = "grass" if lift > 0 else "tomato"
     sign = "+" if lift > 0 else ""
@@ -207,12 +207,12 @@ def _funnel_section() -> rx.Component:
                 # Step label + drop-off
                 rx.flex(
                     rx.text(f"{i+1}. {label}", size="2", weight="medium",
-                            color=rx.color("gray", 12),
+                            color=ROLE["text-primary"],
                             style={"min_width": "280px", "flex_shrink": "0"}),
                     rx.text(
                         f"−{drop}% отток" if drop else "Старт",
                         size="1",
-                        color=rx.color("tomato", 10) if drop >= 15 else rx.color("gray", 9),
+                        color=rx.color("tomato", 10) if drop >= 15 else ROLE["text-secondary"],
                         weight="medium" if drop >= 15 else "regular",
                         style={"min_width": "100px", "flex_shrink": "0"},
                     ),
@@ -224,7 +224,7 @@ def _funnel_section() -> rx.Component:
                 rx.flex(
                     # All users bar
                     rx.flex(
-                        rx.text("Все", size="1", color=rx.color("gray", 9),
+                        rx.text("Все", size="1", color=ROLE["text-secondary"],
                                 style={"width": "80px", "flex_shrink": "0"}),
                         progress_bar(round(100 * all_pct / max_all), bar_color, 6, height="14px"),
                         rx.text(f"{all_pct}%", size="2", weight="bold",
@@ -234,7 +234,7 @@ def _funnel_section() -> rx.Component:
                     ),
                     # New users bar
                     rx.flex(
-                        rx.text("Новые", size="1", color=rx.color("gray", 9),
+                        rx.text("Новые", size="1", color=ROLE["text-secondary"],
                                 style={"width": "80px", "flex_shrink": "0"}),
                         progress_bar(round(100 * new_pct / max_all), "iris", 5, height="10px"),
                         rx.text(f"{new_pct}%", size="1", color=rx.color("iris", 11),
@@ -243,7 +243,7 @@ def _funnel_section() -> rx.Component:
                     ),
                     # Returning users bar
                     rx.flex(
-                        rx.text("Вернувш.", size="1", color=rx.color("gray", 9),
+                        rx.text("Вернувш.", size="1", color=ROLE["text-secondary"],
                                 style={"width": "80px", "flex_shrink": "0"}),
                         progress_bar(round(100 * ret_pct / max_all), "teal", 5, height="10px"),
                         rx.text(f"{ret_pct}%", size="1", color=rx.color("teal", 11),
@@ -315,7 +315,7 @@ def _cohort_section() -> rx.Component:
         rx.box(width="110px", flex_shrink="0"),  # label column
         *[
             rx.box(
-                rx.text(w, size="1", weight="medium", color=rx.color("gray", 9),
+                rx.text(w, size="1", weight="medium", color=ROLE["text-secondary"],
                         text_align="center"),
                 width=cell_w, flex_shrink="0",
             )
@@ -337,7 +337,7 @@ def _cohort_section() -> rx.Component:
                         f"{val}%" if val is not None else "—",
                         size="1",
                         weight="medium" if val == 100 else "regular",
-                        color=rx.color("gray", 12) if val and val >= 25 else rx.color("gray", 9),
+                        color=ROLE["text-primary"] if val and val >= 25 else ROLE["text-secondary"],
                         text_align="center",
                     ),
                     width=cell_w,
@@ -363,7 +363,7 @@ def _cohort_section() -> rx.Component:
 
     # Colour scale legend
     scale = rx.flex(
-        rx.text("Retention:", size="1", color=rx.color("gray", 9)),
+        rx.text("Retention:", size="1", color=ROLE["text-secondary"]),
         *[
             rx.flex(
                 rx.box(width="16px", height="14px", background=c,
@@ -412,7 +412,7 @@ def _cohort_section() -> rx.Component:
 def _ab_section(exp_rows) -> rx.Component:
     COL = "80px 1fr 70px 70px 110px 110px 110px 100px"
     header = rx.grid(
-        *[rx.text(c, size="1", weight="medium", color=rx.color("gray", 9))
+        *[rx.text(c, size="1", weight="medium", color=ROLE["text-secondary"])
           for c in ["Ключ", "Гипотеза", "n(A)", "n(B)", "Conv A (95% CI)",
                     "Conv B (95% CI)", "Lift", "p-value"]],
         columns=COL, gap=SPACING["sm"],
@@ -426,7 +426,7 @@ def _ab_section(exp_rows) -> rx.Component:
         rows.append(rx.grid(
             rx.text(r.key, size="1", font_family="monospace",
                     color=rx.color("gray", 11)),
-            rx.text(r.hypothesis, size="1", color=rx.color("gray", 12)),
+            rx.text(r.hypothesis, size="1", color=ROLE["text-primary"]),
             rx.text(str(r.n_a), size="1", color=rx.color("gray", 10)),
             rx.text(str(r.n_b), size="1", color=rx.color("gray", 10)),
             rx.text(_ci_text(r.conv_a, r.n_a), size="1", color=rx.color("gray", 10)),
@@ -471,7 +471,7 @@ def _sql_block(title: str, description: str, sql: str,
     # Result table
     col_template = " ".join(["1fr"] * len(columns))
     tbl_header = rx.grid(
-        *[rx.text(c, size="1", weight="medium", color=rx.color("gray", 9))
+        *[rx.text(c, size="1", weight="medium", color=ROLE["text-secondary"])
           for c in columns],
         columns=col_template, gap=SPACING["sm"],
         padding=f"6px {SPACING['sm']}",
@@ -493,7 +493,7 @@ def _sql_block(title: str, description: str, sql: str,
 
     return rx.box(
         rx.flex(
-            rx.text(title, size="2", weight="bold", color=rx.color("gray", 12)),
+            rx.text(title, size="2", weight="bold", color=ROLE["text-primary"]),
             rx.text(description, size="1", color=rx.color("gray", 10)),
             direction="column", gap="2px", margin_bottom=SPACING["sm"],
         ),
@@ -510,7 +510,7 @@ def _sql_block(title: str, description: str, sql: str,
         # Result preview
         rx.box(
             rx.text("▶ Результат (mock)", size="1", weight="medium",
-                    color=rx.color("gray", 9), margin_bottom="4px"),
+                    color=ROLE["text-secondary"], margin_bottom="4px"),
             table_container(tbl_header, *tbl_rows),
         ),
         padding=SPACING["md"],

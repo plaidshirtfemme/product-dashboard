@@ -25,7 +25,7 @@ def _release_cards(releases) -> rx.Component:
                        border_radius="var(--radius-full)", width=f"{r.done_pct}%"),
                 height="10px", background=rx.color("gray", 4),
                 border_radius="var(--radius-full)", overflow="hidden", margin_bottom="6px"),
-            rx.text(f"{r.done}/{r.total} задач ({r.done_pct}%)", size="1", color=rx.color("gray", 9)),
+            rx.text(f"{r.done}/{r.total} задач ({r.done_pct}%)", size="1", color=ROLE["text-secondary"]),
             background="white", border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)", padding=SPACING["md"], flex="1"))
     return rx.flex(*cards, gap=SPACING["md"], wrap="wrap", width="100%")

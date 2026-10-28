@@ -12,7 +12,7 @@ from ..components import section_header
 def _bullet(text: str) -> rx.Component:
     return rx.flex(
         rx.box(width="5px", height="5px", border_radius="50%",
-               background=rx.color("gray", 8), flex_shrink="0", margin_top="8px"),
+               background=ROLE["text-muted"], flex_shrink="0", margin_top="8px"),
         rx.text(text, size="2", color=rx.color("gray", 11), line_height="1.7"),
         gap="10px", align="start",
     )
@@ -222,7 +222,7 @@ def _day_cell(day_idx: int) -> rx.Component:
 def _calendar_week(week_idx: int) -> rx.Component:
     start = week_idx * 7
     return rx.flex(
-        rx.text(_WEEK_NAMES[week_idx], size="1", color=rx.color("gray", 9),
+        rx.text(_WEEK_NAMES[week_idx], size="1", color=ROLE["text-secondary"],
                 width="180px", flex_shrink="0", padding_top="16px"),
         rx.flex(
             *[_day_cell(start + d) for d in range(7)],
@@ -281,14 +281,14 @@ def _detail_panel() -> rx.Component:
                 rx.cond(
                     CeremonyState.day_is_empty,
                     rx.text("В этот день встреч нет", size="2",
-                            color=rx.color("gray", 8)),
+                            color=ROLE["text-muted"]),
                     rx.table.root(
                         rx.table.header(
                             rx.table.row(
                                 *[rx.table.column_header_cell(
                                     col,
                                     style={"font_size": "11px",
-                                           "color": rx.color("gray", 9),
+                                           "color": ROLE["text-secondary"],
                                            "text_transform": "uppercase"})
                                   for col in ["Встреча", "Время", "Участники", "О чём"]]
                             )
@@ -356,7 +356,7 @@ def info_tab() -> rx.Component:
         # ── Блок 1 ──────────────────────────────────────────────────────────
         rx.text("Команда и процесс",
                 size="4", weight="bold",
-                color=rx.color("gray", 12),
+                color=ROLE["text-primary"],
                 margin_bottom=SPACING["md"]),
         _team_and_process(),
 
@@ -365,10 +365,10 @@ def info_tab() -> rx.Component:
         # ── Блок 2 ──────────────────────────────────────────────────────────
         rx.text("Календарь церемоний",
                 size="4", weight="bold",
-                color=rx.color("gray", 12),
+                color=ROLE["text-primary"],
                 margin_bottom="4px"),
         rx.text("2-недельный спринт · Standup пн + чт · Среда защищена",
-                size="2", color=rx.color("gray", 9),
+                size="2", color=ROLE["text-secondary"],
                 margin_bottom=SPACING["md"]),
         _ceremony_calendar(),
 

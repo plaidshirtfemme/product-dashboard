@@ -2,12 +2,12 @@
 
 import reflex as rx
 from ..components import stat_card, stat_card_row, section_header, real_page_header, real_page_wrapper
-from ..data.real_project_extract import (
+from ..data.kp.real_project_extract import (
     TOTAL_URLS_PROCESSED, TOTAL_NOTES_CREATED, TOTAL_IP_BLOCKS,
     TOTAL_TOO_LONG, TOTAL_NO_TEXT, PROJECT_DESCRIPTION, STACK,
     BATCH_SESSIONS,
 )
-from ..data.vault_snapshot import TOTAL_NOTES, SNAPSHOT_DATE
+from ..data.kp.vault_snapshot import TOTAL_NOTES, SNAPSHOT_DATE
 from ..tokens import SPACING, BORDER, ROLE
 
 
@@ -17,9 +17,9 @@ def real_overview_tab() -> rx.Component:
 
     stack_rows = [
         rx.flex(
-            rx.text(tech, size="2", weight="medium", color=rx.color("gray", 12),
+            rx.text(tech, size="2", weight="medium", color=ROLE["text-primary"],
                     min_width="200px"),
-            rx.text(role, size="2", color=rx.color("gray", 9)),
+            rx.text(role, size="2", color=ROLE["text-secondary"]),
             gap=SPACING["md"],
             align="start",
             padding=f"6px 0",

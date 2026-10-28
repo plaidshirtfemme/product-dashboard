@@ -344,10 +344,10 @@ def _section_head(sid: str, title: str, subtitle: str | None, accent: str) -> rx
             rx.cond(is_collapsed, "chevron-right", "chevron-down"),
             size=18, color=rx.color(accent, 9),
         ),
-        rx.text(title, size="4", weight="bold", color=rx.color("gray", 12)),
+        rx.text(title, size="4", weight="bold", color=ROLE["text-primary"]),
         rx.cond(
             subtitle is not None,
-            rx.text(subtitle or "", size="1", color=rx.color("gray", 9)),
+            rx.text(subtitle or "", size="1", color=ROLE["text-secondary"]),
             rx.box(),
         ),
         gap="8px", align="center",
@@ -512,7 +512,7 @@ def _personal_bank_block(bank: dict) -> rx.Component:
     )
     return _collapsible(
         bank["id"], bank["title"],
-        rx.text(bank["note"], size="1", color=rx.color("gray", 9),
+        rx.text(bank["note"], size="1", color=ROLE["text-secondary"],
                 line_height="1.5", margin_bottom="4px"),
         rx.text("↔ Тащи строку на карточку героя; строку с карточки — сюда, чтобы снять.",
                 size="1", color=rx.color(bank["accent"], 10), margin_bottom="6px"),
@@ -549,17 +549,17 @@ def _traits_bank_block(bank: dict) -> rx.Component:
                          color=rx.color(acc, 11), margin_top="8px", margin_bottom="3px")]
         for label, items in g["sublists"]:
             if label:
-                parts.append(rx.text(label, size="1", color=rx.color("gray", 9)))
+                parts.append(rx.text(label, size="1", color=ROLE["text-secondary"]))
             parts.append(rx.flex(*[_trait_chip(t) for t in items],
                                  wrap="wrap", gap="3px", margin_bottom="3px"))
         for label, pairs in g["pairgroups"]:
             if label:
-                parts.append(rx.text(label, size="1", color=rx.color("gray", 9)))
+                parts.append(rx.text(label, size="1", color=ROLE["text-secondary"]))
             for l, r in pairs:
                 parts.append(rx.flex(_trait_chip(l), _trait_chip(r),
                                      gap="3px", width="100%", margin_bottom="2px"))
         if g["singles"]:
-            parts.append(rx.text("прочее", size="1", color=rx.color("gray", 8), margin_top="2px"))
+            parts.append(rx.text("прочее", size="1", color=ROLE["text-muted"], margin_top="2px"))
             parts.append(rx.flex(*[_trait_chip(t) for t in g["singles"]], wrap="wrap", gap="3px"))
         groups.append(rx.box(*parts, margin_bottom="6px"))
     list_box = _drag_div(
@@ -570,7 +570,7 @@ def _traits_bank_block(bank: dict) -> rx.Component:
     )
     return _collapsible(
         bank["id"], bank["title"],
-        rx.text(bank["note"], size="1", color=rx.color("gray", 9),
+        rx.text(bank["note"], size="1", color=ROLE["text-secondary"],
                 line_height="1.5", margin_bottom="4px"),
         rx.text("↔ Тащи черту на карточку героя; чип с карточки — сюда, чтобы снять.",
                 size="1", color=rx.color(acc, 10), margin_bottom="6px"),
@@ -600,17 +600,17 @@ def _cast_card(m: dict, compact: bool = False) -> rx.Component:
     return _drag_div(
         rx.flex(
             rx.box(
-                rx.text(m["name"], size="3", weight="bold", color=rx.color("gray", 12)),
+                rx.text(m["name"], size="3", weight="bold", color=ROLE["text-primary"]),
                 rx.text(m["role"], size="1", weight="medium", color=rx.color("teal", 11)),
-                rx.text(GRADES.get(m["name"], ""), size="1", color=rx.color("gray", 9),
+                rx.text(GRADES.get(m["name"], ""), size="1", color=ROLE["text-secondary"],
                         margin_bottom="8px"),
                 rx.text(m["character"], size="2", color=rx.color("gray", 11), line_height="1.6"),
-                rx.text(m["image"], size="1", color=rx.color("gray", 9),
+                rx.text(m["image"], size="1", color=ROLE["text-secondary"],
                         font_style="italic", margin_top="8px"),
                 flex="1",
             ),
             rx.flex(
-                rx.text(initials, size="4", weight="bold", color=rx.color("gray", 8)),
+                rx.text(initials, size="4", weight="bold", color=ROLE["text-muted"]),
                 width="64px", height="64px", flex_shrink="0",
                 align="center", justify="center",
                 background=rx.color("gray", 3),
@@ -669,7 +669,7 @@ def _team_block() -> rx.Component:
     )
     right = rx.flex(
         rx.text("Личные банки — перетаскивай на карточки",
-                size="1", color=rx.color("gray", 9), margin_bottom="4px", flex_shrink="0"),
+                size="1", color=ROLE["text-secondary"], margin_bottom="4px", flex_shrink="0"),
         _traits_bank_block(_BANK_BY_ID["traits"]),
         _personal_bank_block(_BANK_BY_ID["personal"]),
         direction="column", flex="1", min_width="300px",
@@ -694,7 +694,7 @@ def _jtbd_block() -> rx.Component:
     return _collapsible(
         "jtbd", "JTBD",
         rx.text("Jobs To Be Done — ради чего юзеры «нанимают» Motif:",
-                size="1", color=rx.color("gray", 9), margin_bottom="8px"),
+                size="1", color=ROLE["text-secondary"], margin_bottom="8px"),
         _bullets(ABOUT["jtbd"], "teal"),
         accent="teal",
     )
@@ -703,7 +703,7 @@ def _jtbd_block() -> rx.Component:
 def _raci_block() -> rx.Component:
     header = rx.table.row(
         *[rx.table.column_header_cell(
-            c, style={"font_size": "11px", "color": rx.color("gray", 9),
+            c, style={"font_size": "11px", "color": ROLE["text-secondary"],
                       "text_transform": "uppercase"})
           for c in ["Активность", "R", "A", "C", "I"]]
     )
@@ -720,7 +720,7 @@ def _raci_block() -> rx.Component:
     return _collapsible(
         "raci", "RACI",
         rx.text("R — делает · A — отвечает (одна на строку) · C — консультирует · I — информируют.",
-                size="1", color=rx.color("gray", 9), margin_bottom="8px"),
+                size="1", color=ROLE["text-secondary"], margin_bottom="8px"),
         rx.table.root(rx.table.header(header), rx.table.body(*rows),
                       variant="surface", size="1", width="100%"),
         accent="plum",
@@ -771,7 +771,7 @@ def _spoke(sp: dict, compact: bool = False) -> rx.Component:
         rx.fragment() if compact else rx.badge(sp["with"], variant="soft",
                                                color_scheme="gray", size="1", flex_shrink="0"),
         rx.fragment() if (not compact and is_generic) else rx.text(
-            role_text, size="1", color=rx.color("gray", 9),
+            role_text, size="1", color=ROLE["text-secondary"],
             flex_shrink="0", text_align="right", max_width="180px",
         ),
         gap="8px", align="center", width="100%",
@@ -790,7 +790,7 @@ def _artifact_hub(m: dict, compact: bool = False) -> rx.Component:
         if compact else
         rx.flex(
             rx.badge(m["name"], variant="solid", color_scheme=m["accent"], size="2"),
-            rx.text(m["role"], size="1", color=rx.color("gray", 9)),
+            rx.text(m["role"], size="1", color=ROLE["text-secondary"]),
             gap="8px", align="center", margin_bottom="10px",
         )
     )
@@ -814,7 +814,7 @@ def _artifacts_block(compact: bool = False) -> rx.Component:
     )
     return _collapsible(
         "artifacts_compact" if compact else "artifacts", "Артефакты обмена",
-        rx.text(intro, size="1", color=rx.color("gray", 9), margin_bottom=SPACING["md"]),
+        rx.text(intro, size="1", color=ROLE["text-secondary"], margin_bottom=SPACING["md"]),
         rx.grid(*[_artifact_hub(m, compact) for m in ARTIFACTS],
                 columns="2", gap=SPACING["md"], width="100%"),
         accent="violet",
@@ -936,7 +936,7 @@ def _tl_block(item) -> rx.Component:
 def _lane_handle(lane) -> rx.Component:
     """Грип дорожки: drag-источник + drop-цель reorder (перетащить дорожку и бросить на грип другой)."""
     return _drag_div(
-        rx.text("⋮⋮", size="1", color=rx.color("gray", 9),
+        rx.text("⋮⋮", size="1", color=ROLE["text-secondary"],
                 style={"pointerEvents": "none", "lineHeight": "1", "userSelect": "none"}),
         draggable=True,
         on_drag_start=MotifAboutState.start_drag_lane(lane),
@@ -971,7 +971,7 @@ def _tl_addzone() -> rx.Component:
                 width="100%", height="16px", align_items="stretch", opacity="0.55"),
         rx.el.div("＋ бросить фактор сюда для новой дорожки",
                   style={"position": "absolute", "left": "6px", "top": "1px",
-                         "fontSize": "10px", "color": rx.color("gray", 8),
+                         "fontSize": "10px", "color": ROLE["text-muted"],
                          "pointerEvents": "none"}),
         position="relative", flex="1", min_width="0",
     )
@@ -1005,7 +1005,7 @@ def _story_bank_block(bank: dict) -> rx.Component:
     )
     return _collapsible(
         bank["id"], bank["title"],
-        rx.text(bank["note"], size="1", color=rx.color("gray", 9),
+        rx.text(bank["note"], size="1", color=ROLE["text-secondary"],
                 line_height="1.5", margin_bottom="4px"),
         rx.text("↔ Тащи строку на дорожку этого банка в таймлайне; блок из таймлайна сюда — снять.",
                 size="1", color=rx.color(bank["accent"], 10), margin_bottom="6px"),
@@ -1057,7 +1057,7 @@ def _timeline_daxis() -> rx.Component:
 def _yaxis_label() -> rx.Component:
     """Вертикальная подпись оси Y — «нити»."""
     return rx.box(
-        rx.text("нити", size="1", weight="bold", color=rx.color("gray", 9),
+        rx.text("нити", size="1", weight="bold", color=ROLE["text-secondary"],
                 style={"writingMode": "vertical-rl", "transform": "rotate(180deg)"}),
         width="20px", flex_shrink="0",
         display="flex", align_items="center", justify_content="center",
@@ -1068,7 +1068,7 @@ def _freytag_caption() -> rx.Component:
     return rx.text(
         "Классическая драматическая дуга / пирамида Фрайтага "
         "(экспозиция → нарастание → кульминация → спад → развязка)",
-        size="1", color=rx.color("gray", 9), font_style="italic", margin_top="6px",
+        size="1", color=ROLE["text-secondary"], font_style="italic", margin_top="6px",
     )
 
 
@@ -1109,7 +1109,7 @@ def _layout_export() -> rx.Component:
         "layout_export", "📋 Раскладка текстом (для сценария)",
         rx.text("Выдели и скопируй (или заскринь) и пришли мне — соберу сценарий по дням. "
                 "Отражает всё, что ты разложила (включая короткие 1-дневные факторы).",
-                size="1", color=rx.color("gray", 9), margin_bottom="6px"),
+                size="1", color=ROLE["text-secondary"], margin_bottom="6px"),
         rx.box(
             rx.text(MotifAboutState.layout_summary,
                     style={"whiteSpace": "pre-wrap", "fontFamily": "monospace",
@@ -1130,7 +1130,7 @@ def _factors_block() -> rx.Component:
     )
     right = rx.flex(
         rx.text("Сюжетные банки — перетаскивай на таймлайн",
-                size="2", weight="bold", color=rx.color("gray", 12),
+                size="2", weight="bold", color=ROLE["text-primary"],
                 margin_bottom="6px", flex_shrink="0"),
         *[_story_bank_block(_BANK_BY_ID[bid]) for bid in STORY_BANK_IDS],
         direction="column", flex_shrink="0", width="240px",
@@ -1158,7 +1158,7 @@ def _diaries_block() -> rx.Component:
         "diaries", "Дневники",
         rx.text("Черновик — поменяется под финальный сценарий A1 и раскладку факторов. "
                 "По одному сворачиваемому дневнику на роль (пока — PM).",
-                size="1", color=rx.color("gray", 9), margin_bottom="8px"),
+                size="1", color=ROLE["text-secondary"], margin_bottom="8px"),
         *subs,
         accent="cyan",
     )
@@ -1168,7 +1168,7 @@ def _quote_card(q: dict) -> rx.Component:
     return rx.box(
         rx.flex(
             rx.badge(q["name"], variant="soft", color_scheme="pink", size="1"),
-            rx.text(q["role"], size="1", color=rx.color("gray", 9)),
+            rx.text(q["role"], size="1", color=ROLE["text-secondary"]),
             gap="8px", align="center", margin_bottom="4px",
         ),
         rx.text("« " + q["quote"] + " »", size="2", color=rx.color("gray", 11),
@@ -1184,7 +1184,7 @@ def _quotes_block() -> rx.Component:
     return _collapsible(
         "quotes", "Цитаты",
         rx.text("Черновик — уточним под черты героев и финальный сценарий.",
-                size="1", color=rx.color("gray", 9), margin_bottom="8px"),
+                size="1", color=ROLE["text-secondary"], margin_bottom="8px"),
         rx.grid(*[_quote_card(q) for q in QUOTES],
                 columns="2", gap=SPACING["md"], width="100%"),
         accent="pink",
@@ -1206,7 +1206,7 @@ def _backstory_block() -> rx.Component:
     return _collapsible(
         "backstory", "Бэкстори",
         rx.text("Кратко: мотивация · почему тут · где живёт/заземляется (полное — в world-bible §2N).",
-                size="1", color=rx.color("gray", 9), margin_bottom="8px"),
+                size="1", color=ROLE["text-secondary"], margin_bottom="8px"),
         *rows,
         accent="iris",
     )
@@ -1228,7 +1228,7 @@ def _script_block() -> rx.Component:
         "script", "Сценарий · A1 «Потеря арта» (финал, по раскладке Guzel)",
         rx.text("Ансамблевая плетёнка со спайном: главный A1 + слои (переезд Дэна, выгорание Леи, "
                 "удачи, награда Нура). Причинная цепочка: техдолг → слабый QA → миграция (бэкенд-дыра).",
-                size="1", color=rx.color("gray", 9), margin_bottom="8px"),
+                size="1", color=ROLE["text-secondary"], margin_bottom="8px"),
         *rows,
         accent="grass",
     )

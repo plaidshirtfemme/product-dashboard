@@ -66,8 +66,16 @@ EPIC_TYPE_COLORS: dict[str, str] = {
 # Encodes WHICH Radix step plays WHICH role, so code stops hardcoding steps and
 # the role-map lives in tokens, not scattered comments. This is the semantic /
 # component layer on top of the Radix Colors primitive scale.
-# NB: current convention is lighter than Radix canon (text step 9 vs canon 11-12,
-# border step 4 vs canon 6-8). Aligning to canon = separate task (visual review).
+# NB: текущая конвенция светлее канона Radix (текст шаг 9 против канона 11-12,
+# бордер шаг 4 против 6-8). Сближение с каноном — DASH-142, решение за Guzel.
+#
+# 16.09.2026: вариант text-secondary = gray.11 был собран и показан — ОТКЛОНЁН,
+# вернулись на gray.9. Заодно выяснилось, что мерить надо не тем: Radix даёт
+# гарантию в APCA (Lc 60 для шага 11, Lc 90 для 12, на фоне ШАГА 2 своей шкалы),
+# а не в WCAG 2. Замер APCA на живой теме (прибор сверен на эталонах W3C):
+# slate-9 = Lc 56.91, slate-10 = Lc 61.90, slate-11 = Lc 76.21, slate-12 = Lc 99.84.
+# Порог годности в APCA НЕ сверен с источником — без него числа решения не дают.
+# Выбор метрики и порога — DASH-150, исполнитель Guzel.
 # ---------------------------------------------------------------------------
 
 _ROLE_NAMES = (
@@ -86,6 +94,25 @@ COLOR_ROLE: dict[str, tuple[str, int]] = {n: _role_pair(n) for n in _ROLE_NAMES}
 
 # name -> rx.color(...) Var — ready to drop straight into component props
 ROLE: dict = {n: rx.color(s, st) for n, (s, st) in COLOR_ROLE.items()}
+
+# ---------------------------------------------------------------------------
+# Цвет сущности (DASH-151, 16.09.2026). Не статус и не роль в интерфейсе,
+# а вид объекта Jira. Purple — осознанное исключение из темы (accent teal,
+# gray slate): teal уже означает «ссылка/интерактив», и красить им сущность
+# значит смешать два разных смысла. Обоснование целиком — в design_tokens.json,
+# color.entity. НЕ ПУТАТЬ с EPIC_TYPE_COLORS: там тип эпика, здесь сущность.
+# ---------------------------------------------------------------------------
+
+_ENTITY_NAMES = ("epic",)
+
+
+def _entity_pair(name: str) -> tuple[str, int]:
+    scale, step = _val(f"color.entity.{name}").split(".")
+    return scale, int(step)
+
+
+COLOR_ENTITY: dict[str, tuple[str, int]] = {n: _entity_pair(n) for n in _ENTITY_NAMES}
+ENTITY: dict = {n: rx.color(s, st) for n, (s, st) in COLOR_ENTITY.items()}
 
 # ---------------------------------------------------------------------------
 # Interaction states (hover / selected) → Radix (scale, step).

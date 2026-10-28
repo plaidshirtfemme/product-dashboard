@@ -1,7 +1,7 @@
 """Monitoring & Support tab — SRE / Support view (этап 8 MVP)."""
 
 import reflex as rx
-from ..tokens import SPACING, BORDER, STATUS_COLORS
+from ..tokens import SPACING, BORDER, STATUS_COLORS, ROLE
 from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
 from ..data.adapter import load_issues
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs
@@ -31,7 +31,7 @@ def _bug_table(bugs) -> rx.Component:
 
 def _support_table(tickets) -> rx.Component:
     if not tickets:
-        return rx.text("Нет обращений", size="2", color=rx.color("gray", 9))
+        return rx.text("Нет обращений", size="2", color=ROLE["text-secondary"])
     _TPL = "90px 110px 100px 40px 100px"
     header = table_header(["Ключ", "Статус", "Priority", "SP", "Cycle time"], _TPL)
     rows = []
@@ -76,8 +76,8 @@ def _support_linkage_table(bugs, support_issues) -> rx.Component:
             _sev_badge(b.severity),
             rx.flex(
                 rx.text(str(count), size="2", weight="bold",
-                        color=rx.color("tomato", 11) if count >= 5 else rx.color("gray", 12)),
-                rx.text("тикетов", size="1", color=rx.color("gray", 9)),
+                        color=rx.color("tomato", 11) if count >= 5 else ROLE["text-primary"]),
+                rx.text("тикетов", size="1", color=ROLE["text-secondary"]),
                 align="center", gap="5px",
             ),
             rx.badge(urgency, color_scheme=urgency_color, variant="soft", size="1"),
@@ -116,7 +116,7 @@ def monitoring_tab() -> rx.Component:
         rx.box(height=SPACING["xl"]),
         section_header("Bug Board",
                        subtitle=f"Баги в MONITORING squad · {len(bugs)} записей · Blocker/Critical выделены красным"),
-        _bug_table(bugs) if bugs else rx.text("Нет багов", size="2", color=rx.color("gray", 9)),
+        _bug_table(bugs) if bugs else rx.text("Нет багов", size="2", color=ROLE["text-secondary"]),
         rx.box(height=SPACING["xl"]),
         section_header("Support → Bug linkage",
                        subtitle="Баги MONITORING squad · количество связанных обращений пользователей"),

@@ -18,7 +18,7 @@ Usage:
 """
 
 import reflex as rx
-from ..tokens.tokens import SPACING, FONTS
+from ..tokens.tokens import SPACING, FONTS, ROLE
 
 
 def mono_text(value: str) -> rx.Component:
@@ -51,6 +51,6 @@ def data_table(
             width="100%",
         )
         if rows
-        else rx.text(empty_message, color=rx.color("gray", 9), padding=SPACING["md"]),
+        else rx.text(empty_message, color=ROLE["text-secondary"], padding=SPACING["md"]),
         width="100%",
     )

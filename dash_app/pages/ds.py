@@ -6,7 +6,7 @@
 
 import reflex as rx
 from ..tokens import (
-    SPACING, STATUS_COLORS, COLOR_ROLE, COLOR_STATE, TYPE_SCALE, FONTS, ROLE,
+    SPACING, STATUS_COLORS, COLOR_ROLE, COLOR_STATE, COLOR_ENTITY, TYPE_SCALE, FONTS, ROLE,
     BORDER, BORDER_WIDTH, RADIUS,
     PAGE_MAX_WIDTH, PAGE_MAX_WIDTH_WIDE, SIDEBAR_WIDTH,
 )
@@ -52,9 +52,9 @@ def _color_row(color: str, shade: int, usage: str) -> rx.Component:
             flex_shrink="0",
         ),
         rx.text(token_name, size="2", weight="medium",
-                color=rx.color("gray", 12),
+                color=ROLE["text-primary"],
                 font_family="monospace", min_width="80px"),
-        rx.text(usage, size="2", color=rx.color("gray", 9), flex="1"),
+        rx.text(usage, size="2", color=ROLE["text-secondary"], flex="1"),
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
@@ -72,12 +72,12 @@ def _status_color_row(key: str, radix_name: str, usage: str) -> rx.Component:
         ),
         rx.flex(
             rx.text(f"STATUS_COLORS['{key}']", size="1",
-                    color=rx.color("gray", 9), font_family="monospace"),
+                    color=ROLE["text-secondary"], font_family="monospace"),
             rx.text(radix_name, size="2", weight="medium",
-                    color=rx.color("gray", 12)),
+                    color=ROLE["text-primary"]),
             direction="column", gap="0",
         ),
-        rx.text(usage, size="2", color=rx.color("gray", 9), flex="1"),
+        rx.text(usage, size="2", color=ROLE["text-secondary"], flex="1"),
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
@@ -97,6 +97,8 @@ _ROLE_USAGE = {
     "border-subtle":  "Тонкий внутренний разделитель (строки)",
     "bg-card":        "Фон карточки / панели",
     "bg-subtle":      "Фон превью / вставки",
+    # сущности (COLOR_ENTITY) — _role_row ищет подпись по имени в этом же словаре
+    "epic":           "Эпик: ключ, бейдж, ховер ссылок на эпик",
 }
 
 
@@ -110,13 +112,13 @@ def _role_row(name: str, scale: str, step: int) -> rx.Component:
             flex_shrink="0",
         ),
         rx.flex(
-            rx.text(name, size="2", weight="medium", color=rx.color("gray", 12),
+            rx.text(name, size="2", weight="medium", color=ROLE["text-primary"],
                     font_family="monospace"),
-            rx.text(f"{scale}-{step}", size="1", color=rx.color("gray", 9),
+            rx.text(f"{scale}-{step}", size="1", color=ROLE["text-secondary"],
                     font_family="monospace"),
             direction="column", gap="0", min_width="150px",
         ),
-        rx.text(_ROLE_USAGE.get(name, ""), size="2", color=rx.color("gray", 9), flex="1"),
+        rx.text(_ROLE_USAGE.get(name, ""), size="2", color=ROLE["text-secondary"], flex="1"),
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
@@ -147,13 +149,13 @@ def _state_row(name: str, scale: str, step: int) -> rx.Component:
             flex_shrink="0",
         ),
         rx.flex(
-            rx.text(name, size="2", weight="medium", color=rx.color("gray", 12),
+            rx.text(name, size="2", weight="medium", color=ROLE["text-primary"],
                     font_family="monospace"),
-            rx.text(f"{scale}-{step}", size="1", color=rx.color("gray", 9),
+            rx.text(f"{scale}-{step}", size="1", color=ROLE["text-secondary"],
                     font_family="monospace"),
             direction="column", gap="0", min_width="150px",
         ),
-        rx.text(_STATE_USAGE.get(name, ""), size="2", color=rx.color("gray", 9), flex="1"),
+        rx.text(_STATE_USAGE.get(name, ""), size="2", color=ROLE["text-secondary"], flex="1"),
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
@@ -179,9 +181,9 @@ def _spacing_row(key: str, value: str) -> rx.Component:
 
     return rx.flex(
         rx.text(f"SPACING['{key}']", size="1", font_family="monospace",
-                color=rx.color("gray", 9), min_width="120px", flex_shrink="0"),
+                color=ROLE["text-secondary"], min_width="120px", flex_shrink="0"),
         rx.text(value, size="2", weight="medium",
-                color=rx.color("gray", 12), min_width="50px", flex_shrink="0"),
+                color=ROLE["text-primary"], min_width="50px", flex_shrink="0"),
         progress_bar(pct=pct, color="teal", shade=5, height="12px"),
         gap=SPACING["md"],
         align="center",
@@ -203,9 +205,9 @@ _TYPE_SAMPLES = [
 def _type_row(key: str, sample: str, weight: str, color: str, shade: int) -> rx.Component:
     return rx.flex(
         rx.text(f"TYPE_SCALE['{key}']", size="1", font_family="monospace",
-                color=rx.color("gray", 8), min_width="160px", flex_shrink="0"),
+                color=ROLE["text-muted"], min_width="160px", flex_shrink="0"),
         rx.text(TYPE_SCALE[key], size="1", font_family="monospace",
-                color=rx.color("gray", 9), min_width="40px", flex_shrink="0"),
+                color=ROLE["text-secondary"], min_width="40px", flex_shrink="0"),
         rx.text(
             sample,
             style={
@@ -229,11 +231,11 @@ def _type_row(key: str, sample: str, weight: str, color: str, shade: int) -> rx.
 def _const_row(name: str, value: str, note: str) -> rx.Component:
     return rx.flex(
         rx.text(name, size="2", weight="medium",
-                font_family="monospace", color=rx.color("gray", 12),
+                font_family="monospace", color=ROLE["text-primary"],
                 min_width="200px", flex_shrink="0"),
         rx.text(value, size="2", font_family="monospace",
                 color=rx.color("teal", 9), min_width="120px", flex_shrink="0"),
-        rx.text(note, size="2", color=rx.color("gray", 9), flex="1"),
+        rx.text(note, size="2", color=ROLE["text-secondary"], flex="1"),
         gap=SPACING["md"],
         align="center",
         padding=f"{SPACING['xs']} 0",
@@ -248,9 +250,9 @@ def _const_row(name: str, value: str, note: str) -> rx.Component:
 def _component_card(name: str, description: str, preview: rx.Component) -> rx.Component:
     return rx.box(
         rx.flex(
-            rx.text(name, size="2", weight="medium", color=rx.color("gray", 12),
+            rx.text(name, size="2", weight="medium", color=ROLE["text-primary"],
                     font_family="monospace"),
-            rx.text(description, size="1", color=rx.color("gray", 9)),
+            rx.text(description, size="1", color=ROLE["text-secondary"]),
             direction="column", gap=SPACING["xs"],
             margin_bottom=SPACING["md"],
         ),
@@ -279,7 +281,7 @@ def _tokens_view() -> rx.Component:
         section_header("Цвета · Color Tokens", "palette"),
         rx.box(
             rx.text("STATUS_COLORS — семантические токены",
-                    size="1", weight="medium", color=rx.color("gray", 9),
+                    size="1", weight="medium", color=ROLE["text-secondary"],
                     text_transform="uppercase", letter_spacing="0.06em",
                     margin_bottom=SPACING["sm"]),
             *[
@@ -288,7 +290,7 @@ def _tokens_view() -> rx.Component:
             ],
             rx.box(height=SPACING["md"]),
             rx.text("Radix color scale — прямое использование",
-                    size="1", weight="medium", color=rx.color("gray", 9),
+                    size="1", weight="medium", color=ROLE["text-secondary"],
                     text_transform="uppercase", letter_spacing="0.06em",
                     margin_bottom=SPACING["sm"]),
             *[_color_row(c, s, u) for c, s, u in _COLOR_PALETTE],
@@ -305,10 +307,38 @@ def _tokens_view() -> rx.Component:
         section_header("Семантические роли · component tokens", "layers"),
         rx.box(
             rx.text("COLOR_ROLE — какой Radix-шаг какую роль играет (карта в токенах, не в комментариях)",
-                    size="1", weight="medium", color=rx.color("gray", 9),
+                    size="1", weight="medium", color=ROLE["text-secondary"],
                     text_transform="uppercase", letter_spacing="0.06em",
                     margin_bottom=SPACING["sm"]),
             *[_role_row(name, scale, step) for name, (scale, step) in COLOR_ROLE.items()],
+            padding=f"{SPACING['sm']} {SPACING['md']}",
+            border=f"{BORDER} {ROLE['border-default']}",
+            border_radius="var(--radius-3)",
+            background=ROLE["bg-card"],
+            margin_top=SPACING["sm"],
+        ),
+
+        rx.box(height=SPACING["xl"]),
+
+        # ── 1b-bis. Цвет сущности (DASH-151, 16.09.2026) ───────────────────
+        section_header("Сущности · entity tokens", "shapes"),
+        rx.box(
+            rx.text("COLOR_ENTITY — цвет вида объекта, а не статуса и не роли в интерфейсе",
+                    size="1", weight="medium", color=ROLE["text-secondary"],
+                    text_transform="uppercase", letter_spacing="0.06em",
+                    margin_bottom=SPACING["sm"]),
+            *[_role_row(name, scale, step) for name, (scale, step) in COLOR_ENTITY.items()],
+            rx.text(
+                "Осознанное исключение из темы. Тема задана accent=teal, gray=slate — "
+                "purple в неё не входит. Оставлен намеренно: teal уже занят под "
+                "«ссылка / интерактив» (state.hover-text, state.selected-text), и красить "
+                "им сущность значит смешать «на это можно нажать» с «это эпик». "
+                "Замер 16.09.2026: purple встречался 6 раз, все до одного означали эпик — "
+                "решение было последовательным, но жило хардкодом в backlog.py мимо токенов. "
+                "Не путать с EPIC_TYPE_COLORS: там тип эпика (business / enabler / component), "
+                "здесь сама сущность.",
+                size="1", color=ROLE["text-secondary"], margin_top=SPACING["sm"],
+            ),
             padding=f"{SPACING['sm']} {SPACING['md']}",
             border=f"{BORDER} {ROLE['border-default']}",
             border_radius="var(--radius-3)",
@@ -322,7 +352,7 @@ def _tokens_view() -> rx.Component:
         section_header("Состояния · interaction states", "mouse-pointer-click"),
         rx.box(
             rx.text("COLOR_STATE — цвета наведения и выбора",
-                    size="1", weight="medium", color=rx.color("gray", 9),
+                    size="1", weight="medium", color=ROLE["text-secondary"],
                     text_transform="uppercase", letter_spacing="0.06em",
                     margin_bottom=SPACING["sm"]),
             *[_state_row(name, scale, step) for name, (scale, step) in COLOR_STATE.items()],
@@ -343,7 +373,7 @@ def _tokens_view() -> rx.Component:
                 "не чинится. Disabled: состояние есть и значение снимается — "
                 "непостроенная вкладка навигации это gray.7 против gray.10, "
                 "снятый ховер и снятый клик; ждём решения DASH-152.",
-                size="1", color=rx.color("gray", 9),
+                size="1", color=ROLE["text-secondary"],
                 margin_top=SPACING["sm"], line_height="1.5",
             ),
             padding=f"{SPACING['sm']} {SPACING['md']}",
@@ -375,14 +405,14 @@ def _tokens_view() -> rx.Component:
             rx.box(height=SPACING["sm"]),
             rx.flex(
                 rx.text("FONTS['sans']", size="1", font_family="monospace",
-                        color=rx.color("gray", 9), min_width="160px"),
+                        color=ROLE["text-secondary"], min_width="160px"),
                 rx.text(FONTS["sans"], size="1", color=rx.color("gray", 11), flex="1"),
                 gap=SPACING["md"],
                 padding=f"{SPACING['xs']} 0",
             ),
             rx.flex(
                 rx.text("FONTS['mono']", size="1", font_family="monospace",
-                        color=rx.color("gray", 9), min_width="160px"),
+                        color=ROLE["text-secondary"], min_width="160px"),
                 rx.text(FONTS["mono"], size="1",
                         style={"font_family": FONTS["mono"]},
                         color=rx.color("gray", 11), flex="1"),
@@ -501,7 +531,7 @@ def _rule_card(title: str, icon: str, color: str, items: list[str]) -> rx.Compon
     return rx.box(
         rx.flex(
             rx.icon(icon, size=16, color=rx.color(color, 9), flex_shrink="0"),
-            rx.text(title, size="2", weight="bold", color=rx.color("gray", 12)),
+            rx.text(title, size="2", weight="bold", color=ROLE["text-primary"]),
             align="center",
             gap=SPACING["sm"],
             margin_bottom=SPACING["md"],
@@ -528,7 +558,7 @@ def _quote(text: str, source: str) -> rx.Component:
             rx.text(f"«{text}»", size="1", color=rx.color("gray", 11),
                     line_height="1.5", style={"font_style": "italic"}),
             rx.text(f"— {source}", size="1", weight="medium",
-                    color=rx.color("gray", 9)),
+                    color=ROLE["text-secondary"]),
             direction="column",
             gap="2px",
         ),
@@ -610,7 +640,7 @@ def _rules_view() -> rx.Component:
         ),
         rx.box(height=SPACING["md"]),
         rx.text("Когда выносить base-компонент — триггеры из источников:",
-                size="2", weight="medium", color=rx.color("gray", 12),
+                size="2", weight="medium", color=ROLE["text-primary"],
                 margin_bottom=SPACING["sm"]),
         rx.flex(
             _quote(
@@ -805,7 +835,7 @@ def _section_button(section: str, label: str, sub: str) -> rx.Component:
         rx.text(label, size="2", weight="medium",
                 color=rx.cond(is_active, rx.color("teal", 11), rx.color("gray", 11))),
         rx.text(sub, size="1",
-                color=rx.cond(is_active, rx.color("teal", 10), rx.color("gray", 9))),
+                color=rx.cond(is_active, rx.color("teal", 10), ROLE["text-secondary"])),
         direction="column",
         gap="0",
         padding=f"{SPACING['sm']} {SPACING['md']}",

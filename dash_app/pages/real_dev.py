@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..components import section_header, data_table, real_page_header, real_page_wrapper
-from ..data.real_project_extract import GIT_COMMITS, EXCEPTIONS
+from ..data.kp.real_project_extract import GIT_COMMITS, EXCEPTIONS
 from ..tokens import SPACING, BORDER, ROLE
 
 _CAT_COLOR = {
@@ -24,7 +24,7 @@ _CAT_LABEL = {
 def _commit_row(c) -> rx.Component:
     color = _CAT_COLOR.get(c.category, "gray")
     return rx.flex(
-        rx.text(c.date, size="1", color=rx.color("gray", 8),
+        rx.text(c.date, size="1", color=ROLE["text-muted"],
                 min_width="90px", font_family="monospace"),
         rx.text(c.sha,  size="1", color=rx.color("teal", 9),
                 min_width="60px", font_family="monospace"),
@@ -45,7 +45,7 @@ def _exception_row(e) -> rx.Component:
         rx.text(e.name, size="2", weight="medium", color=rx.color("teal", 10),
                 font_family="monospace", min_width="260px"),
         rx.text(e.description, size="2", color=rx.color("gray", 11), flex="1"),
-        rx.text(e.raised_by, size="1", color=rx.color("gray", 8),
+        rx.text(e.raised_by, size="1", color=ROLE["text-muted"],
                 font_family="monospace"),
         gap=SPACING["md"],
         align="center",
@@ -67,7 +67,7 @@ def real_dev_tab() -> rx.Component:
             rx.flex(
                 rx.text(str(feat_count), size="5", weight="bold",
                         color=rx.color("teal", 9)),
-                rx.text("feat", size="1", color=rx.color("gray", 9)),
+                rx.text("feat", size="1", color=ROLE["text-secondary"]),
                 direction="column", align="center",
                 padding=f"12px {SPACING['lg']}",
                 border=f"{BORDER} {ROLE['border-default']}",
@@ -76,15 +76,15 @@ def real_dev_tab() -> rx.Component:
             rx.flex(
                 rx.text(str(security_count), size="5", weight="bold",
                         color=rx.color("red", 9)),
-                rx.text("security", size="1", color=rx.color("gray", 9)),
+                rx.text("security", size="1", color=ROLE["text-secondary"]),
                 direction="column", align="center",
                 padding=f"12px {SPACING['lg']}",
                 border=f"{BORDER} {ROLE['border-default']}",
                 border_radius="var(--radius-2)",
             ),
             rx.flex(
-                rx.text("3", size="5", weight="bold", color=rx.color("gray", 9)),
-                rx.text("дня", size="1", color=rx.color("gray", 9)),
+                rx.text("3", size="5", weight="bold", color=ROLE["text-secondary"]),
+                rx.text("дня", size="1", color=ROLE["text-secondary"]),
                 direction="column", align="center",
                 padding=f"12px {SPACING['lg']}",
                 border=f"{BORDER} {ROLE['border-default']}",

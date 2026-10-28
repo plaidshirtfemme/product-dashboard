@@ -11,7 +11,7 @@ Backlog tab — полный реестр всех задач с интерак�
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER, EPIC_TYPE_COLORS, FONTS, ROLE
+from ..tokens import SPACING, BORDER, EPIC_TYPE_COLORS, FONTS, ROLE, ENTITY, COLOR_ENTITY
 from ..components import section_header, reorderable_table, Column, SEV_COLORS
 
 # Минимум видимой заливки прогресс-полоски (как min_pct у общего progress_bar).
@@ -28,7 +28,7 @@ from ..states.backlog_state import (
 def _select(label: str, options: list[str], value_var, on_change) -> rx.Component:
     items = [rx.select.item("Все", value="")] + [rx.select.item(o, value=o) for o in options]
     return rx.box(
-        rx.text(label, size="1", color=rx.color("gray", 9),
+        rx.text(label, size="1", color=ROLE["text-secondary"],
                 style={"text_transform": "uppercase", "letter_spacing": "0.04em"},
                 margin_bottom="4px"),
         rx.select.root(
@@ -43,7 +43,7 @@ def _select(label: str, options: list[str], value_var, on_change) -> rx.Componen
 
 def _select_dyn(label: str, options_var, value_var, on_change) -> rx.Component:
     return rx.box(
-        rx.text(label, size="1", color=rx.color("gray", 9),
+        rx.text(label, size="1", color=ROLE["text-secondary"],
                 style={"text_transform": "uppercase", "letter_spacing": "0.04em"},
                 margin_bottom="4px"),
         rx.select.root(
@@ -62,7 +62,7 @@ def _select_dyn(label: str, options_var, value_var, on_change) -> rx.Component:
 def _select_epic() -> rx.Component:
     """Epic filter with 'KEY · Name' labels but stores KEY as value."""
     return rx.box(
-        rx.text("Epic", size="1", color=rx.color("gray", 9),
+        rx.text("Epic", size="1", color=ROLE["text-secondary"],
                 style={"text_transform": "uppercase", "letter_spacing": "0.04em"},
                 margin_bottom="4px"),
         rx.select.root(
@@ -120,7 +120,7 @@ def _filter_bar() -> rx.Component:
                 ),
                 rx.text(
                     BacklogState.filtered_count.to_string(), " задач",
-                    size="1", color=rx.color("gray", 9),
+                    size="1", color=ROLE["text-secondary"],
                 ),
                 align="center",
                 gap=SPACING["sm"],
@@ -172,7 +172,7 @@ def _status_bg(status: str):
     return rx.cond(status == "Done", rx.color("grass", 9),
            rx.cond(status == "In Progress", rx.color("amber", 9),
            rx.cond(status == "In Review", rx.color("teal", 9),
-                   rx.color("gray", 9))))
+                   ROLE["text-secondary"])))
 
 
 def _status_badge_large(status: str) -> rx.Component:
@@ -216,7 +216,7 @@ def _jira_field(label: str, value_component) -> rx.Component:
         rx.text(
             label,
             size="1",
-            color=rx.color("gray", 9),
+            color=ROLE["text-secondary"],
             weight="medium",
             style={
                 "min_width": "90px",
@@ -243,12 +243,12 @@ def _history_row(h: dict) -> rx.Component:
         rx.flex(
             rx.text(h["author"], size="1", weight="medium", color=rx.color("gray", 11)),
             rx.text("·", size="1", color=rx.color("gray", 7)),
-            rx.text(h["date"], size="1", color=rx.color("gray", 9)),
+            rx.text(h["date"], size="1", color=ROLE["text-secondary"]),
             align="center", gap="2",
         ),
         rx.flex(
             _status_badge_small(h["from"]),
-            rx.icon("arrow_right", size=13, color=rx.color("gray", 8)),
+            rx.icon("arrow_right", size=13, color=ROLE["text-muted"]),
             _status_badge_small(h["to"]),
             align="center", gap="2", margin_top="1",
         ),
@@ -287,7 +287,7 @@ def _issue_content() -> rx.Component:
                 rx.cond(
                     issue["description"] != "",
                     rx.box(
-                        rx.text("Description", size="1", color=rx.color("gray", 9),
+                        rx.text("Description", size="1", color=ROLE["text-secondary"],
                                 weight="medium",
                                 style={"text_transform": "uppercase",
                                        "letter_spacing": "0.04em"},
@@ -338,7 +338,7 @@ def _issue_content() -> rx.Component:
                 ),
                 # Priority — editable select
                 rx.flex(
-                    rx.text("Priority", size="1", color=rx.color("gray", 9), weight="medium",
+                    rx.text("Priority", size="1", color=ROLE["text-secondary"], weight="medium",
                             style={"min_width": "90px", "text_transform": "uppercase",
                                    "letter_spacing": "0.04em"}),
                     rx.select.root(
@@ -355,7 +355,7 @@ def _issue_content() -> rx.Component:
                 ),
                 # Epic Link — editable select
                 rx.flex(
-                    rx.text("Epic Link", size="1", color=rx.color("gray", 9), weight="medium",
+                    rx.text("Epic Link", size="1", color=ROLE["text-secondary"], weight="medium",
                             style={"min_width": "90px", "text_transform": "uppercase",
                                    "letter_spacing": "0.04em"}),
                     rx.select.root(
@@ -394,9 +394,9 @@ def _issue_content() -> rx.Component:
             BacklogState.selected_status_history,
             rx.box(
                 rx.flex(
-                    rx.icon("history", size=13, color=rx.color("gray", 9)),
+                    rx.icon("history", size=13, color=ROLE["text-secondary"]),
                     rx.text("История статусов", size="1", weight="medium",
-                            color=rx.color("gray", 9),
+                            color=ROLE["text-secondary"],
                             style={"text_transform": "uppercase",
                                    "letter_spacing": "0.04em"}),
                     align="center", gap="1", margin_bottom="2",
@@ -417,7 +417,7 @@ def _epic_child_row(child: dict) -> rx.Component:
                 style={"font_family": FONTS["mono"], "white_space": "nowrap"},
                 color=rx.color("gray", 10), min_width="80px"),
         _status_badge_small(child["status"]),
-        rx.text(child["summary"], size="2", color=rx.color("gray", 12),
+        rx.text(child["summary"], size="2", color=ROLE["text-primary"],
                 style={"overflow": "hidden", "text_overflow": "ellipsis",
                        "white_space": "nowrap"}),
         align="center", gap="2",
@@ -434,10 +434,10 @@ def _epic_content() -> rx.Component:
         # ── Header ─────────────────────────────────────────────────────────
         rx.flex(
             rx.flex(
-                rx.badge("epic", color_scheme="purple", variant="soft", size="1"),
+                rx.badge("epic", color_scheme=COLOR_ENTITY["epic"][0], variant="soft", size="1"),
                 rx.text(epic["epic_key"],
                         style={"font_family": FONTS["mono"], "font_size": "12px"},
-                        color=rx.color("purple", 11)),
+                        color=ENTITY["epic"]),
                 _epic_type_chip(epic["epic_type"], epic["unlocks"]),
                 align="center", gap="2",
             ),
@@ -456,7 +456,7 @@ def _epic_content() -> rx.Component:
             # Left: child issues
             rx.flex(
                 rx.text("Child Issues (", done_pct.to_string(), " % done)",
-                        size="1", color=rx.color("gray", 9), weight="medium",
+                        size="1", color=ROLE["text-secondary"], weight="medium",
                         style={"text_transform": "uppercase", "letter_spacing": "0.04em"},
                         margin_bottom="2"),
                 rx.flex(
@@ -467,7 +467,7 @@ def _epic_content() -> rx.Component:
             ),
             # Right: stats panel
             rx.flex(
-                rx.text("Progress", size="1", color=rx.color("gray", 9), weight="medium",
+                rx.text("Progress", size="1", color=ROLE["text-secondary"], weight="medium",
                         style={"text_transform": "uppercase", "letter_spacing": "0.04em"},
                         margin_bottom="2"),
                 rx.flex(
@@ -567,7 +567,7 @@ def _c_epic_key(row):
                    style={"font_family": FONTS["mono"], "white_space": "nowrap",
                           "cursor": "pointer",
                           "_hover": {"text_decoration": "underline"}},
-                   color=rx.color("purple", 11),
+                   color=ENTITY["epic"],
                    on_click=BacklogState.open_epic(row["epic"]))
 
 
@@ -575,7 +575,7 @@ def _c_epic_name(row):
     return rx.text(row["epic_name"], size="1", color=rx.color("teal", 11),
                    style={"white_space": "normal", "word_break": "break-word",
                           "cursor": "pointer",
-                          "_hover": {"color": rx.color("purple", 11),
+                          "_hover": {"color": ENTITY["epic"],
                                      "text_decoration": "underline"}},
                    on_click=BacklogState.open_epic(row["epic"]))
 
@@ -595,7 +595,7 @@ def _c_key(row):
 
 def _c_summary(row):
     return rx.text(
-        row["summary"], size="2", color=rx.color("gray", 12),
+        row["summary"], size="2", color=ROLE["text-primary"],
         style={"cursor": "pointer", "white_space": "normal",
                "word_break": "break-word",
                "_hover": {"color": rx.color("teal", 11),
@@ -745,7 +745,7 @@ def _epic_link(field: str, size: str, *, mono: bool = False, color=None):
     """Ячейка-ссылка «открыть эпик»: mono-ключ или название с переносом."""
     def _cell(row):
         style = {"cursor": "pointer",
-                 "_hover": {"color": rx.color("purple", 11),
+                 "_hover": {"color": ENTITY["epic"],
                             "text_decoration": "underline"}}
         if mono:
             style |= {"font_family": FONTS["mono"], "font_size": "12px",
@@ -753,7 +753,7 @@ def _epic_link(field: str, size: str, *, mono: bool = False, color=None):
         else:
             style |= {"white_space": "normal", "word_break": "break-word"}
         return rx.text(row[field], size=size,
-                       color=color if color is not None else rx.color("gray", 12),
+                       color=color if color is not None else ROLE["text-primary"],
                        style=style,
                        on_click=BacklogState.open_epic(row["epic"]))
     return _cell
@@ -786,7 +786,7 @@ def _ec_done_pct(row):
 
 
 _EPIC_COLUMNS: list[Column] = [
-    Column("key", "Key", _epic_link("epic", "1", mono=True, color=rx.color("purple", 11)), width=90),
+    Column("key", "Key", _epic_link("epic", "1", mono=True, color=ENTITY["epic"]), width=90),
     Column("name", "Name", _epic_link("epic_name", "2"), width=220),
     Column("type", "Type", lambda r: _epic_type_chip(r["epic_type"], r["unlocks"]), width=140),
     Column("okr", "OKR", _c_okr, width=92),

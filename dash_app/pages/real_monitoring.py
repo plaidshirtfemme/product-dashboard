@@ -2,7 +2,7 @@
 
 import reflex as rx
 from ..components import section_header, stat_card, stat_card_row, real_page_header, real_page_wrapper
-from ..data.real_project_extract import (
+from ..data.kp.real_project_extract import (
     BATCH_SESSIONS,
     TOTAL_URLS_PROCESSED, TOTAL_NOTES_CREATED, TOTAL_IP_BLOCKS,
     TOTAL_TOO_LONG, TOTAL_NO_TEXT, TOTAL_ERRORS,
@@ -22,7 +22,7 @@ def _session_row(s) -> rx.Component:
     is_big = s.total_urls > 100
     return rx.flex(
         rx.flex(
-            rx.text(f"{s.date} {s.time}", size="1", color=rx.color("gray", 8),
+            rx.text(f"{s.date} {s.time}", size="1", color=ROLE["text-muted"],
                     font_family="monospace", min_width="110px"),
             rx.badge(
                 "main batch" if is_big else "test run",
@@ -37,12 +37,12 @@ def _session_row(s) -> rx.Component:
                 min_width="50px", text_align="right"),
         rx.text(f"{s.created} ({success_rate})", size="2",
                 color=rx.color("teal", 9), min_width="90px", text_align="right"),
-        rx.text(str(s.too_long), size="2", color=rx.color("gray", 9),
+        rx.text(str(s.too_long), size="2", color=ROLE["text-secondary"],
                 min_width="50px", text_align="right"),
         rx.text(f"{s.ip_blocks} ({ip_rate})", size="2",
                 color=rx.color("amber", 9) if s.ip_blocks > 0 else rx.color("gray", 7),
                 min_width="80px", text_align="right"),
-        rx.text(str(s.no_text), size="2", color=rx.color("gray", 9),
+        rx.text(str(s.no_text), size="2", color=ROLE["text-secondary"],
                 min_width="50px", text_align="right"),
         gap=SPACING["lg"],
         align="center",
@@ -57,7 +57,7 @@ def _table_header() -> rx.Component:
     widths = ["180px", "50px", "90px", "50px", "80px", "50px"]
     return rx.flex(
         *[
-            rx.text(c, size="1", weight="medium", color=rx.color("gray", 8),
+            rx.text(c, size="1", weight="medium", color=ROLE["text-muted"],
                     text_transform="uppercase", letter_spacing="0.05em",
                     min_width=w, text_align="right" if i > 0 else "left")
             for i, (c, w) in enumerate(zip(cols, widths))
@@ -129,7 +129,7 @@ def _error_badge(label: str, count: int, total: int, color: str) -> rx.Component
     pct = _pct(count, total)
     return rx.flex(
         rx.text(str(count), size="5", weight="bold", color=rx.color(color, 9)),
-        rx.text(label, size="1", color=rx.color("gray", 9)),
+        rx.text(label, size="1", color=ROLE["text-secondary"]),
         rx.text(f"{pct} ошибок", size="1", color=rx.color("gray", 7)),
         direction="column",
         align="center",

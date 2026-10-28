@@ -53,7 +53,7 @@ def empty_state(
             rx.text(
                 reason,
                 size="2",
-                color=rx.color("gray", 9),
+                color=ROLE["text-secondary"],
                 text_align="center",
                 max_width="480px",
                 line_height="1.6",
