@@ -3306,8 +3306,9 @@ def get_dash_issues() -> list[dict]:
                 "не сработало — на 575 случаях."
             )),
         _di("DASH-162", "Публичность на уровне проекта: Knowledge Pipeline только локально, Motif и Product Dashboard публично",
-            "In Progress", "Task", "ARCH", _DASH_EPICS["E13"], 5, 5, "Guzel K.",
+            "Done", "Task", "ARCH", _DASH_EPICS["E13"], 5, 5, "Guzel K.",
             created="2026-10-27T10:00:00.000+0000", started="2026-10-27T11:00:00.000+0000",
+            resolved="2026-10-28T12:00:00.000+0000",
             labels=["architecture", "security", "process"], priority="High",
             description=(
                 "ЗАЧЕМ. Сейчас публичность задана на уровне ФАЙЛОВ: scripts/deploy.py читает .gitignore и "
@@ -3335,6 +3336,22 @@ def get_dash_issues() -> list[dict]:
                 "правилом «данные только выбранного проекта» из CLAUDE.md дашборда.\n\n"
                 "СТАТУС ЗАМЕРА. Описанное поведение deploy.py и .gitignore — по документам и по DASH-103, "
                 "в этой задаче ещё не воспроизводилось."
+            ),
+            decision_note=(
+                "РЕАЛИЗОВАНО и проверено 28.10. Механизм: PROJECT_VISIBILITY + is_public()/PUBLIC_BUILD/"
+                "show_mode() в states/__init__.py; router.py гейтит импорт real_* (show_mode + try/except → "
+                "заглушка); navigation.py возвращает KP в переключатель только локально; данные KP вынесены "
+                "из data/ (удалены real_project_extract/vault_snapshot) → data/kp/ (закрыт .gitignore); "
+                "deploy.py — страж assert_no_local_leak + флаг --check; Motif очищен от vault-чисел KP "
+                "(overview North Star, research Vault Coverage). ПРИЁМКА (прибор с известным ответом): "
+                "deploy.py --check = «все 13 файлов local-проекта исключены»; имитация утечки → страж падает "
+                "(exit 2). Ревью Guzel: локально 3 режима ок, Motif без vault-чисел. Коммит bc7ede9, "
+                "запушено 28.10. ОСТАТОК (вне 162): real_*/vault_snapshot уже лежали в истории публичного "
+                "origin — снимается приватизацией репо (решение Guzel). Контентные утечки ds_tab/real_design — "
+                "семья DASH-166/167, не публичность. РЕДЕПЛОЙ 28.10 (PUBLIC_BUILD=1): живой сайт перепроверен "
+                "прибором — данные vault (имя vault, дата снэпшота, счётчик «358 заметок», покрытие папок) ушли "
+                "из публичного бандла, внутренние файлы (CLAUDE.md, data/kp/*, ТЗ) отдают 404. Остались только "
+                "имя «Knowledge Pipeline» и имена файлов в описательном тексте Architecture — как в README."
             )),
         _di("DASH-161", "Growth скейлит эксперименты с p≈0.96: вердикт не связан со значимостью",
             "To Do", "Bug", "ANALYSIS", _DASH_EPICS["E3"], 5, 3, "Claude Code",
@@ -3744,9 +3761,10 @@ def get_dash_issues() -> list[dict]:
                 "порядок: сначала D (константы) → B (дефолты загрузчиков) → C (OKR) → A (вкладки, после DASH-163/166)."
             )),
         _di("DASH-168", "Вкладка Requirements · BA/SA (dash): конспект аналитика из .md-файлов, рендер через rx.markdown",
-            "In Progress", "story", "DEV", _DASH_EPICS["E7"], 8, 5, "Claude Code",
+            "Done", "story", "DEV", _DASH_EPICS["E7"], 8, 5, "Claude Code",
             created="2026-09-16T10:00:00.000+0000",
             started="2026-09-16T10:30:00.000+0000",
+            resolved="2026-10-28T12:00:00.000+0000",
             labels=["content", "ux"], priority="Medium",
             description=(
                 "Личный конспект Гузель по темам системного/бизнес-аналитика (12 разделов), встроенный "
@@ -3777,6 +3795,12 @@ def get_dash_issues() -> list[dict]:
                 "изменение видно; таблица и картинка рендерятся корректно.\n\n"
                 "ПРОВЕНАНС: ТЗ и первичная сборка — сессия «Dash: BA-SA» (16.09.2026); UI-полировка — "
                 "«Dash: UI polish» (17.09.2026). Задача заведена постфактум 28.10 (работа велась без тикета)."
+            ),
+            decision_note=(
+                "ЗАКОММИЧЕНО 28.10 (bc7ede9, запушено): pages/ba_sa.py + states/ba_sa_state.py + "
+                "data/ba_sa_notes.py; контент content/ba-sa/*.md — вне гита и деплоя (личное). Отличие от "
+                "ТЗ зафиксировано: список разделов уехал со страницы в левое меню (аккордеон, как у Design). "
+                "Задача заведена постфактум — сборка шла в сентябре без тикета; описание собрано из ТЗ и кода."
             )),
     ]
 
