@@ -14,9 +14,10 @@ Designed to demonstrate product thinking across the full SDLC — from discovery
 An interactive dashboard that shows a real software project through the lens of every product role:  
 PM, BA, SA, Designer, PA, Dev, QA, Growth, and more.
 
-The dashboard supports **3 project modes** switchable at runtime:
+It was built to track a **real** solo AI project — **Knowledge Pipeline** (YouTube → Obsidian notes via Claude API). That project's data is kept **private**: it ships only in local builds and never reaches the public site.
+
+The public build has **2 project modes**, switchable at runtime:
 - **Motif Demo** — a fictional product team with generated Jira-like data
-- **Knowledge Pipeline** — a real solo AI project (YouTube → Obsidian notes via Claude API)
 - **Product Dashboard** — this dashboard itself, shown as a product project with real sprint history
 
 **North Star:** *"A recruiter understands the product context without any explanation."*
@@ -28,14 +29,14 @@ The dashboard supports **3 project modes** switchable at runtime:
 **Technical foundation**
 - 17 SDLC tabs: About, Practices & Rules, Kanban, Backlog, Roadmap, Overview/PM, Research, Analytics, Architecture, Requirements, Design, Design System, Dev & Pipeline, Quality, Release, Monitoring, Growth
 - All tabs are built and navigable (no empty pages)
-- 3 project modes with runtime switching via dropdown
+- 2 public project modes with runtime switching via dropdown (a third — Knowledge Pipeline — runs in local builds only)
 - Design tokens in W3C format (`design_tokens.json`), synced with Figma Tokens Studio
 - Hand-authored Jira mock data: 88 tasks with full sprint history, epics, decision notes
 - Reactive filters in Backlog (squad, type, sprint, epic, OKR)
 - Accordion navigation: Design System nested under Design
 - `USER_STORIES.md` — 17 roles × 100+ user stories
 
-**Real project data (Knowledge Pipeline mode)**
+**Real project data — Knowledge Pipeline (local builds only, kept private)**
 - Pipeline metrics: notes created, processing time, token usage
 - Vault snapshot: folder structure, note count
 - Architecture Decision Records from real README
@@ -60,7 +61,7 @@ The dashboard supports **3 project modes** switchable at runtime:
 
 ```bash
 git clone https://github.com/plaidshirtfemme/product-dashboard.git
-cd dashboard-product
+cd product-dashboard
 pip install -r requirements.txt
 reflex run
 ```

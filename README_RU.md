@@ -14,9 +14,10 @@
 Интерактивный дашборд, который показывает реальный программный проект через призму каждой продуктовой роли:  
 PM, BA, SA, Дизайнер, PA, Dev, QA, Growth и другие.
 
-Дашборд поддерживает **3 режима проекта**, переключаемых в реальном времени:
+Создан, чтобы вести **реальный** соло-AI-проект — **Knowledge Pipeline** (YouTube → заметки Obsidian через Claude API). Данные этого проекта **приватны**: собираются только в локальной сборке и на публичный сайт не уезжают.
+
+В публичной сборке — **2 режима проекта**, переключаемых в реальном времени:
 - **Motif Demo** — вымышленная продуктовая команда с генерируемыми Jira-подобными данными
-- **Knowledge Pipeline** — реальный соло-AI-проект (YouTube → заметки Obsidian через Claude API)
 - **Product Dashboard** — сам дашборд, показанный как продуктовый проект с реальной историей спринтов
 
 **North Star:** *«Рекрутер понимает продуктовый контекст без объяснений».*
@@ -28,14 +29,14 @@ PM, BA, SA, Дизайнер, PA, Dev, QA, Growth и другие.
 **Техническая база**
 - 17 SDLC-вкладок: About, Practices & Rules, Kanban, Backlog, Roadmap, Overview/PM, Research, Analytics, Architecture, Requirements, Design, Design System, Dev & Pipeline, Quality, Release, Monitoring, Growth
 - Все вкладки построены и доступны (нет пустых страниц)
-- 3 режима проекта с переключением через дропдаун в реальном времени
+- 2 публичных режима проекта с переключением через дропдаун (третий — Knowledge Pipeline — только в локальной сборке)
 - Дизайн-токены в формате W3C (`design_tokens.json`), совместимы с Figma Tokens Studio
 - Hand-authored Jira-данные: 88 задач с полной историей спринтов, эпиками, decision notes
 - Реактивные фильтры в Backlog (squad, тип, спринт, эпик, OKR)
 - Аккордеон-навигация: Design System вложена под Design
 - `USER_STORIES.md` — 17 ролей × 100+ пользовательских историй
 
-**Реальные данные проекта (режим Knowledge Pipeline)**
+**Реальные данные проекта — Knowledge Pipeline (только локальная сборка, приватно)**
 - Метрики пайплайна: созданные заметки, время обработки, использование токенов
 - Снэпшот Obsidian-vault: структура папок, количество заметок
 - Architecture Decision Records из реального README
@@ -60,7 +61,7 @@ PM, BA, SA, Дизайнер, PA, Dev, QA, Growth и другие.
 
 ```bash
 git clone https://github.com/plaidshirtfemme/product-dashboard.git
-cd dashboard-product
+cd product-dashboard
 pip install -r requirements.txt
 reflex run
 ```
