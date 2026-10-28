@@ -1,6 +1,5 @@
 """
 Overview tab (PM). Metrics per handoff:
-- North Star metric (реальные данные vault)
 - Flow Metrics: cycle time, lead time, sprint predictability, rework rate,
   velocity, flow velocity, flow load
 - MVP Timeline
@@ -33,7 +32,6 @@ from ..data.metrics import (
 )
 from ..data.okr import load_okrs
 from ..data.jira_mock_raw import MOTIF_DEMO_CONFIG
-from ..data.vault_snapshot import TOTAL_NOTES, VAULT_NAME, SNAPSHOT_DATE
 
 SQUAD_LABELS = {
     "RESEARCH": "Research",
@@ -60,84 +58,6 @@ def _pct_of_timeline(d: date) -> float:
 
 def _today_pct() -> float:
     return _pct_of_timeline(date.today())
-
-
-# ---------------------------------------------------------------------------
-# North Star block
-# ---------------------------------------------------------------------------
-
-def _north_star(note_count: int) -> rx.Component:
-    return rx.box(
-        rx.flex(
-            rx.box(
-                rx.flex(
-                    rx.text(
-                        "North Star Metric",
-                        style={
-                            "font_size": "11px",
-                            "font_weight": "600",
-                            "text_transform": "uppercase",
-                            "letter_spacing": "0.08em",
-                        },
-                        color=rx.color("teal", 11),
-                    ),
-                    gap=SPACING["md"],
-                    align="center",
-                ),
-                rx.text(
-                    str(note_count),
-                    style={"font_size": "48px", "font_weight": "700", "line_height": "1"},
-                    color=rx.color("teal", 11),
-                    margin_top=SPACING["xs"],
-                ),
-                rx.text(
-                    "качественных заметок в vault",
-                    size="3",
-                    color=rx.color("gray", 11),
-                    margin_top=SPACING["xs"],
-                ),
-                rx.text(
-                    f"Obsidian vault · {VAULT_NAME} · снэпшот {SNAPSHOT_DATE}",
-                    size="1",
-                    color=rx.color("gray", 9),
-                    margin_top="4px",
-                ),
-            ),
-            rx.box(
-                rx.text(
-                    "Цель MVP",
-                    size="1",
-                    color=rx.color("gray", 9),
-                    style={"text_transform": "uppercase", "letter_spacing": "0.05em"},
-                ),
-                rx.text(
-                    f"{MOTIF_DEMO_CONFIG.total_scope:,}",
-                    style={"font_size": "28px", "font_weight": "600"},
-                    color=rx.color("gray", 11),
-                ),
-                rx.text(
-                    "URL в scope",
-                    size="1",
-                    color=rx.color("gray", 9),
-                ),
-                rx.box(height=SPACING["sm"]),
-                rx.text(
-                    f"{round(100 * note_count / MOTIF_DEMO_CONFIG.total_scope, 1)}%",
-                    style={"font_size": "20px", "font_weight": "500"},
-                    color=rx.color("teal", 10),
-                ),
-                rx.text("от цели", size="1", color=rx.color("gray", 9)),
-                text_align="right",
-            ),
-            justify="between",
-            align="start",
-            width="100%",
-        ),
-        background=rx.color("teal", 2),
-        border=f"{BORDER} {rx.color('teal', 4)}",
-        border_radius="var(--radius-3)",
-        padding=SPACING["lg"],
-    )
 
 
 # ---------------------------------------------------------------------------
@@ -218,8 +138,8 @@ def _mvp_timeline() -> rx.Component:
         rx.flex(
             rx.box(width="160px", flex_shrink="0"),
             rx.flex(
-                rx.text(str(_MVP_START), size="1", color=rx.color("gray", 9)),
-                rx.text(str(_MVP_END), size="1", color=rx.color("gray", 9)),
+                rx.text(str(_MVP_START), size="1", color=ROLE["text-secondary"]),
+                rx.text(str(_MVP_END), size="1", color=ROLE["text-secondary"]),
                 justify="between",
                 flex="1",
             ),
@@ -250,12 +170,12 @@ def _kr_row(kr) -> rx.Component:
     color = _STATUS_COLORS[kr.status]
     return rx.box(
         rx.flex(
-            rx.text(kr.key, size="1", color=rx.color("gray", 9), width="52px", flex_shrink="0"),
-            rx.text(kr.title, size="2", color=rx.color("gray", 12), flex="1"),
+            rx.text(kr.key, size="1", color=ROLE["text-secondary"], width="52px", flex_shrink="0"),
+            rx.text(kr.title, size="2", color=ROLE["text-primary"], flex="1"),
             rx.flex(
                 rx.text(kr.formatted_current, size="2", weight="medium", color=rx.color(color, 11)),
-                rx.text("→", size="1", color=rx.color("gray", 9)),
-                rx.text(kr.formatted_target, size="1", color=rx.color("gray", 9)),
+                rx.text("→", size="1", color=ROLE["text-secondary"]),
+                rx.text(kr.formatted_target, size="1", color=ROLE["text-secondary"]),
                 align="center",
                 gap="6px",
                 flex_shrink="0",
@@ -303,7 +223,7 @@ def _objective_card(obj, task_progress) -> rx.Component:
                     variant="solid",
                     size="1",
                 ),
-                rx.text(obj.quarter, size="1", color=rx.color("gray", 9)),
+                rx.text(obj.quarter, size="1", color=ROLE["text-secondary"]),
                 align="center",
                 gap=SPACING["sm"],
             ),
@@ -319,14 +239,14 @@ def _objective_card(obj, task_progress) -> rx.Component:
         ),
         rx.box(height="8px"),
         # — title + description
-        rx.text(obj.title, size="3", weight="medium", color=rx.color("gray", 12)),
+        rx.text(obj.title, size="3", weight="medium", color=ROLE["text-primary"]),
         rx.text(obj.description, size="2", color=rx.color("gray", 10), margin_top="2px"),
         # — task progress (from okr_breakdown)
         rx.flex(
             rx.text(
                 f"Задач в беклоге: {task_progress.done} / {task_progress.total} done ({task_progress.pct_done}%)",
                 size="1",
-                color=rx.color("gray", 9),
+                color=ROLE["text-secondary"],
             ),
             rx.box(
                 rx.box(
@@ -378,18 +298,9 @@ def overview_tab() -> rx.Component:
     okr_rows = okr_breakdown(issues)
     okr_objectives = load_okrs()
     health_rows = squad_health(issues)
-    note_count = TOTAL_NOTES
 
     return rx.box(
 
-        # ── North Star ────────────────────────────────────────────────────
-        section_header(
-            "North Star",
-            subtitle="Главная метрика продукта — создаёт ли пайплайн ценность",
-        ),
-        _north_star(note_count),
-
-        rx.box(height=SPACING["xl"]),
 
         # ── Flow Metrics — ряд 1: время и предсказуемость ────────────────
         section_header(

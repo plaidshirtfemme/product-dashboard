@@ -13,11 +13,40 @@ in the tabs bar) and switches ProjectState.project_mode between
 """
 
 import reflex as rx
-from ..states import NavState, ProjectState, NAV_TABS, BUILT_TABS
+from ..states import NavState, ProjectState, NAV_TABS, BUILT_TABS, show_mode
+from ..states.ba_sa_state import BaSaState
 from ..tokens import SPACING, SIDEBAR_WIDTH, BORDER, STATE, ROLE
 
 _SIDEBAR_W = SIDEBAR_WIDTH
 _TAB_H = "48px"
+
+
+def _mode_menu_item(mode: str, label: str, sub: str, on_click) -> rx.Component:
+    """Один пункт переключателя проекта. Вынесен из трёх почти одинаковых блоков
+    (Motif / KP / Product Dashboard), чтобы правка меню жила в одном месте."""
+    return rx.dropdown_menu.item(
+        rx.flex(
+            rx.flex(
+                rx.icon("check", size=14,
+                        color=rx.cond(
+                            ProjectState.project_mode == mode,
+                            rx.color("teal", 9),
+                            "transparent",
+                        )),
+                width="20px",
+                justify="center",
+            ),
+            rx.flex(
+                rx.text(label, size="2", weight="medium"),
+                rx.text(sub, size="1", color=ROLE["text-secondary"]),
+                direction="column",
+                gap="0",
+            ),
+            align="center",
+            gap="6px",
+        ),
+        on_click=on_click,
+    )
 
 
 def _project_dropdown() -> rx.Component:
@@ -46,12 +75,12 @@ def _project_dropdown() -> rx.Component:
                             current_label,
                             size="2",
                             weight="medium",
-                            color=rx.color("gray", 12),
+                            color=ROLE["text-primary"],
                         ),
                         rx.text(
                             current_sub,
                             size="1",
-                            color=rx.color("gray", 9),
+                            color=ROLE["text-secondary"],
                         ),
                         direction="column",
                         gap="0",
@@ -60,7 +89,7 @@ def _project_dropdown() -> rx.Component:
                     gap=SPACING["sm"],
                     flex="1",
                 ),
-                rx.icon("chevron-down", size=14, color=rx.color("gray", 9)),
+                rx.icon("chevron-down", size=14, color=ROLE["text-secondary"]),
                 align="center",
                 justify="between",
                 width="100%",
@@ -72,56 +101,24 @@ def _project_dropdown() -> rx.Component:
             as_child=True,
         ),
         rx.dropdown_menu.content(
-            rx.dropdown_menu.item(
-                rx.flex(
-                    rx.flex(
-                        rx.icon("check", size=14,
-                                color=rx.cond(
-                                    ProjectState.project_mode == "demo",
-                                    rx.color("teal", 9),
-                                    "transparent",
-                                )),
-                        width="20px",
-                        justify="center",
-                    ),
-                    rx.flex(
-                        rx.text("Motif", size="2", weight="medium"),
-                        rx.text("Demo · вымышленная продуктовая команда", size="1",
-                                color=rx.color("gray", 9)),
-                        direction="column",
-                        gap="0",
-                    ),
-                    align="center",
-                    gap="6px",
-                ),
-                on_click=ProjectState.set_demo,
+            _mode_menu_item(
+                "demo", "Motif", "Demo · вымышленная продуктовая команда",
+                ProjectState.set_demo,
             ),
-            # Knowledge Pipeline (real) скрыт из переключателя — решение Guzel 25.07
-            # (проект пока не показываем). Логика режима "real" в коде оставлена.
+            # Knowledge Pipeline (real) — в переключателе только в ЛОКАЛЬНОЙ сборке.
+            # В публичной сборке проект закрыт (DASH-162, show_mode). Прежнее
+            # решение Guzel 25.07 «пока не показываем» заменено на «видно локально».
+            *(
+                [_mode_menu_item(
+                    "real", "Knowledge Pipeline", "Real · соло-пайплайн · локально",
+                    ProjectState.set_real,
+                )]
+                if show_mode("real") else []
+            ),
             rx.dropdown_menu.separator(),
-            rx.dropdown_menu.item(
-                rx.flex(
-                    rx.flex(
-                        rx.icon("check", size=14,
-                                color=rx.cond(
-                                    ProjectState.project_mode == "dash",
-                                    rx.color("teal", 9),
-                                    "transparent",
-                                )),
-                        width="20px",
-                        justify="center",
-                    ),
-                    rx.flex(
-                        rx.text("Product Dashboard", size="2", weight="medium"),
-                        rx.text("Real · этот дашборд как продуктовый проект", size="1",
-                                color=rx.color("gray", 9)),
-                        direction="column",
-                        gap="0",
-                    ),
-                    align="center",
-                    gap="6px",
-                ),
-                on_click=ProjectState.set_dash,
+            _mode_menu_item(
+                "dash", "Product Dashboard", "Real · этот дашборд как продуктовый проект",
+                ProjectState.set_dash,
             ),
             width="280px",
         ),
@@ -158,6 +155,76 @@ def _sidebar_item(key: str, label: str, icon: str) -> rx.Component:
     if not is_built:
         return rx.tooltip(item, content="В разработке")
     return item
+
+
+def _ba_sa_sub_item(item: rx.Var) -> rx.Component:
+    """Один из двенадцати разделов конспекта. Иконки нет намеренно: двенадцать
+    одинаковых значков подряд — шум, отступ и полоска слева и так показывают
+    вложенность."""
+    is_active = (NavState.active_tab == "analysis") & (BaSaState.active_slug == item["slug"])
+    return rx.flex(
+        rx.text(item["title"], size="2"),
+        align="center",
+        padding=f"{SPACING['sm']} {SPACING['md']}",
+        margin_left="20px",
+        border_radius="var(--radius-2)",
+        border_left=f"2px solid {ROLE['border-default']}",
+        cursor="pointer",
+        background=rx.cond(is_active, rx.color("teal", 3), "transparent"),
+        color=rx.cond(is_active, rx.color("teal", 11), rx.color("gray", 10)),
+        width="100%",
+        _hover={"background": STATE["hover-bg"]},
+        on_click=[
+            NavState.set_tab("analysis"),
+            BaSaState.open_section(item["slug"]),
+        ],
+    )
+
+
+def _ba_sa_accordion(label: str, icon: str) -> rx.Component:
+    """Requirements · BA/SA как группа с разделами внутри — устроено так же,
+    как Design с его пятью подвкладками.
+
+    Отличие от Design: там подвкладки перечислены в NAV_TABS, а здесь их
+    список приходит из файлов на диске, поэтому строится через foreach по
+    состоянию. Показываем вложенное только в режиме Product Dashboard —
+    в других проектах на этой вкладке реестр требований, а не конспект.
+    """
+    is_active = NavState.active_tab == "analysis"
+    has_sections = (
+        (ProjectState.project_mode == "dash") & (BaSaState.sections.length() > 0)
+    )
+    return rx.fragment(
+        rx.flex(
+            rx.icon(icon, size=16),
+            rx.text(label, size="2"),
+            rx.box(flex="1"),
+            rx.cond(
+                has_sections,
+                rx.icon(
+                    rx.cond(NavState.analysis_open, "chevron-up", "chevron-down"),
+                    size=12,
+                    color=rx.color("gray", 7),
+                ),
+                rx.fragment(),
+            ),
+            align="center",
+            gap=SPACING["sm"],
+            padding=f"{SPACING['sm']} {SPACING['md']}",
+            border_radius="var(--radius-2)",
+            cursor="pointer",
+            background=rx.cond(is_active, rx.color("teal", 3), "transparent"),
+            color=rx.cond(is_active, rx.color("teal", 11), rx.color("gray", 10)),
+            width="100%",
+            _hover={"background": STATE["hover-bg"]},
+            on_click=NavState.toggle_analysis,
+        ),
+        rx.cond(
+            has_sections & NavState.analysis_open,
+            rx.foreach(BaSaState.sections, _ba_sa_sub_item),
+            rx.fragment(),
+        ),
+    )
 
 
 def _design_accordion() -> rx.Component:
@@ -203,6 +270,8 @@ def _sidebar_items() -> list[rx.Component]:
     for key, label, icon in NAV_TABS:
         if key == "design":
             items.append(_design_accordion())
+        elif key == "analysis":
+            items.append(_ba_sa_accordion(label, icon))
         elif key in {"ds", "discover", "define", "develop", "deliver"}:
             pass  # rendered inside _design_accordion
         else:

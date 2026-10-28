@@ -6,7 +6,8 @@ before, but readable as a flat list instead of 16-level nesting.
 """
 
 import reflex as rx
-from .states import NavState, ProjectState
+from .states import NavState, ProjectState, show_mode
+from .tokens import ROLE
 from .components.empty_state import empty_state
 from .pages.about import about_tab
 from .pages.motif_about import motif_about_tab
@@ -16,6 +17,7 @@ from .pages.kanban import kanban_tab, dash_kanban_tab
 from .pages.research import research_tab
 from .pages.analytics import analytics_tab
 from .pages.analysis import analysis_tab
+from .pages.ba_sa import ba_sa_tab
 from .pages.design import design_tab
 from .pages.growth import growth_tab
 from .pages.architecture import architecture_tab
@@ -25,15 +27,39 @@ from .pages.release import release_tab
 from .pages.monitoring import monitoring_tab
 from .pages.info import info_tab
 from .pages.ds import ds_tab
-from .pages.real_overview import real_overview_tab
-from .pages.real_architecture import real_architecture_tab
 from .pages.dash_architecture import dash_architecture_tab
-from .pages.real_dev import real_dev_tab
-from .pages.real_quality import real_quality_tab
-from .pages.real_release import real_release_tab
-from .pages.real_monitoring import real_monitoring_tab
-from .pages.real_research import real_research_tab
-from .pages.real_design import real_design_tab
+
+# ── Knowledge Pipeline tabs gated by build visibility (DASH-162) ───────────
+# Локально импортируем real_* как раньше. В публичной сборке режим "real"
+# закрыт: его данные (dash_app/data/kp/) не уезжают, поэтому импорт либо
+# пропускается (show_mode), либо падает ImportError — и тогда на месте
+# KP-вкладок ставится заглушка, а бэкенд не падает.
+_SHOW_REAL = show_mode("real")
+if _SHOW_REAL:
+    try:
+        from .pages.real_overview import real_overview_tab
+        from .pages.real_architecture import real_architecture_tab
+        from .pages.real_dev import real_dev_tab
+        from .pages.real_quality import real_quality_tab
+        from .pages.real_release import real_release_tab
+        from .pages.real_monitoring import real_monitoring_tab
+        from .pages.real_research import real_research_tab
+        from .pages.real_design import real_design_tab
+    except ImportError:
+        _SHOW_REAL = False
+
+if not _SHOW_REAL:
+    def _kp_local_only() -> rx.Component:
+        return empty_state(
+            "Knowledge Pipeline",
+            "Этот проект собирается только в локальной сборке.",
+            icon="lock",
+            mode="demo_only",
+        )
+
+    real_overview_tab = real_architecture_tab = real_dev_tab = real_quality_tab = (
+        real_release_tab
+    ) = real_monitoring_tab = real_research_tab = real_design_tab = _kp_local_only
 from .pages.roadmap import roadmap_tab
 from .pages.dash_discover import dash_discover_tab
 from .pages.dash_define import dash_define_tab
@@ -41,7 +67,7 @@ from .pages.dash_develop import dash_develop_tab
 from .pages.dash_deliver import dash_deliver_tab
 
 _WIP = rx.box(
-    rx.text("В разработке", color=rx.color("gray", 9), size="3"),
+    rx.text("В разработке", color=ROLE["text-secondary"], size="3"),
     padding="4rem",
     text_align="center",
 )
@@ -127,6 +153,7 @@ def _build_page_content() -> rx.Component:
                 "Вкладка смоделирована для демонстрации роли.",
                 "file-text",
             ),
+            dash=ba_sa_tab(),
         )),
         ("design",        _by_project(motif=design_tab(),        kp=real_design_tab())),
         ("dev",           _by_project(motif=dev_tab(),           kp=real_dev_tab())),

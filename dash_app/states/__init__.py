@@ -1,3 +1,5 @@
+import os
+
 import reflex as rx
 
 NAV_TABS: list[tuple[str, str, str]] = [
@@ -27,9 +29,42 @@ NAV_TABS: list[tuple[str, str, str]] = [
 BUILT_TABS = {"about", "roadmap", "overview", "backlog", "kanban", "research", "analytics", "analysis", "design", "growth", "architecture", "dev", "quality", "release", "monitoring", "ds", "info", "discover", "define", "develop", "deliver"}
 
 
+# ── Project visibility (DASH-162) ──────────────────────────────────────────
+# Публичность задаётся на уровне ПРОЕКТА (project_mode), а не отдельного файла.
+#   "public" → уезжает на публичный сайт (Reflex Cloud)
+#   "local"  → доступен только при локальном `reflex run`
+# Knowledge Pipeline ("real") закрыт от публики: его данные не уезжают в архив
+# (scripts/deploy.py), а вкладки не собираются в публичный фронтенд.
+PROJECT_VISIBILITY: dict[str, str] = {
+    "demo": "public",   # Motif — вымышленная демо-команда
+    "real": "local",    # Knowledge Pipeline — только локально
+    "dash": "public",   # Product Dashboard — этот дашборд
+}
+
+
+def is_public(mode: str) -> bool:
+    """Относится ли режим проекта к публичной витрине."""
+    return PROJECT_VISIBILITY.get(mode, "public") == "public"
+
+
+# Публичная сборка полностью исключает local-проекты. scripts/deploy.py ставит
+# PUBLIC_BUILD=1 на время компиляции при деплое; локальный `reflex run` его не
+# выставляет — поэтому локально видны все проекты.
+PUBLIC_BUILD: bool = os.environ.get("PUBLIC_BUILD") == "1"
+
+
+def show_mode(mode: str) -> bool:
+    """Доступен ли режим проекта в текущей сборке.
+
+    Локальная сборка → все режимы. Публичная → только публичные.
+    """
+    return is_public(mode) or not PUBLIC_BUILD
+
+
 class NavState(rx.State):
     active_tab: str = "kanban"
     design_open: bool = False
+    analysis_open: bool = False
 
     def set_tab(self, tab: str):
         if tab in BUILT_TABS:
@@ -40,6 +75,10 @@ class NavState(rx.State):
     def toggle_design(self):
         self.design_open = not self.design_open
         self.active_tab = "design"
+
+    def toggle_analysis(self):
+        self.analysis_open = not self.analysis_open
+        self.active_tab = "analysis"
 
 
 class ProjectState(rx.State):

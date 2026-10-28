@@ -4,13 +4,12 @@ Research tab — UX Researcher view (этапы 2 и 8 MVP).
 Sections:
 1. Research Velocity  — stat cards from Jira mock (research-spike issues)
 2. Research Journal   — hypothesis → method → metric → insight → decision table
-3. Vault Coverage     — real note count per folder; gaps highlighted (real data)
-4. Usability Testing  — TSR + SUS simulated placeholders (⚠️ no real test data)
+3. Usability Testing  — TSR + SUS simulated placeholders (⚠️ no real test data)
 """
 
 import reflex as rx
 
-from ..tokens import SPACING, BORDER
+from ..tokens import SPACING, BORDER, ROLE
 from ..components import (
     table_container,
     table_header,
@@ -19,11 +18,9 @@ from ..components import (
     stat_card_row,
     status_badge,
     section_header,
-    vault_coverage_chart,
 )
 from ..data.adapter import load_issues
 from ..data.metrics import research_stats, research_journal
-from ..data.vault_snapshot import FOLDER_COUNTS, SNAPSHOT_DATE
 from .utils import jira_status_key as _jira_status_key
 
 # Simulated usability test results (⚠️ no real test data exists yet)
@@ -41,17 +38,12 @@ _USABILITY_SESSIONS = [
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _vault_folder_counts() -> list[tuple[str, int]]:
-    """Folder note counts from frozen snapshot — sorted ascending (gaps first)."""
-    return sorted(FOLDER_COUNTS, key=lambda x: x[1])
-
-
 def _decision_badge(decision: str | None) -> rx.Component:
     if decision == "Применено":
         return rx.badge("Применено", color_scheme="teal", variant="soft", size="1")
     if decision == "В беклог":
         return rx.badge("В беклог", color_scheme="amber", variant="soft", size="1")
-    return rx.text("—", size="2", color=rx.color("gray", 8))
+    return rx.text("—", size="2", color=ROLE["text-muted"])
 
 
 def _insight_indicator(insight: str | None) -> rx.Component:
@@ -60,7 +52,7 @@ def _insight_indicator(insight: str | None) -> rx.Component:
             rx.icon("circle_check", size=15, color=rx.color("teal", 10)),
             content=insight,
         )
-    return rx.text("—", size="2", color=rx.color("gray", 8))
+    return rx.text("—", size="2", color=ROLE["text-muted"])
 
 
 def _method_badge(method: str | None) -> rx.Component:
@@ -89,9 +81,9 @@ def _journal_table(spikes) -> rx.Component:
         rows.append(table_row([
             status_badge(_jira_status_key(spike.status)),
             rx.tooltip(
-                rx.text(hyp_short, size="2", color=rx.color("gray", 12)),
+                rx.text(hyp_short, size="2", color=ROLE["text-primary"]),
                 content=hyp,
-            ) if len(hyp) > 72 else rx.text(hyp, size="2", color=rx.color("gray", 12)),
+            ) if len(hyp) > 72 else rx.text(hyp, size="2", color=ROLE["text-primary"]),
             _method_badge(spike.research_method),
             rx.text(spike.research_metric or "—", size="2", color=rx.color("gray", 11)),
             _insight_indicator(spike.insight),
@@ -99,12 +91,6 @@ def _journal_table(spikes) -> rx.Component:
         ], _COL, i))
 
     return table_container(header, *rows)
-
-
-# ---------------------------------------------------------------------------
-# Vault Coverage bars
-# ---------------------------------------------------------------------------
-
 
 
 # ---------------------------------------------------------------------------
@@ -169,7 +155,6 @@ def research_tab() -> rx.Component:
     issues = load_issues()
     rs = research_stats(issues)
     spikes = research_journal(issues)
-    folders = _vault_folder_counts()
 
     insight_pct = round(100 * rs.with_insight / rs.total_spikes) if rs.total_spikes else 0
     applied_pct = round(100 * rs.applied / rs.total_spikes) if rs.total_spikes else 0
@@ -212,15 +197,6 @@ def research_tab() -> rx.Component:
             subtitle="Гипотеза → метод → метрика → инсайт → решение",
         ),
         _journal_table(spikes),
-
-        rx.box(height=SPACING["xl"]),
-
-        # ── Vault Coverage ─────────────────────────────────────────────────
-        section_header(
-            "Vault Content Coverage",
-            subtitle="Количество заметок по папкам · красные = пробелы (< 5 заметок)",
-        ),
-        vault_coverage_chart(folders),
 
         rx.box(height=SPACING["xl"]),
 

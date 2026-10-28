@@ -13,7 +13,7 @@ from pathlib import Path
 import os
 
 VAULT_PATH = Path(os.environ.get("OBSIDIAN_VAULT_PATH", r"C:\Users\guzel\Desktop\obsidian_notes\design_programming"))
-SNAPSHOT_PATH = Path(__file__).parent.parent / "dash_app" / "data" / "vault_snapshot.json"
+SNAPSHOT_PATH = Path(__file__).parent.parent / "dash_app" / "data" / "kp" / "vault_snapshot.json"
 
 
 def main() -> None:
@@ -39,6 +39,8 @@ def main() -> None:
         "folders": folders,
     }
 
+    # data/kp/ закрыт .gitignore и отсутствует на свежем клоне — создаём перед записью.
+    SNAPSHOT_PATH.parent.mkdir(parents=True, exist_ok=True)
     SNAPSHOT_PATH.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Updated: {total} notes, {len(folders)} folders → {SNAPSHOT_PATH}")
 
