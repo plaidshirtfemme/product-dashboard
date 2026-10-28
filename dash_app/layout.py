@@ -18,7 +18,9 @@ def index() -> rx.Component:
 
     page_header = rx.box(
         rx.text(
-            "Knowledge Pipeline",
+            # DASH-165: временная заглушка вместо захардкоженного «Knowledge Pipeline»
+            # (светился над всеми режимами). Полная параметризация по project_mode — позже.
+            "project",
             style={"font_size": "11px", "font_weight": "600",
                    "text_transform": "uppercase", "letter_spacing": "0.08em"},
             color=ROLE["text-secondary"],
