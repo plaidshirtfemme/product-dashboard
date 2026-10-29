@@ -18,7 +18,7 @@ from ..components import (
     mono_text,
     section_header,
 )
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import arch_stats, arch_adrs, arch_tasks
 
 
@@ -198,8 +198,8 @@ def _tasks_table(rows) -> rx.Component:
 # Main tab
 # ---------------------------------------------------------------------------
 
-def architecture_tab() -> rx.Component:
-    issues = load_issues()
+def motif_architecture_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     s = arch_stats(issues)
     adrs = arch_adrs(issues)
     tasks = arch_tasks(issues)

@@ -5,8 +5,8 @@ Source: the dashboard codebase itself (tokens, components, navigation choices).
 """
 
 import reflex as rx
-from ..components import section_header, real_page_header, real_page_wrapper
-from ..tokens import SPACING, BORDER, ROLE
+from ..components import section_header
+from ..tokens import SPACING, BORDER, ROLE, PAGE_MAX_WIDTH
 
 
 _DECISIONS = [
@@ -173,9 +173,12 @@ def _palette_row(color: str, shade: int, usage: str) -> rx.Component:
     )
 
 
-def real_design_tab() -> rx.Component:
-    return real_page_wrapper(
-        real_page_header("Дизайн-решения этого дашборда · tokens/ + components/"),
+def dash_design_tab() -> rx.Component:
+    return rx.box(
+        rx.text(
+            "Дизайн-решения этого дашборда · tokens/ + components/",
+            size="1", color=ROLE["text-secondary"], padding=f"0 0 {SPACING['md']}",
+        ),
 
         # Design decisions
         section_header(
@@ -227,4 +230,7 @@ def real_design_tab() -> rx.Component:
             margin_top=SPACING["sm"],
         ),
 
+        padding=f"0 {SPACING['xl']} {SPACING['xl']}",
+        max_width=PAGE_MAX_WIDTH,
+        margin="0 auto",
     )

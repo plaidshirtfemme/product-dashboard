@@ -22,7 +22,7 @@ from ..components import (
     mono_text,
     section_header,
 )
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import (
     analysis_stats,
     analysis_requirements,
@@ -189,8 +189,8 @@ def _dependencies_table(dep_rows) -> rx.Component:
 # Main tab
 # ---------------------------------------------------------------------------
 
-def analysis_tab() -> rx.Component:
-    issues = load_issues()
+def motif_analysis_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     s = analysis_stats(issues)
     req_rows = analysis_requirements(issues)
     dep_rows = analysis_dependencies(issues)

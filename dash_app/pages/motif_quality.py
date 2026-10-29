@@ -4,7 +4,7 @@ from collections import Counter
 import reflex as rx
 from ..tokens import SPACING, BORDER, STATUS_COLORS, ROLE
 from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container, progress_bar, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs, go_no_go_criteria
 
 _SEV_ORDER = {"Blocker": 0, "Critical": 1, "Major": 2, "Minor": 3, "Trivial": 4}
@@ -134,8 +134,8 @@ def _go_no_go_checklist(criteria) -> rx.Component:
     )
 
 
-def quality_tab() -> rx.Component:
-    issues = load_issues()
+def motif_quality_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     s = squad_summary(issues, "QUALITY")
     all_bugs = squad_bugs(issues)          # all bugs across project
     quality_bugs = squad_bugs(issues, "QUALITY")

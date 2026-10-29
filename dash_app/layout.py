@@ -11,7 +11,7 @@ _SPACING_XL = SPACING["xl"]
 
 def index() -> rx.Component:
     subtitle = rx.cond(
-        ProjectState.project_mode == "real",
+        ProjectState.project_mode == "kp",
         "Knowledge Pipeline — реальный соло-проект",
         "Симуляция Jira-интеграции · Демо для портфолио",
     )

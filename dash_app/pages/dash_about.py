@@ -4,7 +4,7 @@ import reflex as rx
 from ..tokens import SPACING, ROLE
 
 
-def about_tab() -> rx.Component:
+def dash_about_tab() -> rx.Component:
     return rx.box(
         rx.text(
             "About project",

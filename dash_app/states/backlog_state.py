@@ -11,15 +11,15 @@ from collections import defaultdict
 
 import reflex as rx
 
-from ..data.adapter import load_issues
-from ..data.okr import load_okrs
+from ..data.adapter import load_issues, MOTIF_CONFIG
+from ..data.okr_motif import load_motif_okrs
 from ..data.okr_dash import load_dash_okrs
 from ..data.jira_mock_raw import (
     DASH_CONFIG, EPIC_NAMES, EPIC_TYPES, EPIC_UNLOCKS, epic_sort_key,
 )
 from . import ProjectState
 
-_OKR_TITLES: dict[str, str] = {obj.tag: obj.title for obj in load_okrs()}
+_OKR_TITLES_MOTIF: dict[str, str] = {obj.tag: obj.title for obj in load_motif_okrs()}
 _OKR_TITLES_DASH: dict[str, str] = {obj.tag: obj.title for obj in load_dash_okrs()}
 
 # ---------------------------------------------------------------------------
@@ -68,13 +68,13 @@ def _to_dict(i, okr_titles: dict) -> dict:
     }
 
 
-_ALL:      list[dict] = [_to_dict(i, _OKR_TITLES)      for i in load_issues()]
+_ALL_MOTIF:      list[dict] = [_to_dict(i, _OKR_TITLES_MOTIF)      for i in load_issues(MOTIF_CONFIG)]
 _ALL_DASH: list[dict] = [_to_dict(i, _OKR_TITLES_DASH) for i in load_issues(DASH_CONFIG)]
 
 # Reverse map epic name → key, per mode. Used to keep the Epic KEY column in sync
 # when a user reassigns an issue's Epic Link by name in the popup (the select
 # yields a name, but grouping/filter key off r["epic"]).
-_NAME_TO_KEY:      dict[str, str] = {d["epic_name"]: d["epic"] for d in _ALL      if d["epic_name"]}
+_NAME_TO_KEY_MOTIF:      dict[str, str] = {d["epic_name"]: d["epic"] for d in _ALL_MOTIF      if d["epic_name"]}
 _NAME_TO_KEY_DASH: dict[str, str] = {d["epic_name"]: d["epic"] for d in _ALL_DASH if d["epic_name"]}
 
 # Static option lists
@@ -94,17 +94,15 @@ def _options(data: list[dict]) -> dict:
     }
 
 
-_OPTS      = _options(_ALL)
+_OPTS_MOTIF      = _options(_ALL_MOTIF)
 _OPTS_DASH = _options(_ALL_DASH)
 
-# Exposed for the page
-SQUAD_OPTIONS    = _OPTS["squads"]
-TYPE_OPTIONS     = _OPTS["types"]
+# Exposed for the page — только универсальные enum'ы (не зависят от проекта).
+# Проектные опции (сквады/типы/эпики/OKR) — реактивные @rx.var ниже, по project_mode;
+# прежние статические Motif-only экспорты удалены как мёртвые (DASH-167, row 53).
 STATUS_OPTIONS   = _STATUSES
 PRIORITY_OPTIONS = _PRIORITIES
 SEVERITY_OPTIONS = _SEVERITIES
-EPIC_OPTIONS     = _OPTS["epic_names"]
-OKR_OPTIONS      = _OPTS["okrs"]
 
 
 # ---------------------------------------------------------------------------
@@ -221,8 +219,8 @@ class BacklogState(ProjectState):
     @rx.var
     def filtered(self) -> list[dict]:
         is_dash = self.project_mode == "dash"
-        rows = _ALL_DASH if is_dash else _ALL
-        name_to_key = _NAME_TO_KEY_DASH if is_dash else _NAME_TO_KEY
+        rows = _ALL_DASH if is_dash else _ALL_MOTIF
+        name_to_key = _NAME_TO_KEY_DASH if is_dash else _NAME_TO_KEY_MOTIF
         rows = [
             {
                 **r,
@@ -258,8 +256,8 @@ class BacklogState(ProjectState):
         if not self.selected_key:
             return {}
         is_dash = self.project_mode == "dash"
-        rows = _ALL_DASH if is_dash else _ALL
-        name_to_key = _NAME_TO_KEY_DASH if is_dash else _NAME_TO_KEY
+        rows = _ALL_DASH if is_dash else _ALL_MOTIF
+        name_to_key = _NAME_TO_KEY_DASH if is_dash else _NAME_TO_KEY_MOTIF
         for r in rows:
             if r["key"] == self.selected_key:
                 new_name = self._epic_overrides.get(r["key"], r["epic_name"])
@@ -276,7 +274,7 @@ class BacklogState(ProjectState):
         # DASH-112: типизированный список для попапа (иначе .length()/foreach на Any падают).
         if not self.selected_key:
             return []
-        rows = _ALL_DASH if self.project_mode == "dash" else _ALL
+        rows = _ALL_DASH if self.project_mode == "dash" else _ALL_MOTIF
         for r in rows:
             if r["key"] == self.selected_key:
                 return r.get("status_history", [])
@@ -286,7 +284,7 @@ class BacklogState(ProjectState):
     def selected_epic(self) -> dict:
         if not self.selected_epic_key:
             return {}
-        rows = _ALL_DASH if self.project_mode == "dash" else _ALL
+        rows = _ALL_DASH if self.project_mode == "dash" else _ALL_MOTIF
         epic_rows = [r for r in rows if r["epic"] == self.selected_epic_key]
         if not epic_rows:
             return {}
@@ -301,7 +299,7 @@ class BacklogState(ProjectState):
     def selected_epic_children(self) -> list[dict]:
         if not self.selected_epic_key:
             return []
-        rows = _ALL_DASH if self.project_mode == "dash" else _ALL
+        rows = _ALL_DASH if self.project_mode == "dash" else _ALL_MOTIF
         return [
             {"key": r["key"], "summary": r["summary"],
              "status": r["status"], "issue_type": r["issue_type"]}
@@ -333,25 +331,25 @@ class BacklogState(ProjectState):
     # ── reactive dropdown options ─────────────────────────────────────────────
     @rx.var
     def squad_options(self) -> list[str]:
-        return _OPTS_DASH["squads"] if self.project_mode == "dash" else _OPTS["squads"]
+        return _OPTS_DASH["squads"] if self.project_mode == "dash" else _OPTS_MOTIF["squads"]
 
     @rx.var
     def type_options(self) -> list[str]:
-        return _OPTS_DASH["types"] if self.project_mode == "dash" else _OPTS["types"]
+        return _OPTS_DASH["types"] if self.project_mode == "dash" else _OPTS_MOTIF["types"]
 
     @rx.var
     def sprint_options(self) -> list[str]:
-        return _OPTS_DASH["sprints"] if self.project_mode == "dash" else _OPTS["sprints"]
+        return _OPTS_DASH["sprints"] if self.project_mode == "dash" else _OPTS_MOTIF["sprints"]
 
     @rx.var
     def epic_options(self) -> list[str]:
         """Epic keys for filtering (value stored in self.epic)."""
-        return _OPTS_DASH["epics"] if self.project_mode == "dash" else _OPTS["epics"]
+        return _OPTS_DASH["epics"] if self.project_mode == "dash" else _OPTS_MOTIF["epics"]
 
     @rx.var
     def epic_filter_options(self) -> list[dict]:
         """Pairs {value: key, label: 'KEY · Name'} for the filter dropdown."""
-        rows = _ALL_DASH if self.project_mode == "dash" else _ALL
+        rows = _ALL_DASH if self.project_mode == "dash" else _ALL_MOTIF
         seen: dict[str, str] = {}
         for r in rows:
             if r["epic"] and r["epic"] not in seen:
@@ -368,9 +366,9 @@ class BacklogState(ProjectState):
     @rx.var
     def all_epic_names(self) -> list[str]:
         """Full list of epic names for the issue-popup epic select (unfiltered)."""
-        rows = _ALL_DASH if self.project_mode == "dash" else _ALL
+        rows = _ALL_DASH if self.project_mode == "dash" else _ALL_MOTIF
         return sorted({r["epic_name"] for r in rows if r["epic_name"]})
 
     @rx.var
     def okr_options(self) -> list[str]:
-        return _OPTS_DASH["okrs"] if self.project_mode == "dash" else _OPTS["okrs"]
+        return _OPTS_DASH["okrs"] if self.project_mode == "dash" else _OPTS_MOTIF["okrs"]

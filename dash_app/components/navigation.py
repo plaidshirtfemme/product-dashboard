@@ -9,7 +9,7 @@ structure without hitting empty pages.
 
 Project selector dropdown lives at the top of the sidebar (and inline
 in the tabs bar) and switches ProjectState.project_mode between
-"demo" and "real".
+"motif" and "kp".
 """
 
 import reflex as rx
@@ -55,14 +55,14 @@ def _project_dropdown() -> rx.Component:
     Shows current project name + chevron; clicking opens a menu to switch modes.
     """
     current_label = rx.cond(
-        ProjectState.project_mode == "demo",
+        ProjectState.project_mode == "motif",
         "Motif",
-        rx.cond(ProjectState.project_mode == "real", "Knowledge Pipeline", "Product Dashboard"),
+        rx.cond(ProjectState.project_mode == "kp", "Knowledge Pipeline", "Product Dashboard"),
     )
     current_sub = rx.cond(
-        ProjectState.project_mode == "demo",
+        ProjectState.project_mode == "motif",
         "Demo · вымышленная команда",
-        rx.cond(ProjectState.project_mode == "real", "Real · соло-пайплайн", "Real · этот дашборд"),
+        rx.cond(ProjectState.project_mode == "kp", "Real · соло-пайплайн", "Real · этот дашборд"),
     )
 
     return rx.dropdown_menu.root(
@@ -102,18 +102,18 @@ def _project_dropdown() -> rx.Component:
         ),
         rx.dropdown_menu.content(
             _mode_menu_item(
-                "demo", "Motif", "Demo · вымышленная продуктовая команда",
-                ProjectState.set_demo,
+                "motif", "Motif", "Demo · вымышленная продуктовая команда",
+                ProjectState.set_motif,
             ),
             # Knowledge Pipeline (real) — в переключателе только в ЛОКАЛЬНОЙ сборке.
             # В публичной сборке проект закрыт (DASH-162, show_mode). Прежнее
             # решение Guzel 25.07 «пока не показываем» заменено на «видно локально».
             *(
                 [_mode_menu_item(
-                    "real", "Knowledge Pipeline", "Real · соло-пайплайн · локально",
-                    ProjectState.set_real,
+                    "kp", "Knowledge Pipeline", "Real · соло-пайплайн · локально",
+                    ProjectState.set_kp,
                 )]
-                if show_mode("real") else []
+                if show_mode("kp") else []
             ),
             rx.dropdown_menu.separator(),
             _mode_menu_item(

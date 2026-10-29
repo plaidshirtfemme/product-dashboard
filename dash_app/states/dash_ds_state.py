@@ -12,7 +12,7 @@ from __future__ import annotations
 import reflex as rx
 
 
-class DsState(rx.State):
+class DashDsState(rx.State):
     """Active sub-section of the Design System tab."""
 
     # "tokens" | "rules"

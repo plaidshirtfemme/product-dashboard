@@ -14,7 +14,7 @@ import reflex as rx
 
 from ..tokens import SPACING, BORDER, ROLE
 from ..components import section_header, stat_card, stat_card_row, table_container, progress_bar
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import growth_experiments
 
 # ---------------------------------------------------------------------------
@@ -525,8 +525,8 @@ def _sql_block(title: str, description: str, sql: str,
 # Main tab
 # ---------------------------------------------------------------------------
 
-def analytics_tab() -> rx.Component:
-    issues = load_issues()
+def motif_analytics_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     exp_rows = growth_experiments(issues)
     sig_exp = sum(1 for r in exp_rows if r.p_value < 0.05 and r.status == "Done")
     w1_vals = [row[1] for row in _COHORT_DATA if row[1] is not None]

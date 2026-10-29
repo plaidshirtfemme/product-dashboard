@@ -22,7 +22,7 @@ from .jira_mock_raw import (
     get_dash_issues,
     get_releases,
     ProjectConfig,
-    MOTIF_DEMO_CONFIG,
+    MOTIF_CONFIG,
     DASH_CONFIG,
     EPIC_NAMES,
     WORKFLOW_INDEX,
@@ -371,7 +371,7 @@ def adapt_issue(raw: dict) -> Issue:
 _ISSUE_CACHE: dict[str, list[Issue]] = {}
 
 
-def load_issues(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[Issue]:
+def load_issues(config: ProjectConfig) -> list[Issue]:
     """
     The single function every dashboard tab should call. Swap `config`
     for a different ProjectConfig to simulate an entirely different
@@ -416,7 +416,7 @@ def _fill_blocked_active(issues: list[Issue]) -> None:
         ]
 
 
-def list_releases(config: ProjectConfig = MOTIF_DEMO_CONFIG):
+def list_releases(config: ProjectConfig):
     """
     Release history for the Release tab — includes rolled_back. Already
     clean (no changelog/customfield parsing needed), so this is a direct

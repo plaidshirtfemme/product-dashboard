@@ -55,10 +55,10 @@ assets/ba-sa/*
 
 # Knowledge Pipeline (project_mode "real") — собирается только локально,
 # закрыт от публики (DASH-162). Данные уехали в dash_app/data/kp/; страницы
-# режима — real_*.py (имена снимет DASH-187, переименование real→kp).
+# режима — kp_*.py (переименованы из real_*, DASH-163). project_mode остаётся "real".
 # Запись через "/*", как у ba-sa: git и scripts/deploy.py получают исключения
 # по каждому файлу. scripts/deploy.py дополнительно падает, если такой файл
 # всё же попал бы в архив (страж DASH-162).
 dash_app/data/kp/*
-dash_app/pages/real_*.py
+dash_app/pages/kp_*.py
 scripts/update_vault_snapshot.py

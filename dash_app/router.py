@@ -9,46 +9,46 @@ import reflex as rx
 from .states import NavState, ProjectState, show_mode
 from .tokens import ROLE
 from .components.empty_state import empty_state
-from .pages.about import about_tab
+from .pages.dash_about import dash_about_tab
 from .pages.motif_about import motif_about_tab
-from .pages.overview import overview_tab
+from .pages.motif_overview import motif_overview_tab
 from .pages.backlog import backlog_tab
-from .pages.kanban import kanban_tab, dash_kanban_tab
-from .pages.research import research_tab
-from .pages.analytics import analytics_tab
-from .pages.analysis import analysis_tab
+from .pages.kanban import kanban_tab
+from .pages.motif_research import motif_research_tab
+from .pages.motif_analytics import motif_analytics_tab
+from .pages.motif_analysis import motif_analysis_tab
 from .pages.ba_sa import ba_sa_tab
-from .pages.design import design_tab
-from .pages.growth import growth_tab
-from .pages.architecture import architecture_tab
-from .pages.dev import dev_tab
-from .pages.quality import quality_tab
-from .pages.release import release_tab
-from .pages.monitoring import monitoring_tab
+from .pages.motif_design import motif_design_tab
+from .pages.motif_growth import motif_growth_tab
+from .pages.motif_architecture import motif_architecture_tab
+from .pages.motif_dev import motif_dev_tab
+from .pages.motif_quality import motif_quality_tab
+from .pages.motif_release import motif_release_tab
+from .pages.motif_monitoring import motif_monitoring_tab
 from .pages.info import info_tab
-from .pages.ds import ds_tab
+from .pages.dash_ds import dash_ds_tab
 from .pages.dash_architecture import dash_architecture_tab
+from .pages.dash_design import dash_design_tab
 
 # ── Knowledge Pipeline tabs gated by build visibility (DASH-162) ───────────
-# Локально импортируем real_* как раньше. В публичной сборке режим "real"
+# Локально импортируем real_* как раньше. В публичной сборке режим "kp"
 # закрыт: его данные (dash_app/data/kp/) не уезжают, поэтому импорт либо
 # пропускается (show_mode), либо падает ImportError — и тогда на месте
 # KP-вкладок ставится заглушка, а бэкенд не падает.
-_SHOW_REAL = show_mode("real")
-if _SHOW_REAL:
+_SHOW_KP = show_mode("kp")
+if _SHOW_KP:
     try:
-        from .pages.real_overview import real_overview_tab
-        from .pages.real_architecture import real_architecture_tab
-        from .pages.real_dev import real_dev_tab
-        from .pages.real_quality import real_quality_tab
-        from .pages.real_release import real_release_tab
-        from .pages.real_monitoring import real_monitoring_tab
-        from .pages.real_research import real_research_tab
-        from .pages.real_design import real_design_tab
+        from .pages.kp_overview import kp_overview_tab
+        from .pages.kp_architecture import kp_architecture_tab
+        from .pages.kp_dev import kp_dev_tab
+        from .pages.kp_quality import kp_quality_tab
+        from .pages.kp_release import kp_release_tab
+        from .pages.kp_monitoring import kp_monitoring_tab
+        from .pages.kp_research import kp_research_tab
     except ImportError:
-        _SHOW_REAL = False
+        _SHOW_KP = False
 
-if not _SHOW_REAL:
+if not _SHOW_KP:
     def _kp_local_only() -> rx.Component:
         return empty_state(
             "Knowledge Pipeline",
@@ -57,10 +57,10 @@ if not _SHOW_REAL:
             mode="demo_only",
         )
 
-    real_overview_tab = real_architecture_tab = real_dev_tab = real_quality_tab = (
-        real_release_tab
-    ) = real_monitoring_tab = real_research_tab = real_design_tab = _kp_local_only
-from .pages.roadmap import roadmap_tab
+    kp_overview_tab = kp_architecture_tab = kp_dev_tab = kp_quality_tab = (
+        kp_release_tab
+    ) = kp_monitoring_tab = kp_research_tab = _kp_local_only
+from .pages.dash_roadmap import dash_roadmap_tab
 from .pages.dash_discover import dash_discover_tab
 from .pages.dash_define import dash_define_tab
 from .pages.dash_develop import dash_develop_tab
@@ -84,9 +84,9 @@ def _by_project(
         "layout-dashboard",
     )
     return rx.cond(
-        ProjectState.project_mode == "demo",
+        ProjectState.project_mode == "motif",
         motif,
-        rx.cond(ProjectState.project_mode == "real", kp, dash_component),
+        rx.cond(ProjectState.project_mode == "kp", kp, dash_component),
     )
 
 
@@ -103,20 +103,14 @@ def _build_page_content() -> rx.Component:
     entries: list[tuple[str, rx.Component]] = [
         ("about", _by_project(
             motif=motif_about_tab(),
-            kp=about_tab(),
-            dash=about_tab(),
-        )),
-        ("kanban", _by_project(
-            motif=kanban_tab(),
-            kp=_demo_only(
-                "Kanban / Командная доска",
-                "В соло-проекте нет командного Jira-процесса. "
-                "Канбан смоделирован для демонстрации Scrumban-методологии "
-                "и навыков работы с бэклогом.",
-                "kanban",
+            kp=_coming_soon(
+                "О проекте",
+                "Описание проекта Knowledge Pipeline появится в следующей итерации.",
+                "info",
             ),
-            dash=dash_kanban_tab(),
+            dash=dash_about_tab(),
         )),
+        ("kanban", kanban_tab()),
         ("backlog", _by_project(
             motif=backlog_tab(),
             kp=_demo_only(
@@ -129,10 +123,10 @@ def _build_page_content() -> rx.Component:
             ),
             dash=backlog_tab(),
         )),
-        ("overview",      _by_project(motif=overview_tab(),      kp=real_overview_tab())),
-        ("research",      _by_project(motif=research_tab(),      kp=real_research_tab())),
+        ("overview",      _by_project(motif=motif_overview_tab(),      kp=kp_overview_tab())),
+        ("research",      _by_project(motif=motif_research_tab(),      kp=kp_research_tab())),
         ("analytics",     _by_project(
-            motif=analytics_tab(),
+            motif=motif_analytics_tab(),
             kp=_demo_only(
                 "Analytics · PA",
                 "У Knowledge Pipeline нет внешней аудитории пользователей. "
@@ -143,9 +137,9 @@ def _build_page_content() -> rx.Component:
                 "bar-chart-2",
             ),
         )),
-        ("architecture",  _by_project(motif=architecture_tab(),  kp=real_architecture_tab(), dash=dash_architecture_tab())),
+        ("architecture",  _by_project(motif=motif_architecture_tab(),  kp=kp_architecture_tab(), dash=dash_architecture_tab())),
         ("analysis",      _by_project(
-            motif=analysis_tab(),
+            motif=motif_analysis_tab(),
             kp=_demo_only(
                 "Requirements · BA/SA",
                 "В соло-проекте не было внешних стейкхолдеров и "
@@ -155,13 +149,21 @@ def _build_page_content() -> rx.Component:
             ),
             dash=ba_sa_tab(),
         )),
-        ("design",        _by_project(motif=design_tab(),        kp=real_design_tab())),
-        ("dev",           _by_project(motif=dev_tab(),           kp=real_dev_tab())),
-        ("quality",       _by_project(motif=quality_tab(),       kp=real_quality_tab())),
-        ("release",       _by_project(motif=release_tab(),       kp=real_release_tab())),
-        ("monitoring",    _by_project(motif=monitoring_tab(),    kp=real_monitoring_tab())),
+        ("design", _by_project(
+            motif=motif_design_tab(),
+            kp=_coming_soon(
+                "Design",
+                "Дизайн-решения Knowledge Pipeline появятся в следующей итерации.",
+                "pen-tool",
+            ),
+            dash=dash_design_tab(),
+        )),
+        ("dev",           _by_project(motif=motif_dev_tab(),           kp=kp_dev_tab())),
+        ("quality",       _by_project(motif=motif_quality_tab(),       kp=kp_quality_tab())),
+        ("release",       _by_project(motif=motif_release_tab(),       kp=kp_release_tab())),
+        ("monitoring",    _by_project(motif=motif_monitoring_tab(),    kp=kp_monitoring_tab())),
         ("growth",        _by_project(
-            motif=growth_tab(),
+            motif=motif_growth_tab(),
             kp=_demo_only(
                 "Growth & Эксперименты",
                 "У соло-пайплайна для личных заметок нет аудитории роста "
@@ -183,9 +185,22 @@ def _build_page_content() -> rx.Component:
                 "Roadmap Knowledge Pipeline в разработке.",
                 "map",
             ),
-            dash=roadmap_tab(),
+            dash=dash_roadmap_tab(),
         )),
-        ("ds",   ds_tab()),
+        ("ds", _by_project(
+            motif=_coming_soon(
+                "Design System",
+                "Design System этого дашборда доступна только в режиме Product Dashboard. "
+                "Переключитесь на 'Product Dashboard' в селекторе проекта.",
+                "palette",
+            ),
+            kp=_coming_soon(
+                "Design System",
+                "Design System этого дашборда доступна только в режиме Product Dashboard.",
+                "palette",
+            ),
+            dash=dash_ds_tab(),
+        )),
         ("discover", _by_project(
             motif=_coming_soon(
                 "Discover",

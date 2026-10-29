@@ -21,7 +21,7 @@ from ..components import (
     mono_text,
     section_header,
 )
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import growth_stats, growth_experiments, growth_releases
 
 # Simulated activation funnel (⚠️ no real user analytics)
@@ -245,8 +245,8 @@ def _activation_funnel() -> rx.Component:
 # Main tab
 # ---------------------------------------------------------------------------
 
-def growth_tab() -> rx.Component:
-    issues = load_issues()
+def motif_growth_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     s = growth_stats(issues)
     exp_rows = growth_experiments(issues)
     releases = growth_releases(issues)

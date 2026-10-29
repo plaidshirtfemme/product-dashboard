@@ -33,11 +33,11 @@ BUILT_TABS = {"about", "roadmap", "overview", "backlog", "kanban", "research", "
 # Публичность задаётся на уровне ПРОЕКТА (project_mode), а не отдельного файла.
 #   "public" → уезжает на публичный сайт (Reflex Cloud)
 #   "local"  → доступен только при локальном `reflex run`
-# Knowledge Pipeline ("real") закрыт от публики: его данные не уезжают в архив
+# Knowledge Pipeline ("kp") закрыт от публики: его данные не уезжают в архив
 # (scripts/deploy.py), а вкладки не собираются в публичный фронтенд.
 PROJECT_VISIBILITY: dict[str, str] = {
-    "demo": "public",   # Motif — вымышленная демо-команда
-    "real": "local",    # Knowledge Pipeline — только локально
+    "motif": "public",   # Motif — вымышленная демо-команда
+    "kp": "local",    # Knowledge Pipeline — только локально
     "dash": "public",   # Product Dashboard — этот дашборд
 }
 
@@ -82,14 +82,14 @@ class NavState(rx.State):
 
 
 class ProjectState(rx.State):
-    """Global project mode: demo (Motif) | real (KP) | dash (this dashboard)."""
-    project_mode: str = "demo"   # "demo" | "real" | "dash"
+    """Global project mode: motif (Motif) | kp (KP) | dash (this dashboard)."""
+    project_mode: str = "motif"   # "motif" | "kp" | "dash"
 
-    def set_real(self):
-        self.project_mode = "real"
+    def set_kp(self):
+        self.project_mode = "kp"
 
-    def set_demo(self):
-        self.project_mode = "demo"
+    def set_motif(self):
+        self.project_mode = "motif"
 
     def set_dash(self):
         self.project_mode = "dash"

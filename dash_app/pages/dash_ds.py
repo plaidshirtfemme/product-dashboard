@@ -12,7 +12,7 @@ from ..tokens import (
 )
 from ..components import section_header, stat_card, stat_card_row, progress_bar, color_legend
 from ..components.empty_state import empty_state
-from ..states.dash_ds_state import DsState
+from ..states.dash_ds_state import DashDsState
 
 _PAD = f"0 {SPACING['xl']} {SPACING['xl']}"
 _MAX = PAGE_MAX_WIDTH
@@ -830,7 +830,7 @@ _SECTIONS = [
 
 
 def _section_button(section: str, label: str, sub: str) -> rx.Component:
-    is_active = DsState.section == section
+    is_active = DashDsState.section == section
     return rx.flex(
         rx.text(label, size="2", weight="medium",
                 color=rx.cond(is_active, rx.color("teal", 11), rx.color("gray", 11))),
@@ -850,7 +850,7 @@ def _section_button(section: str, label: str, sub: str) -> rx.Component:
             f"{BORDER} {ROLE['border-default']}",
         ),
         _hover={"background": rx.cond(is_active, rx.color("teal", 3), rx.color("gray", 3))},
-        on_click=DsState.set_section(section),
+        on_click=DashDsState.set_section(section),
     )
 
 
@@ -869,12 +869,12 @@ def _section_switcher() -> rx.Component:
     )
 
 
-def ds_tab() -> rx.Component:
+def dash_ds_tab() -> rx.Component:
     return rx.box(
         _section_switcher(),
         rx.box(height=SPACING["lg"]),
         rx.match(
-            DsState.section,
+            DashDsState.section,
             ("tokens", _tokens_view()),
             ("rules", _rules_view()),
             _tokens_view(),

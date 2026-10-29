@@ -19,7 +19,7 @@ from ..components import (
     status_badge,
     section_header,
 )
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import research_stats, research_journal
 from .utils import jira_status_key as _jira_status_key
 
@@ -151,8 +151,8 @@ def _usability_table() -> rx.Component:
 # Main tab
 # ---------------------------------------------------------------------------
 
-def research_tab() -> rx.Component:
-    issues = load_issues()
+def motif_research_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     rs = research_stats(issues)
     spikes = research_journal(issues)
 

@@ -30,8 +30,8 @@ from ..data.metrics import (
     flow_velocity_total,
     flow_load,
 )
-from ..data.okr import load_okrs
-from ..data.jira_mock_raw import MOTIF_DEMO_CONFIG
+from ..data.okr_motif import load_motif_okrs
+from ..data.jira_mock_raw import MOTIF_CONFIG
 
 SQUAD_LABELS = {
     "RESEARCH": "Research",
@@ -46,8 +46,8 @@ SQUAD_LABELS = {
     "PM": "Product Management",
 }
 
-_MVP_START = MOTIF_DEMO_CONFIG.mvp_start.date()
-_MVP_END = MOTIF_DEMO_CONFIG.mvp_deadline.date()
+_MVP_START = MOTIF_CONFIG.mvp_start.date()
+_MVP_END = MOTIF_CONFIG.mvp_deadline.date()
 _TOTAL_DAYS = (_MVP_END - _MVP_START).days
 
 
@@ -69,7 +69,7 @@ def _mvp_timeline() -> rx.Component:
         "teal", "iris", "violet", "cyan",
         "amber", "grass", "tomato", "plum", "orange",
     ]
-    squads = MOTIF_DEMO_CONFIG.squads
+    squads = MOTIF_CONFIG.squads
     today_pct = _today_pct()
 
     rows = []
@@ -288,15 +288,15 @@ def _okr_section(objectives, task_rows) -> rx.Component:
 # Main tab
 # ---------------------------------------------------------------------------
 
-def overview_tab() -> rx.Component:
-    issues = load_issues()
+def motif_overview_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     fs = flow_stats(issues)
     vs = velocity_stats(issues)
     fv = flow_velocity_total(issues)
     fl = flow_load(issues)
     rice_rows = rice_backlog(issues)
     okr_rows = okr_breakdown(issues)
-    okr_objectives = load_okrs()
+    okr_objectives = load_motif_okrs()
     health_rows = squad_health(issues)
 
     return rx.box(

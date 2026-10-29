@@ -20,7 +20,7 @@ from ..components import (
     mono_text,
     section_header,
 )
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import design_stats, design_issues
 
 
@@ -272,8 +272,8 @@ def _iteration_depth(rows) -> rx.Component:
 # Main tab
 # ---------------------------------------------------------------------------
 
-def design_tab() -> rx.Component:
-    issues = load_issues()
+def motif_design_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     s = design_stats(issues)
     rows = design_issues(issues)
 

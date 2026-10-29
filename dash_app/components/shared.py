@@ -6,7 +6,7 @@ from ..tokens import SPACING, BORDER, STATUS_COLORS, PAGE_MAX_WIDTH, ROLE
 _GAP_THRESHOLD = 5
 
 
-def real_page_wrapper(*children: rx.Component) -> rx.Component:
+def kp_page_wrapper(*children: rx.Component) -> rx.Component:
     """Standard outer box for all real_* tabs: padding, max_width, center."""
     return rx.box(
         *children,
@@ -16,7 +16,7 @@ def real_page_wrapper(*children: rx.Component) -> rx.Component:
     )
 
 
-def real_page_header(subtitle: str) -> rx.Component:
+def kp_page_header(subtitle: str) -> rx.Component:
     """'Real project' badge + source subtitle shown at the top of every real_* tab."""
     return rx.flex(
         rx.badge("Real project", color_scheme="teal", variant="soft", size="1"),

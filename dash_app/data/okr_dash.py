@@ -1,6 +1,6 @@
 """OKR data for DASH project (KP Dashboard itself). Sprint: 2026-06-22..2026-08-01."""
 from __future__ import annotations
-from .okr import KeyResult, Objective
+from .okr_types import KeyResult, Objective
 
 
 DASH_OKR_OBJECTIVES: list[Objective] = [

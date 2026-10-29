@@ -332,7 +332,7 @@ def _sprint_review_section() -> rx.Component:
 
 # ── Tab root ─────────────────────────────────────────────────────────────────
 
-def roadmap_tab() -> rx.Component:
+def dash_roadmap_tab() -> rx.Component:
     return rx.box(
         _goals_section(),
         rx.box(height=SPACING["xl"]),

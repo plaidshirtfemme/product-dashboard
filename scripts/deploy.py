@@ -74,11 +74,11 @@ def public_ba_sa_paths() -> set[str]:
 # ── DASH-162: страж публичности на уровне проекта ──────────────────────────
 # Файлы local-проектов (видимость "local" в PROJECT_VISIBILITY) не должны
 # уезжать в публичный бэкенд-архив. Маркеры — по расположению/префиксу (данные
-# в dash_app/data/kp/, страницы real_*.py), а не по слову "real", чтобы
-# переименование real→kp (DASH-187) не ломало страж.
+# в dash_app/data/kp/, страницы kp_*.py), а не по слову "real", чтобы
+# переименование real→kp (DASH-163) не ломало страж.
 LOCAL_PROJECT_GLOBS = [
     "dash_app/data/kp/**/*",       # данные Knowledge Pipeline
-    "dash_app/pages/real_*.py",    # вкладки режима real (KP)
+    "dash_app/pages/kp_*.py",    # вкладки режима real (KP)
     "scripts/update_vault_snapshot.py",
 ]
 
@@ -110,7 +110,7 @@ def assert_no_local_leak(excludes: list[str]) -> None:
         print("\n[X] DASH-162: файлы local-проекта попали бы в публичный архив:")
         for path in leaked:
             print("   LEAK:", path)
-        print("Проверь .gitignore (dash_app/data/kp/*, dash_app/pages/real_*.py, "
+        print("Проверь .gitignore (dash_app/data/kp/*, dash_app/pages/kp_*.py, "
               "scripts/update_vault_snapshot.py). Деплой остановлен.")
         sys.exit(2)
 

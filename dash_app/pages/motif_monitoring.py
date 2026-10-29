@@ -3,7 +3,7 @@
 import reflex as rx
 from ..tokens import SPACING, BORDER, STATUS_COLORS, ROLE
 from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs
 
 
@@ -50,7 +50,7 @@ def _support_linkage_table(bugs, support_issues) -> rx.Component:
     """Shows bugs with count of related support tickets."""
     # Build map: bug_key → count of support tickets that list it in related_to
     from ..data.adapter import load_issues as _load
-    all_issues = _load()
+    all_issues = _load(MOTIF_CONFIG)
     support_all = [i for i in all_issues if i.issue_type == "support-ticket"]
     bug_to_support: dict[str, int] = {}
     for s in support_all:
@@ -87,8 +87,8 @@ def _support_linkage_table(bugs, support_issues) -> rx.Component:
     return table_container(header, *rows)
 
 
-def monitoring_tab() -> rx.Component:
-    issues = load_issues()
+def motif_monitoring_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     s = squad_summary(issues, "MONITORING")
     bugs = squad_bugs(issues, "MONITORING")
     all_tasks = squad_non_bugs(issues, "MONITORING")

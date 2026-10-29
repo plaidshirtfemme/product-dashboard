@@ -3,7 +3,7 @@
 import reflex as rx
 from ..tokens import SPACING, BORDER, STATUS_COLORS, ROLE
 from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container, sev_badge as _sev_badge, SEV_COLORS as _SEV_COLORS
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import squad_summary, squad_bugs, squad_non_bugs, sprint_trends, dev_person_wip
 
 _PRI_COLORS = {"Highest": STATUS_COLORS["danger"], "High": STATUS_COLORS["warning"], "Medium": "gray", "Low": "gray", "Lowest": "gray"}
@@ -153,8 +153,8 @@ def _person_wip_table(people) -> rx.Component:
     return table_container(header, *rows)
 
 
-def dev_tab() -> rx.Component:
-    issues = load_issues()
+def motif_dev_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     s = squad_summary(issues, "DEV")
     bugs = squad_bugs(issues, "DEV")
     tasks = squad_non_bugs(issues, "DEV")

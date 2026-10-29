@@ -129,7 +129,7 @@ class ProjectConfig:
 
 # Default config for Motif demo team — NOT hardcoded into the generator,
 # just the default argument. Any other ProjectConfig works identically.
-MOTIF_DEMO_CONFIG = ProjectConfig(
+MOTIF_CONFIG = ProjectConfig(
     project_key="MTF",
     project_name="Motif",
     mvp_start=datetime(2026, 4, 1),
@@ -445,12 +445,12 @@ def _issue_type_extra_fields(rng: random.Random, issue_type: str, squad_key: str
     return {}
 
 
-def get_releases(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[Release]:
+def get_releases(config: ProjectConfig) -> list[Release]:
     """Public accessor for the Release tab — exposes rolled_back etc."""
     return _generate_releases(config)
 
 
-def generate_raw_issues(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[dict]:
+def generate_raw_issues(config: ProjectConfig) -> list[dict]:
     """
     Returns a list of issues in (approximately) Jira Cloud REST API shape:
     { "key": ..., "fields": {...}, "changelog": {"histories": [...]}, ... }
@@ -667,7 +667,7 @@ def generate_raw_issues(config: ProjectConfig = MOTIF_DEMO_CONFIG) -> list[dict]
     # Story spine — a curated set of A1 "Потеря арта" issues woven on top of
     # the generated statistical body (spine + braid, like the story itself).
     # Only for the Motif demo; other configs get body-only.
-    if config.project_key == MOTIF_DEMO_CONFIG.project_key:
+    if config.project_key == MOTIF_CONFIG.project_key:
         issues.extend(_motif_spine_issues(config, issue_counter))
 
     return issues
@@ -1277,7 +1277,7 @@ def get_dash_issues() -> list[dict]:
             started="2026-07-02T19:00:00.000+0000",
             resolved="2026-07-02T22:00:00.000+0000",
             labels=["architecture"]),
-        _di("DASH-28", "Переименовать KNOWLEDGE_PIPELINE_CONFIG → MOTIF_DEMO_CONFIG",
+        _di("DASH-28", "Переименовать KNOWLEDGE_PIPELINE_CONFIG → MOTIF_CONFIG",
             "Done", "task", "DEV", _DASH_EPICS["E4"], 3, 1, "Claude Code",
             created="2026-07-07T10:00:00.000+0000",
             started="2026-07-07T10:10:00.000+0000",
@@ -1876,7 +1876,7 @@ def get_dash_issues() -> list[dict]:
             )),
 
         # ── Переписать MOTIF данные под реальный сценарий ────────────────────
-        _di("DASH-69", "Spike: переписать MOTIF_DEMO_CONFIG данные под реальный сценарий спринта",
+        _di("DASH-69", "Spike: переписать MOTIF_CONFIG данные под реальный сценарий спринта",
             "Done", "Spike", "DEV", _DASH_EPICS["E10"], 8, 5, "Claude Code",
             created="2026-07-09T10:00:00.000+0000",
             started="2026-07-12T14:00:00.000+0000",
@@ -3669,7 +3669,7 @@ def get_dash_issues() -> list[dict]:
                 "НАЙДЕНО в DASH-162. North Star-герой вкладки Overview в режиме Motif показывал TOTAL_NOTES "
                 "(число заметок Obsidian-vault KP) и подпись 'Obsidian vault · design_programming' — то есть "
                 "метрику РЕАЛЬНОГО проекта KP под вымышленным лейблом Motif. При этом у Motif в конфиге своя "
-                "North Star: 'Активных пользователей завершивших первый скетч' (MOTIF_DEMO_CONFIG, без числа). "
+                "North Star: 'Активных пользователей завершивших первый скетч' (MOTIF_CONFIG, без числа). "
                 "Mislabel того же рода, что чинила DASH-117.\n\n"
                 "СДЕЛАНО в DASH-162: vault-зависимые блоки убраны из Motif (герой overview + секция Vault "
                 "Coverage в research), vault_snapshot закрыт в local. Overview временно без North Star-героя.\n\n"
@@ -3706,7 +3706,7 @@ def get_dash_issues() -> list[dict]:
                 "ДВЕ ОСИ (не путать):\n"
                 "• ВЫБОР контента — всегда по ключу project_mode, никогда ручной проводкой. Сейчас нарушено: "
                 "свитч _by_project повторён в router.py на каждую строку, а page-функции захардкожены под "
-                "один проект (design_tab() зовёт load_issues() с умолчанием MOTIF_DEMO_CONFIG, adapter.py:374).\n"
+                "один проект (design_tab() зовёт load_issues() с умолчанием MOTIF_CONFIG, adapter.py:374).\n"
                 "• ФОРМА контента — определяет только ЧИСЛО рендереров, НЕ способ выбора: (а) однородные "
                 "данные (issues) → один рендерер + датасет проекта; (б) разнородный заготовленный контент → "
                 "рендерер на тип раскладки + контент-документ проекта (реестр/'CMS'); (в) уникальная "
@@ -3726,7 +3726,7 @@ def get_dash_issues() -> list[dict]:
                 "вариант а). SHARED (нейтральные): info.\n\n"
                 "НЕЙМИНГ: равноуровневые сущности — по одному закону, без неявного дефолта-проекта. "
                 "_ALL/_ALL_DASH → _ALL_MOTIF/_ALL_DASH/_ALL_KP (или _ALL[project]); убрать дефолт "
-                "load_issues(config=MOTIF_DEMO_CONFIG). Сплошной аудит нейминга — DASH-167.\n\n"
+                "load_issues(config=MOTIF_CONFIG). Сплошной аудит нейминга — DASH-167.\n\n"
                 "ОГРАНИЧЕНИЕ REFLEX: фронтенд компилируется, поэтому разные ДЕРЕВЬЯ по проекту всё равно "
                 "требуют rx.match(project_mode,…) — но ОДНОЙ единой развилкой по ключу, не 21 ручной; "
                 "вкладки одной формы (только данные) ветвления не требуют.\n\n"
@@ -3748,7 +3748,7 @@ def get_dash_issues() -> list[dict]:
                 "функции, файлы, ключи, конфиги одного уровня) и выровнять именование.\n\n"
                 "ИЗВЕСТНЫЕ НАХОДКИ (стартовые, не весь список): _ALL vs _ALL_DASH в backlog_state.py "
                 "(Motif скрыт в безымянном _ALL) → _ALL_MOTIF/_ALL_DASH/_ALL_KP; load_issues(config="
-                "MOTIF_DEMO_CONFIG) — Motif как неявный дефолт; префикс real_* (снимает DASH-163). "
+                "MOTIF_CONFIG) — Motif как неявный дефолт; префикс real_* (снимает DASH-163). "
                 "Проверить также имена page-функций (*_tab), конфигов (*_CONFIG), state-классов.\n\n"
                 "ИНВЕНТАРИЗАЦИЯ ВЫПОЛНЕНА 28.10 (без правок кода): 9 наборов пиров, корневая находка — "
                 "перегруженное безымянное пространство (иногда Motif-дефолт, иногда shared), что и спрятало "
@@ -3802,6 +3802,59 @@ def get_dash_issues() -> list[dict]:
                 "ТЗ зафиксировано: список разделов уехал со страницы в левое меню (аккордеон, как у Design). "
                 "Задача заведена постфактум — сборка шла в сентябре без тикета; описание собрано из ТЗ и кода."
             )),
+        _di("DASH-169", "Даты created/updated на всех артефактах контента + вывод дат на UI",
+            "To Do", "Task", "DEV", _DASH_EPICS["E7"], 8, 3, "Claude Code",
+            created="2026-10-28T16:00:00.000+0000",
+            labels=["architecture", "data", "ux"], priority="Medium",
+            description=(
+                "РЕШЕНИЕ GUZEL 28.10: на ВСЕХ артефактах контента завести даты created/updated "
+                "(ISO, как у issues: created/updated). Поле decided (дата принятия решения) пока НЕ "
+                "нужно. Даты должны выводиться на UI.\n\n"
+                "АУДИТ 28.10 (прямой замер по коду): даты есть только на Jira-слое (issues: "
+                "created/started/resolved/updated + changelog.histories). НЕТ дат у: OKR/Goals "
+                "(okr.py — Objective/KeyResult, только quarter-строка), North Star "
+                "(ProjectConfig.north_star_metric — строка), ADR-карточек DD-* (real_design._DECISIONS), "
+                "BA/SA заметок (25 .md, 0 с фронтматтером), персон (dash_personas), discover-проблем "
+                "(discover_problems).\n\n"
+                "ВОЗМОЖНОСТЬ (эта задача): добавить created/updated (str|None, ISO 'YYYY-MM-DDT…', "
+                "defaults None — аддитивно, старые данные не ломаются) в: Objective/KeyResult (okr.py), "
+                "схему ADR-карточки (real_design→dash_design, см. DASH-166), ProjectConfig (north_star), "
+                "фронтматтер BA/SA (+ парс в ba_sa_notes.py, + рендер), dash_personas, discover_problems. "
+                "Рендер дат в UI, где артефакт показывается (компактно, на токенах; точную форму "
+                "согласовать визуально — правило DASH-158).\n\n"
+                "ЗНАЧЕНИЯ: проставить реальные created/updated на существующем контенте DASH из истории "
+                "гита/сессий. KP-контент заполняет чат Dash and KPipeline (семья DASH-166) — он обязан "
+                "проставить created/updated на всех новых и существующих KP-записях.\n\n"
+                "ПРИЁМКА: reflex run по 3 режимам + check_px; даты видны в UI на обогащённых артефактах; "
+                "defaults не ломают режимы без дат."
+            )),
+        _di("DASH-170", "Подготовка связности артефактов: обогатить схемы Discover теорией BA/SA → Practices & Rules",
+            "To Do", "Task", "ARCH", _DASH_EPICS["E15"], 8, 2, "Guzel K.",
+            created="2026-10-28T16:05:00.000+0000",
+            labels=["process", "discovery", "research"], priority="Medium",
+            description=(
+                "РЕШЕНИЕ GUZEL 28.10: подготовительные работы к связности артефактов — чтобы артефакты "
+                "вкладок не висели в воздухе (при смене North Star/OKR/исследования связь должна "
+                "прослеживаться, а не быть общей кашей).\n\n"
+                "ЗАМЕР 28.10: хребет Goal→Epic→Issue→ADR связан (EPIC_OKR в jira_mock_raw, okr_tag на "
+                "задачах, decision_note=ADR на задаче). НЕ связаны: дизайн-артефакты (ADR-карточки DD-*, "
+                "BA/SA, персоны, research, user flows) и весь KP (нет KP-хребта).\n\n"
+                "ШАГ 1 — обогатить ДВЕ схемы на Discover (dash_discover.py) теорией BA/SA "
+                "(content/ba-sa/108_8.1.*, 109_9.1.*):\n"
+                "• «Процесс: этапы и передачи» (_PROCESS_STAGES): сейчас только roles + hands_off(выход). "
+                "Добавить на этап Вход, концентрат Артефактов, явное «что блокирует следующий этап» (gate). "
+                "Развернуть Definition/Analysis в реальную SA-цепочку: BRD→Epic(бизнес-цель)→Capability→"
+                "Features→User Story→процессы(AS-IS/TO-BE)→данные(ERD)→взаимодействие→спецификации.\n"
+                "• «Артефакты обмена» (_artifacts_block из motif_about): добавить конкретные SA-артефакты "
+                "и направленность из 'Артефакты'+'Кто участвует': BRD, Vision, Business Goals, "
+                "Stakeholders, Capability Map, Features, User Story, use-cases, ERD, AS-IS/TO-BE, "
+                "спецификации.\n\n"
+                "ШАГ 2 — обогащённые артефакты продублировать в Practices & Rules (вкладка info, "
+                "pages/info.py — ключ 'info', label «Practices & Rules») и сделать обязательными к соблюдению.\n\n"
+                "ГЕЙТ: Claude показывает предложение по обогащению → Guzel согласует ДО применения; рендер "
+                "по одной схеме с ревью. Это подготовка к связности; сам маппинг KP-артефактов в хребет — "
+                "в семье DASH-166."
+            )),
     ]
 
     # ── Issue links ───────────────────────────────────────────────────────────
@@ -3817,6 +3870,8 @@ def get_dash_issues() -> list[dict]:
         "DASH-165": [_link("Relates", "DASH-162"), _link("Relates", "DASH-117")],
         "DASH-166": [_link("Relates", "DASH-162"), _link("Relates", "DASH-163"), _link("Relates", "DASH-117")],
         "DASH-167": [_link("Relates", "DASH-166"), _link("Relates", "DASH-163")],
+        "DASH-169": [_block("DASH-166"), _block("DASH-167"), _link("Relates", "DASH-112")],
+        "DASH-170": [_block("DASH-166"), _block("DASH-167"), _link("Relates", "DASH-168"), _link("Relates", "DASH-60")],
         "DASH-4":  [_link("Relates", "DASH-5"), _link("Relates", "DASH-6")],
         "DASH-5":  [_link("Relates", "DASH-4")],
         "DASH-10": [_block("DASH-26"), _block("DASH-27")],

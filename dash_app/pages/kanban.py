@@ -4,10 +4,11 @@ from datetime import date
 
 import reflex as rx
 from ..tokens import SPACING, BORDER, ROLE
-from ..components import section_header, color_legend
-from ..data.adapter import load_issues, Issue
+from ..components import section_header, color_legend, empty_state
+from ..data.adapter import load_issues, Issue, MOTIF_CONFIG
 from ..data.jira_mock_raw import DASH_CONFIG
 from ..data.sprint_calendar import SPRINT_DAYS, SPRINT_ROWS, DEADLINE_KEYS
+from ..states import ProjectState
 from ..states.backlog_state import BacklogState
 from .backlog import _popup as _issue_popup
 
@@ -488,12 +489,8 @@ def _kanban_for(issues) -> rx.Component:
     )
 
 
-def kanban_tab() -> rx.Component:
-    return _kanban_for(load_issues())
-
-
-def dash_kanban_tab() -> rx.Component:
-    issues = load_issues(DASH_CONFIG)
+def _dash_board(issues) -> rx.Component:
+    """Dash-режим: попап задачи/эпика + sprint-календарь над доской."""
     return rx.box(
         # Единственный rx.dialog.root на страницу (Radix-правило) —
         # переиспользуем попап задачи/эпика из Backlog для чипов календаря
@@ -505,4 +502,21 @@ def dash_kanban_tab() -> rx.Component:
             margin="0 auto",
         ),
         _kanban_for(issues),
+    )
+
+
+def kanban_tab() -> rx.Component:
+    """Единый рендерер доски по project_mode (DASH-166): Motif — доска;
+    dash — + sprint-календарь и попап; KP — заглушка (соло-проект без
+    командного Jira-процесса)."""
+    return rx.match(
+        ProjectState.project_mode,
+        ("dash", _dash_board(load_issues(DASH_CONFIG))),
+        ("kp", empty_state(
+            "Kanban / Командная доска",
+            "В соло-проекте нет командного Jira-процесса. Канбан смоделирован "
+            "для демонстрации Scrumban-методологии и навыков работы с бэклогом.",
+            icon="kanban", mode="demo_only",
+        )),
+        _kanban_for(load_issues(MOTIF_CONFIG)),
     )

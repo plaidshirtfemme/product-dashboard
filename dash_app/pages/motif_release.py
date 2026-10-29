@@ -3,7 +3,7 @@
 import reflex as rx
 from ..tokens import SPACING, BORDER, ROLE
 from ..components import stat_card, stat_card_row, status_badge, mono_text, section_header, table_header, table_row, table_container
-from ..data.adapter import load_issues
+from ..data.adapter import load_issues, MOTIF_CONFIG
 from ..data.metrics import squad_summary, squad_non_bugs, release_plan, slipped_issues
 
 
@@ -63,8 +63,8 @@ def _tasks_table(tasks) -> rx.Component:
     return table_container(header, *rows)
 
 
-def release_tab() -> rx.Component:
-    issues = load_issues()
+def motif_release_tab() -> rx.Component:
+    issues = load_issues(MOTIF_CONFIG)
     s = squad_summary(issues, "RELEASE")
     releases = release_plan(issues)
     slipped = slipped_issues(issues)
