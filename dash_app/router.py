@@ -50,11 +50,12 @@ if _SHOW_KP:
 
 if not _SHOW_KP:
     def _kp_local_only() -> rx.Component:
-        return empty_state(
+        # Та же ось, что _demo_only/_coming_soon (empty_state по причине),
+        # а не отдельный проектный хелпер (DASH-167, H).
+        return _demo_only(
             "Knowledge Pipeline",
             "Этот проект собирается только в локальной сборке.",
-            icon="lock",
-            mode="demo_only",
+            "lock",
         )
 
     kp_overview_tab = kp_architecture_tab = kp_dev_tab = kp_quality_tab = (
