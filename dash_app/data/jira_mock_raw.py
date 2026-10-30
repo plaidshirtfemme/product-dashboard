@@ -3645,8 +3645,10 @@ def get_dash_issues() -> list[dict]:
                 "tokens), который в него питается. AI-инструменты в вакансии переехали из nice-to-have в ядро."
             )),
         _di("DASH-163", "Переименовать режим real → kp (данные и страницы) под именование по проекту",
-            "To Do", "Task", "ARCH", _DASH_EPICS["E13"], 5, 3, "Guzel K.",
+            "Done", "Task", "ARCH", _DASH_EPICS["E13"], 5, 3, "Guzel K.",
             created="2026-10-27T12:00:00.000+0000",
+            started="2026-10-29T10:00:00.000+0000",
+            resolved="2026-10-30T12:00:00.000+0000",
             labels=["architecture", "tech-debt", "process"], priority="Medium",
             description=(
                 "ЗАЧЕМ. Имя режима `real` и префикс файлов `real_*` (real_project_extract.py, "
@@ -3660,6 +3662,15 @@ def get_dash_issues() -> list[dict]:
                 "reflex run по всем режимам + check_px.\n\n"
                 "ПОСЛЕ DASH-162: смешанное именование (данные в kp/, страницы real_*) — временный долг, "
                 "который снимает именно эта задача."
+            ),
+            decision_note=(
+                "СДЕЛАНО 29–30.10 (в составе коммита DASH-167/163/166). project_mode 'real'→'kp' "
+                "(set_kp, PROJECT_VISIBILITY['kp'], ~22 ссылки в 5 файлах; 'dash' не трогали). "
+                "pages/real_*.py → pages/kp_*.py (8 файлов, real_*_tab → kp_*_tab). "
+                "components: real_page_wrapper/real_page_header → kp_page_wrapper/kp_page_header. "
+                "router: _SHOW_REAL → _SHOW_KP. Глоб стража в deploy.py и .gitignore real_*.py → kp_*.py. "
+                "Приёмка: import router (локальная + PUBLIC_BUILD=1), check_px ниже базы 717, "
+                "deploy.py --check (страж ловит local-файлы KP)."
             )),
         _di("DASH-164", "Дать Motif собственную North Star-метрику (overview показывал метрику KP)",
             "To Do", "Task", "ARCH", _DASH_EPICS["E13"], 5, 2, "Guzel K.",
@@ -3695,8 +3706,10 @@ def get_dash_issues() -> list[dict]:
                 "факт наличия eyebrow — решение Guzel. Прогнать по 3 режимам + check_px."
             )),
         _di("DASH-166", "Параметризовать вкладки по проекту: единый выбор по ключу, различия — данными",
-            "To Do", "Task", "ARCH", _DASH_EPICS["E13"], 8, 3, "Guzel K.",
+            "Done", "Task", "ARCH", _DASH_EPICS["E13"], 8, 3, "Guzel K.",
             created="2026-10-27T12:15:00.000+0000",
+            started="2026-10-29T11:00:00.000+0000",
+            resolved="2026-10-30T12:00:00.000+0000",
             labels=["architecture", "tech-debt", "refactor"], priority="Medium",
             description=(
                 "РЕШЕНИЕ GUZEL (Вариант 2, модель зафиксирована 27.10). Вкладки — постоянная структура "
@@ -3737,10 +3750,28 @@ def get_dash_issues() -> list[dict]:
                 "empty_state (решение Guzel 28.10; реальный KP-дизайн — позже, если появится). СЦЕПКА с DASH-163 (real→kp) — тот же набор файлов, "
                 "порядок согласовать. Приёмка: reflex run по 3 режимам + check_px; ни одна вкладка не "
                 "показывает чужой проект."
+            ),
+            decision_note=(
+                "ЭТАП 1 СДЕЛАН 29–30.10 (решение Guzel: вариант а, этап 2 — YAGNI, отложен). "
+                "Метод для вкладок — вариант B (повкладочно: bespoke-vs-параметризация, имя следствием), "
+                "а не 'нейминг-всё-потом-мерж'. СДЕЛАНО: (1) bespoke-вкладки — roadmap→dash_roadmap, "
+                "ds→dash_ds (DsState→DashDsState, обёрнута в _by_project, Motif/KP→empty_state — закрыта "
+                "утечка DS), about split (dash_about + kp→empty_state — закрыта утечка about). "
+                "(2) 11 Motif-вкладок → motif_*_tab, все через load_issues(MOTIF_CONFIG). "
+                "(3) Чинит mislabel: real_design (контент дашборда под KP-лейблом) → dash_design, "
+                "bespoke dash-рендерер рядом с dash_architecture; KP-слот Design → empty_state. "
+                "(4) kanban: слит в один реактивный kanban_tab (rx.match по project_mode) вместо "
+                "motif/dash-пары. КЛАССИФИКАЦИЯ issue-вкладок (проверено чтением KP-вкладок): "
+                "Motif = issue-вид (load_issues(MOTIF_CONFIG)), KP = bespoke пайплайн/vault (data.kp.*), "
+                "НЕ параметризуемая пара — поэтому дальше issue-вкладки не схлопывали. "
+                "Эталон параметризации (backlog) оставлен как есть. ЭТАП 2 (реестр контента для "
+                "не-data страниц) не делался — по YAGNI, завести при реальной надобности."
             )),
         _di("DASH-167", "Сплошной аудит нейминга дашборда: равноуровневое — по одному закону",
-            "To Do", "Task", "ARCH", _DASH_EPICS["E13"], 3, 3, "Guzel K.",
+            "Done", "Task", "ARCH", _DASH_EPICS["E13"], 3, 3, "Guzel K.",
             created="2026-10-27T12:20:00.000+0000",
+            started="2026-10-28T10:00:00.000+0000",
+            resolved="2026-10-30T12:00:00.000+0000",
             labels=["architecture", "tech-debt", "process"], priority="Medium",
             description=(
                 "ПРИНЦИП (решение Guzel). Равноуровневые сущности именуются по одному закону; неявного "
@@ -3759,6 +3790,22 @@ def get_dash_issues() -> list[dict]:
                 "утечка: ds_tab (DS дашборда) показана как shared в Motif и KP — не нарушение публичности, "
                 "а ошибка выбора контента (семья 166/167). Правки — по согласованию, по одному, с reflex run + check_px; "
                 "порядок: сначала D (константы) → B (дефолты загрузчиков) → C (OKR) → A (вкладки, после DASH-163/166)."
+            ),
+            decision_note=(
+                "ВЫПОЛНЕНО 28–30.10, все наборы инвентаризации закрыты. "
+                "I: стейл-ссылки DASH-187→DASH-163 (.gitignore, deploy.py). "
+                "D: backlog_state — _ALL/_OPTS/_OKR_TITLES/_NAME_TO_KEY → _*_MOTIF; мёртвые экспорты "
+                "SQUAD/TYPE/EPIC/OKR_OPTIONS удалены (решение Guzel, вариант а). "
+                "B: снят дефолт config=MOTIF_CONFIG у 4 загрузчиков, конфиг передаётся явно. "
+                "C: okr.py→okr_motif.py (load_okrs→load_motif_okrs, OKR_OBJECTIVES→MOTIF_OKR_OBJECTIVES); "
+                "общие дата-классы KeyResult/Objective вынесены в нейтральный okr_types.py. "
+                "E: MOTIF_DEMO_CONFIG→MOTIF_CONFIG (суффикс _DEMO убран). "
+                "A/F/G/H ушли вместе с DASH-163/166: A (вкладки motif_*/kp_*/dash_*), F (kp_page_*), "
+                "G (DsState→DashDsState), H (_SHOW_REAL→_SHOW_KP + _kp_local_only унифицирован через "
+                "_demo_only — одна ось empty_state). "
+                "РЕШЕНИЕ Guzel: BaSaState оставлен как есть (пир появится — тогда закон; сейчас одиночка). "
+                "Корневая находка закрыта: безымянное пространство = только shared, проектное — с префиксом. "
+                "Внутренняя записка 20261028_NAMING-AUDIT-DASH-167.md (gitignored) — журнал прогресса."
             )),
         _di("DASH-168", "Вкладка Requirements · BA/SA (dash): конспект аналитика из .md-файлов, рендер через rx.markdown",
             "Done", "story", "DEV", _DASH_EPICS["E7"], 8, 5, "Claude Code",
